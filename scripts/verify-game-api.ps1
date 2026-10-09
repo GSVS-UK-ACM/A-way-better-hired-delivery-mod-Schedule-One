@@ -3,13 +3,15 @@ param(
     [Parameter(Mandatory = $true)]
     [string] $MelonLoaderRoot,
 
-    [string] $ExpectedAssemblySha256 = "0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA",
+    [string] $ExpectedAssemblySha256 = "CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC",
 
-    [string] $ExpectedFishNetSha256 = "202E89D1E5B27E19403F66DA1779CA82E6E08D17199F2D2593C86CFDC65EF0F4",
+    [string] $ExpectedFishNetSha256 = "E8972F81F848077A0A8B337D343D724A44E6B312A1C8B92E3892097175B59C80",
+
+    [string] $ExpectedCoreSha256 = "A4932C4750637F901F122DF90AD0101F09DDFC3E8F204B1F3C3B5BD77F462926",
 
     [string] $ExpectedInteropSha256 = "A1154A31EC72D4097A0A1DB50E046D97AA6C9B60BCFEB4D0489DF6230960F674",
 
-    [string] $ExpectedUnityCoreSha256 = "269552723AB92FBBCA5DFD1C7EC7D875A95406AB048A1CC9B1BAA78C9B9B62E8",
+    [string] $ExpectedUnityCoreSha256 = "E993B0A6388D5A21748B28E5E40EBEC1BC43B01DFD550AEBBCB79F3072A48E87",
 
     [string] $ExpectedHarmonySha256 = "6C898933B52149E8BCF6722305C7E4D94ADD47C9E53B364096F91721624C0877"
 )
@@ -44,6 +46,7 @@ $script:PassCount++
 
 $assemblyPath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\Assembly-CSharp.dll"
 $fishNetPath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\Il2CppFishNet.Runtime.dll"
+$corePath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\Il2CppScheduleOne.Core.dll"
 $interopPath = Join-Path $MelonLoaderRoot "net6\Il2CppInterop.Runtime.dll"
 $unityCorePath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\UnityEngine.CoreModule.dll"
 $harmonyPath = Join-Path $MelonLoaderRoot "net6\0Harmony.dll"
@@ -65,6 +68,7 @@ function Assert-FileHash(
 
 Assert-FileHash $assemblyPath $ExpectedAssemblySha256 "Assembly-CSharp.dll"
 Assert-FileHash $fishNetPath $ExpectedFishNetSha256 "Il2CppFishNet.Runtime.dll"
+Assert-FileHash $corePath $ExpectedCoreSha256 "Il2CppScheduleOne.Core.dll"
 Assert-FileHash $interopPath $ExpectedInteropSha256 "Il2CppInterop.Runtime.dll"
 Assert-FileHash $unityCorePath $ExpectedUnityCoreSha256 "UnityEngine.CoreModule.dll"
 Assert-FileHash $harmonyPath $ExpectedHarmonySha256 "0Harmony.dll"
@@ -72,12 +76,14 @@ Assert-FileHash $harmonyPath $ExpectedHarmonySha256 "0Harmony.dll"
 [void] [System.Reflection.Assembly]::LoadFrom($cecilPath)
 $gameAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($assemblyPath)
 $fishNetAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($fishNetPath)
+$coreAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($corePath)
 $interopAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($interopPath)
 $unityCoreAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($unityCorePath)
 $harmonyAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($harmonyPath)
 $assemblies = @{
     Game = $gameAssembly
     FishNet = $fishNetAssembly
+    Core = $coreAssembly
     Interop = $interopAssembly
     Unity = $unityCoreAssembly
     Harmony = $harmonyAssembly
@@ -239,7 +245,7 @@ try {
     Assert-Type "Game" "Il2CppScheduleOne.Vehicles.LandVehicle" "Il2CppFishNet.Object.NetworkBehaviour"
     Assert-Type "Game" "Il2CppScheduleOne.Vehicles.VehicleManager" 'Il2CppScheduleOne.DevUtilities.NetworkSingleton`1<Il2CppScheduleOne.Vehicles.VehicleManager>'
     Assert-Type "Game" "Il2CppScheduleOne.AvatarFramework.Avatar" "UnityEngine.MonoBehaviour"
-    Assert-Type "Game" "Il2CppScheduleOne.AvatarFramework.AvatarSettings" "UnityEngine.ScriptableObject"
+    Assert-Type "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "UnityEngine.MonoBehaviour"
     Assert-Type "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "System.Object"
     Assert-Type "Unity" "UnityEngine.Component" "UnityEngine.Object"
     Assert-Type "Unity" "UnityEngine.Behaviour" "UnityEngine.Component"
@@ -297,13 +303,12 @@ try {
         "System.Boolean", "System.Int32"
     ) $false 0 $true
     Assert-Property "Game" "Il2CppScheduleOne.NPCs.NPC" "Avatar" "Il2CppScheduleOne.AvatarFramework.Avatar" $true
-    Assert-Property "Game" "Il2CppScheduleOne.AvatarFramework.Avatar" "CurrentSettings" "Il2CppScheduleOne.AvatarFramework.AvatarSettings" $true
-    foreach ($layerNumber in 2..8) {
-        Assert-Property "Game" "Il2CppScheduleOne.AvatarFramework.AvatarSettings" "BodyLayer${layerNumber}Path" "System.String" $false
-    }
-    Assert-Method "Game" "Il2CppScheduleOne.AvatarFramework.Avatar" "SetBodyLayer" "System.Void" @(
-        "System.Int32", "System.String", "UnityEngine.Color"
-    )
+    Assert-Property "Game" "Il2CppScheduleOne.AvatarFramework.Avatar" "Appearance" "Il2CppScheduleOne.Avatar.AvatarAppearance" $false
+    Assert-Property "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "_wornObjects" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Core.Avatar.AvatarObject>' $true
+    Assert-Property "Core" "Il2CppScheduleOne.Core.Avatar.AvatarObject" "PropertyCollection" "Il2CppScheduleOne.Core.Avatar.Properties.AvatarPropertyCollection" $false
+    Assert-Method "Core" "Il2CppScheduleOne.Core.Avatar.Properties.AvatarPropertyCollection" "GetFirstColorProperty" "Il2CppScheduleOne.Core.Avatar.Properties.ColorProperty"
+    Assert-Method "Core" 'Il2CppScheduleOne.Core.Avatar.Properties.AvatarProperty`1' "SetValue" "System.Void" @("T")
+    Assert-Method "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "RepaintLayers" "System.Void"
     Assert-Property "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "selectedEmployeeType" "Il2CppScheduleOne.Employees.EEmployeeType" $true
     Assert-Method "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "Confirm" "System.Void"
 
@@ -388,11 +393,12 @@ try {
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "onLoadComplete" "UnityEngine.Events.UnityEvent" $true
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "IsLoading" "System.Boolean" $true
 
-    Write-Output "Schedule I 0.4.6f13 IL2CPP Vehicle Handlers API verification passed ($script:PassCount checks)."
+    Write-Output "Schedule I 0.4.7f12 IL2CPP Vehicle Handlers API verification passed ($script:PassCount checks)."
 }
 finally {
     $gameAssembly.Dispose()
     $fishNetAssembly.Dispose()
+    $coreAssembly.Dispose()
     $interopAssembly.Dispose()
     $unityCoreAssembly.Dispose()
     $harmonyAssembly.Dispose()

@@ -105,7 +105,10 @@ try {
     Assert-Call $register "*ClassInjector::RegisterTypeInIl2Cpp*" "Runtime registration injects HandlerEmployee"
 
     $tryApply = Get-RequiredMethod "VehicleHandlers.Employees.HandlerAppearance" "TryApply" @("Il2CppScheduleOne.AvatarFramework.Avatar")
-    Assert-Call $tryApply "*Il2CppScheduleOne.AvatarFramework.Avatar::SetBodyLayer*" "Handler appearance uses the verified avatar body-layer API"
+    Assert-Call $tryApply "*Il2CppScheduleOne.AvatarFramework.Avatar::get_Appearance*" "Handler appearance uses the v0.4.7 avatar appearance component"
+    Assert-Call $tryApply "*Il2CppScheduleOne.Core.Avatar.Properties.AvatarPropertyCollection::GetFirstColorProperty*" "Handler appearance selects an instance-owned worn-object color"
+    Assert-Call $tryApply "*Il2CppScheduleOne.Core.Avatar.Properties.AvatarProperty*::SetValue*" "Handler appearance applies the orange role color"
+    Assert-Call $tryApply "*Il2CppScheduleOne.Avatar.AvatarAppearance::RepaintLayers*" "Handler appearance repaints the changed worn-object layers"
 
     Write-Output "Vehicle Handlers runtime worker verification passed ($script:PassCount checks)."
 }

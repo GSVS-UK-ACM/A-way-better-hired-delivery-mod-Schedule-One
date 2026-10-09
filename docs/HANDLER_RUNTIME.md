@@ -2,7 +2,7 @@
 
 Status: Startup verified; awaiting worker-construction and appearance verification
 
-Target: Schedule I 0.4.6f13 IL2CPP
+Target: Schedule I 0.4.7f12 IL2CPP
 
 ## Runtime type
 
@@ -16,14 +16,14 @@ M2-001 does not manually construct or spawn an employee. The hiring integration 
 
 ## Appearance
 
-A Harmony postfix observes the game's normal `Employee.InitializeAppearance` completion. It ignores every non-Handler employee, then recolors the highest populated non-base body layer with a high-visibility orange role color:
+A Harmony postfix observes the game's normal `Employee.InitializeAppearance` completion. It ignores every non-Handler employee, then recolors the highest-priority colorable worn object with a high-visibility orange role color:
 
-- body layers are considered from layer 8 down to layer 2;
-- layer 1 is never recolored because it can be the base body/skin layer;
-- no shared `AvatarSettings` asset is mutated;
-- if there is no suitable layer or the override throws, the generated base appearance remains intact and a warning is logged.
+- only runtime objects in `AvatarAppearance._wornObjects` are considered, so naked/body objects and skin are never recolored;
+- the first color property on the last suitable worn object is changed, then the avatar layers are repainted;
+- no shared outfit or appearance asset is mutated;
+- if there is no suitable worn object or the override throws, the generated base appearance remains intact and a warning is logged.
 
-The worker therefore keeps the game's gender, body, face, hair, voice, and mugshot selection while gaining a visible Handler role cue when the selected employee appearance contains an outer body layer.
+The worker therefore keeps the game's gender, body, face, hair, voice, and mugshot selection while gaining a visible Handler role cue when the selected employee appearance contains a colorable worn object.
 
 ## Scope boundary
 
@@ -38,7 +38,7 @@ Those behaviors remain assigned to M2-002 and later backlog items.
 
 ## Verification
 
-The pinned API verifier now includes `Il2CppInterop.Runtime.dll`, the injection methods, employee role field, avatar access, appearance initialization, body-layer paths, and body-layer mutation API.
+The pinned API verifier now includes `Il2CppInterop.Runtime.dll`, `Il2CppScheduleOne.Core.dll`, the injection methods, employee role field, avatar access, appearance initialization, runtime worn-object collection, color-property mutation, and layer repaint APIs.
 
 After compilation, `scripts/verify-handler-runtime.ps1` inspects the produced assembly and verifies:
 
@@ -46,7 +46,7 @@ After compilation, `scripts/verify-handler-runtime.ps1` inspects the produced as
 - the native-pointer constructor;
 - Unity `Awake` binding to the real Employee component;
 - Handler role assignment;
-- Handler-filtered Harmony appearance dispatch and body-layer use;
+- Handler-filtered Harmony appearance dispatch, worn-object color mutation, and repaint;
 - idempotent IL2CPP registration.
 
 ## Runtime evidence
@@ -56,6 +56,8 @@ On 2026-09-25, the exact built DLL was installed into the game Mods directory an
 1. Direct `Employee` inheritance failed during mod initialization with `Couldn't find System.Type for Il2Cpp type: NPCMovement+WalkResult`. No worker was created and the game remained responsive at the main menu.
 2. After changing to the composed role component, MelonLoader logged `Registered mono type VehicleHandlers.Employees.HandlerEmployee in il2cpp domain`, followed by the Vehicle Handlers initialization banner. No Vehicle Handlers exception occurred.
 
-The successful installed DLL SHA-256 is `6E976CB9EBABAFFABE60E1EC3188BDE24506DE6D506C78BBCFBE233A4543E3EE`. The failed DLL is retained outside the repository with a disabled extension and cannot be loaded by MelonLoader.
+On 2026-10-09, Schedule I 0.4.7f12 replaced the avatar settings/body-layer runtime API with `AvatarAppearance` and runtime avatar objects. The appearance implementation and verifier were migrated to that API. The updated DLL registered the Handler component and printed the initialization banner on v0.4.7f12 without a Vehicle Handlers exception.
+
+The current successful installed DLL SHA-256 is `EE5631C6D06CF1DBC74B2A32E5625F608F85E4011EC65A7A0F32FC99A9A19000`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
 
 Startup registration is now proven. A future FishNet prefab, component attachment, role persistence, and rendered appearance still require isolated in-game evidence through M2-002 before this item moves from `VERIFYING` to `DONE`.

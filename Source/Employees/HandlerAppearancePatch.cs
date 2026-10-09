@@ -20,7 +20,7 @@ namespace VehicleHandlers.Employees
             {
                 if (!HandlerAppearance.TryApply(__instance.Avatar))
                 {
-                    MelonLogger.Warning("Handler appearance could not find a non-base body layer; preserving the generated employee appearance.");
+                    MelonLogger.Warning("Handler appearance could not find a colorable worn object; preserving the generated employee appearance.");
                 }
             }
             catch (Exception exception)

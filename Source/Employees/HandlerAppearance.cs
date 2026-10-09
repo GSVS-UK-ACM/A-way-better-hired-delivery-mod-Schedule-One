@@ -1,4 +1,7 @@
+using Il2CppScheduleOne.Avatar;
 using Il2CppScheduleOne.AvatarFramework;
+using Il2CppScheduleOne.Core.Avatar;
+using Il2CppScheduleOne.Core.Avatar.Properties;
 using UnityEngine;
 
 namespace VehicleHandlers.Employees
@@ -9,48 +12,38 @@ namespace VehicleHandlers.Employees
 
         public static bool TryApply(Avatar avatar)
         {
-            if (avatar == null || avatar.CurrentSettings == null)
+            if (avatar == null || avatar.Appearance == null)
             {
                 return false;
             }
 
-            AvatarSettings settings = avatar.CurrentSettings;
-            for (int layerIndex = 7; layerIndex >= 1; layerIndex--)
+            AvatarAppearance appearance = avatar.Appearance;
+            Il2CppSystem.Collections.Generic.List<AvatarObject> wornObjects = appearance._wornObjects;
+            if (wornObjects == null)
             {
-                string layerPath = GetBodyLayerPath(settings, layerIndex);
-                if (string.IsNullOrEmpty(layerPath))
+                return false;
+            }
+
+            for (int index = wornObjects.Count - 1; index >= 0; index--)
+            {
+                AvatarObject wornObject = wornObjects[index];
+                if (wornObject == null || wornObject.PropertyCollection == null)
                 {
                     continue;
                 }
 
-                avatar.SetBodyLayer(layerIndex, layerPath, UniformOrange);
+                ColorProperty colorProperty = wornObject.PropertyCollection.GetFirstColorProperty();
+                if (colorProperty == null)
+                {
+                    continue;
+                }
+
+                colorProperty.SetValue(UniformOrange);
+                appearance.RepaintLayers();
                 return true;
             }
 
             return false;
-        }
-
-        private static string GetBodyLayerPath(AvatarSettings settings, int layerIndex)
-        {
-            switch (layerIndex)
-            {
-                case 1:
-                    return settings.BodyLayer2Path;
-                case 2:
-                    return settings.BodyLayer3Path;
-                case 3:
-                    return settings.BodyLayer4Path;
-                case 4:
-                    return settings.BodyLayer5Path;
-                case 5:
-                    return settings.BodyLayer6Path;
-                case 6:
-                    return settings.BodyLayer7Path;
-                case 7:
-                    return settings.BodyLayer8Path;
-                default:
-                    return string.Empty;
-            }
         }
     }
 }
