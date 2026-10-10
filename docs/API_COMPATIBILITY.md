@@ -46,8 +46,8 @@ A mismatched hash or changed signature fails immediately with the expected and o
 - All 122 checks passed against the pinned 0.4.7f12 IL2CPP, Unity, MelonLoader interop, and Harmony reference set.
 - A deliberately incorrect `Assembly-CSharp.dll` hash was rejected.
 - The release build completed with zero warnings and zero errors using .NET SDK 8.0.425.
-- Compiled Handler runtime verification passed all 15 checks.
-- Latest verified, installed, and startup-tested output DLL SHA-256: `EE5631C6D06CF1DBC74B2A32E5625F608F85E4011EC65A7A0F32FC99A9A19000`.
+- Compiled Handler runtime verification passed all 17 checks, including startup-banner integration.
+- Latest verified, installed, and startup-tested output DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
 
 ## Boundary
 

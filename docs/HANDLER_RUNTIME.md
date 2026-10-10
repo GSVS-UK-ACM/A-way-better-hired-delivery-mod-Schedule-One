@@ -58,6 +58,8 @@ On 2026-09-25, the exact built DLL was installed into the game Mods directory an
 
 On 2026-10-09, Schedule I 0.4.7f12 replaced the avatar settings/body-layer runtime API with `AvatarAppearance` and runtime avatar objects. The appearance implementation and verifier were migrated to that API. The updated DLL registered the Handler component and printed the initialization banner on v0.4.7f12 without a Vehicle Handlers exception.
 
-The current successful installed DLL SHA-256 is `EE5631C6D06CF1DBC74B2A32E5625F608F85E4011EC65A7A0F32FC99A9A19000`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
+The mod also prints an orange GSVS startup banner after successful Handler runtime registration. The banner reports Vehicle Handlers `v0.1.0`, Schedule I `0.4.7f12 | IL2CPP`, build `0.4.7f12-dev1`, creator `GSVS UK ACM`, project owner `xboxnuker-rgb`, and the `Hire. Assign. Deliver.` tagline.
+
+The current successful installed DLL SHA-256 is `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
 
 Startup registration is now proven. A future FishNet prefab, component attachment, role persistence, and rendered appearance still require isolated in-game evidence through M2-002 before this item moves from `VERIFYING` to `DONE`.

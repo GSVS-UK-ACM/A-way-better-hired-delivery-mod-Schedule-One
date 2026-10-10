@@ -29,15 +29,16 @@ Game references remain outside this repository.
 
 - Strict static API verification passed all 122 checks against the v0.4.7f12 out-of-tree reference set.
 - Dependency-free contract verification passed all 110 assertions, including the complete 9-by-9 trip transition matrix.
-- Compiled Handler runtime verification passed all 15 checks for inheritance, native construction, base delegation, role assignment, v0.4.7 appearance dispatch/mutation/repaint, and idempotent injection.
+- Compiled Handler runtime verification passed all 17 checks for inheritance, native construction, base delegation, role assignment, v0.4.7 appearance dispatch/mutation/repaint, idempotent injection, and startup-banner integration.
 - An intentionally incorrect `Assembly-CSharp.dll` hash was rejected before API inspection.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
-- Verified and installed Handler-worker DLL SHA-256: `EE5631C6D06CF1DBC74B2A32E5625F608F85E4011EC65A7A0F32FC99A9A19000`.
+- Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
 - The production project now compiles only `Properties/AssemblyInfo.cs` and `Source/**/*.cs`; test build artifacts cannot leak into the mod DLL.
 - First in-game launch rejected direct `Employee` subclass injection because the interop runtime could not map inherited `NPCMovement.WalkResult`; the game remained responsive and no worker was created.
 - Second launch with component composition registered `VehicleHandlers.Employees.HandlerEmployee` successfully and printed the mod initialization banner with no Vehicle Handlers exception.
 - On 2026-10-09, MelonLoader identified game version `0.4.7f12`, regenerated changed interop assemblies, and exposed removal of the old `Avatar.CurrentSettings`/`SetBodyLayer` path. The Handler appearance now mutates the first color property on an instance-owned worn object and calls `AvatarAppearance.RepaintLayers`; the strict v0.4.7 verifier and build pass.
 - The v0.4.7-compatible DLL was installed and launched. MelonLoader again registered `VehicleHandlers.Employees.HandlerEmployee` and printed the Vehicle Handlers initialization banner with no Vehicle Handlers exception. Other installed mods logged unrelated v0.4.7 patch/type failures.
+- On 2026-10-10, the orange GSVS `CREATED BY` banner was added after successful runtime registration. A live v0.4.7f12 launch printed the mod version, target/backend, `0.4.7f12-dev1` build identity, `GSVS UK ACM`, `xboxnuker-rgb`, and `Hire. Assign. Deliver.` before the normal initialization message. The game test process was stopped afterward.
 - MelonLoader logged a missing `MethodXrefScanCache.db` while finalizing the first post-update interop generation, but emitted the new assemblies and completed game/mod startup. Treat this as a local MelonLoader generation warning to watch, not Vehicle Handlers runtime evidence.
 - Worker attachment to a later FishNet prefab and rendered appearance remain untested until M2-002 supplies the construction path.
 
