@@ -18,6 +18,8 @@ Marked Vehicle Handlers are excluded from the vanilla Packager work entry points
 
 `HandlerAssignmentRegistry` owns versioned assignments keyed by Handler GUID. Each assignment records vehicle GUID, destination property code/GUID, dock index, enabled state, manual hidden state, and recoverable trip state.
 
+The registry maintains a reverse vehicle index, compare-and-swap revisions, removal tombstones, and a restore-only loading phase. It is deliberately independent of live game-object validation and runtime movement. See [Handler Assignment Model](ASSIGNMENT_MODEL.md).
+
 ### Reservation registry
 
 `HandlerReservationRegistry` owns destination reservations keyed by stable property and dock identity. Reservation acquisition and release are atomic and owner-specific. A Harmony postfix on `DeliveryManager.IsLoadingBayFree(Property, int)` combines vanilla availability with Handler reservations.

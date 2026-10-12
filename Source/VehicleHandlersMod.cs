@@ -9,7 +9,7 @@ namespace VehicleHandlers
         public const string ModName = "Vehicle Handlers";
         public const string Version = "0.1.0";
         public const string TargetGameVersion = "0.4.7f12";
-        public const string BuildIdentity = "0.4.7f12-dev5";
+        public const string BuildIdentity = "0.4.7f12-dev6";
         public const string Creator = "GSVS UK ACM";
         public const string ProjectOwner = "xboxnuker-rgb";
         public const string ModDescription = "Adds a hireable Handler who moves owned vehicles while respecting loading-bay reservations.";
