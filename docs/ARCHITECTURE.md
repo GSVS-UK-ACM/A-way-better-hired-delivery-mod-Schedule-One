@@ -12,6 +12,8 @@ The versioned cross-milestone types and mutation boundaries are frozen in [Inter
 
 `HandlerEmployee` is an injected IL2CPP role component attached beside a genuine base-game `Employee`; it does not subclass or replace the game's FishNet employee component. This composition is required because the pinned interop runtime cannot inject through one inherited `Employee` virtual signature. The fixer receives a distinct **Vehicle Handler** choice. An unused wire discriminator selects that route, then the server maps construction to the existing `EEmployeeType.Handler`/Packager prefab and writes a save-safe `vehiclehandler_` employee-ID marker. Only marked employees receive the component and high-visibility worn-object color, so vanilla Handlers remain unchanged. The marker crosses the existing FishNet initialization call and survives base employee save/load data. See [Handler Runtime Worker](HANDLER_RUNTIME.md) and [Hiring Integration](HIRING_INTEGRATION.md).
 
+Marked Vehicle Handlers are excluded from the vanilla Packager work entry points while retaining the base employee lifecycle. Their game-owned GUID is bound as the stable `HandlerId`, and firing, leave/despawn, and mod shutdown are forwarded through `IHandlerLifecycleSink` for later movement and reservation cleanup. Generic scene destruction is not treated as deletion because menu transitions destroy loaded objects without deleting saved employees. See [Handler Lifecycle](HANDLER_LIFECYCLE.md).
+
 ### Assignment registry
 
 `HandlerAssignmentRegistry` owns versioned assignments keyed by Handler GUID. Each assignment records vehicle GUID, destination property code/GUID, dock index, enabled state, manual hidden state, and recoverable trip state.

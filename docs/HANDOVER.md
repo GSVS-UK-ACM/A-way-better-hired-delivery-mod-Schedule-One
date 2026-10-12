@@ -2,14 +2,11 @@
 
 ## Active claim
 
-- Backlog: none; `VH-M2-002` completed
-- Owner: Codex
-- Branch: `feat/vh-m2-002-hiring-integration`
-- Status: `READY_TO_MERGE`
+None. `VH-M2-003` is complete on `feat/vh-m2-003-lifecycle` and awaits owner-approved merge.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, and Handler runtime PR #4 are merged. `VH-M2-002` is complete: `dev3` adds a separate fifth Vehicle Handler choice, maps an unused wire discriminator to vanilla construction, persists subtype identity in the base employee ID, and reattaches the role after save/load while leaving ordinary Handlers unchanged. Work lifecycle, assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, and hiring PR #5 are merged. All M2 work is complete and runtime verified on `dev5`: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. Assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -27,9 +24,9 @@ Game references remain outside this repository.
 
 ## Verification status
 
-- Strict static API verification passed all 135 checks against the v0.4.7f12 out-of-tree reference set.
+- Strict static API verification passed all 141 checks against the v0.4.7f12 out-of-tree reference set.
 - Dependency-free contract verification passed all 110 assertions, including the complete 9-by-9 trip transition matrix.
-- Compiled Handler runtime verification passed all 39 checks for the distinct fixer choice, unused wire discriminator, persistent ID marker, vanilla-Handler exclusion, composition, native construction, server/client/load attachment, role assignment, v0.4.7 appearance dispatch/mutation/repaint, idempotent injection, and startup-banner integration.
+- Compiled Handler runtime verification passed all 64 checks for hiring plus Handler-only work suppression, base readiness, stable lifecycle identity, one-shot diagnostics, managed/native injection isolation, idempotent cleanup, sink forwarding, and mod shutdown.
 - An intentionally incorrect `Assembly-CSharp.dll` hash was rejected before API inspection.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
 - Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
@@ -46,6 +43,12 @@ Game references remain outside this repository.
 - On 2026-10-12 under MelonLoader 0.7.3, the fixer showed vanilla Handler `[3]` and Vehicle Handler `[5]`; hiring created Michelle Martin, attached `HandlerEmployee` to `Il2CppScheduleOne.Employees.Packager`, and rendered the orange waist cue without changing her skin/body.
 - The save stored `vehiclehandler_michelle_martin`. After returning to the menu and reloading, `Employee.Initialize` produced one fresh attachment log and Michelle retained the cue and normal dialogue. No Vehicle Handlers warning or exception occurred.
 - Worker Collision/HWE emitted physical-capsule warnings for all loaded employee types, including Michelle and ordinary vanilla workers. These are unrelated full-mod-set noise, not a Vehicle Handlers failure.
+- The first `0.4.7f12-dev4` menu launch registered the component and initialized the mod, but IL2CPP logged an assembly-registration error while scanning managed-only component helpers. The game then exited abruptly during save loading immediately after `Load start!`, without a managed exception. `dev5` decorates those helpers with `HideFromIl2Cpp` and adds verifier coverage for the boundary.
+- Installed `0.4.7f12-dev5` SHA-256: `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
+- On 2026-10-12, `dev5` registered without the `dev4` assembly error, reached the main menu, loaded the existing save, and attached exactly one marker to Michelle. She retained the orange cue and normal interaction prompt; Vehicle Handlers emitted no warning or exception. The full mod set's HWE and DeliverySpotsPlus errors were unrelated.
+- A second Vehicle Handler was hired and fired on the test save. GUID `64baf792-6d7a-4b60-91f3-037ffac126ae` emitted exactly one `Fired` lifecycle event, the later leave/despawn path produced no duplicate cleanup, and no Vehicle Handlers exception followed.
+- During the active work period, Michelle remained idle while an ordinary unmarked Handler continued normal Packager work. This runtime-verifies both sides of the narrow work filter.
+- `0.4.7f12-dev5` blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. `VH-M2-003` is complete.
 
 Commands:
 
@@ -57,6 +60,6 @@ Commands:
 
 ## Next work
 
-1. Merge PR #5 for completed `VH-M2-002`.
-2. Claim `VH-M2-003` on a fresh branch and implement the work lifecycle plus leave/despawn behavior.
-3. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.
+1. Obtain owner approval and merge `feat/vh-m2-003-lifecycle`.
+2. Claim `VH-M3-001` for the one-vehicle assignment model.
+3. Keep clipboard UI, persistence adapters, reservations, and vehicle movement in their respective later backlog items.

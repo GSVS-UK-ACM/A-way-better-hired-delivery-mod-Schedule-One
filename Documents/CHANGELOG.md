@@ -19,4 +19,6 @@ Format follows Keep a Changelog. The project uses semantic versioning after the 
 - Expanded 125-check API gate and 25-check compiled runtime verifier for Unity component attachment and both hiring lifecycle hooks.
 - Replaced the rejected broad vanilla-Handler hook with a separate **Vehicle Handler** fixer choice, a guarded network discriminator, and a save-safe identity marker that leaves normal Handlers untouched.
 - Expanded the compatibility gates to 135 exact API checks and 39 emitted-runtime checks for dialogue injection, identity persistence, and vanilla-worker isolation.
+- Added the Vehicle Handler lifecycle bridge, base work-readiness checks, Handler-only vanilla Packager work suppression, and idempotent firing/despawn/mod-unload cleanup signals.
+- Expanded the compatibility gates to 141 exact API checks and 58 emitted-runtime checks for Packager work isolation and lifecycle cleanup forwarding.
 
