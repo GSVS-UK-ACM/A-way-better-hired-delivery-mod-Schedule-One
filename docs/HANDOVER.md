@@ -2,20 +2,20 @@
 
 ## Active claim
 
-- Backlog: `VH-M2-002`
+- Backlog: none; `VH-M2-002` completed
 - Owner: Codex
 - Branch: `feat/vh-m2-002-hiring-integration`
-- Status: `IN_PROGRESS`
+- Status: `READY_TO_MERGE`
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, and Handler runtime PR #4 are merged. `VH-M2-001` is accepted as the startup-verified runtime foundation. The first `VH-M2-002` runtime inspection showed `dev2` incorrectly reused the vanilla Handler/Packager choice, so no worker was hired and that approach was rejected. `dev3` now adds a separate fifth Vehicle Handler choice, maps an unused wire discriminator to vanilla construction, and persists subtype identity in the base employee ID while leaving ordinary Handlers unchanged. Work lifecycle, assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, and Handler runtime PR #4 are merged. `VH-M2-002` is complete: `dev3` adds a separate fifth Vehicle Handler choice, maps an unused wire discriminator to vanilla construction, persists subtype identity in the base employee ID, and reattaches the role after save/load while leaving ordinary Handlers unchanged. Work lifecycle, assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
 - Schedule I: `0.4.7f12`
 - Backend: IL2CPP
-- MelonLoader build references: `0.7.0 Open-Beta` preserved reference layout; active local runtime changed to `0.7.3` on 2026-10-12 and still needs to generate its IL2CPP reference folder on launch
+- MelonLoader build references: `0.7.0 Open-Beta` preserved reference layout; the installed DLL was runtime verified under active MelonLoader `0.7.3` on 2026-10-12
 - `Assembly-CSharp.dll` SHA-256: `CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC`
 - `Il2CppFishNet.Runtime.dll` SHA-256: `E8972F81F848077A0A8B337D343D724A44E6B312A1C8B92E3892097175B59C80`
 - `Il2CppScheduleOne.Core.dll` SHA-256: `A4932C4750637F901F122DF90AD0101F09DDFC3E8F204B1F3C3B5BD77F462926`
@@ -34,7 +34,7 @@ Game references remain outside this repository.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
 - Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
 - Rejected `0.4.7f12-dev2` DLL SHA-256: `B54FB9EEF53B0BA217E44C8F075A77DEF23DB8095B38D5B737743F24ED6619DC`; startup passed, but its player-facing choice was the vanilla Handler/Packager. It must not be used for hiring.
-- Statically verified corrected `0.4.7f12-dev3` DLL SHA-256: `65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2`; installed on 2026-10-12 with rejected `dev2` retained under a disabled extension, but not yet runtime-tested.
+- Runtime-verified corrected `0.4.7f12-dev3` DLL SHA-256: `65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2`; tested on 2026-10-12 with rejected `dev2` retained under a disabled extension.
 - The production project now compiles only `Properties/AssemblyInfo.cs` and `Source/**/*.cs`; test build artifacts cannot leak into the mod DLL.
 - First in-game launch rejected direct `Employee` subclass injection because the interop runtime could not map inherited `NPCMovement.WalkResult`; the game remained responsive and no worker was created.
 - Second launch with component composition registered `VehicleHandlers.Employees.HandlerEmployee` successfully and printed the mod initialization banner with no Vehicle Handlers exception.
@@ -42,8 +42,10 @@ Game references remain outside this repository.
 - The v0.4.7-compatible DLL was installed and launched. MelonLoader again registered `VehicleHandlers.Employees.HandlerEmployee` and printed the Vehicle Handlers initialization banner with no Vehicle Handlers exception. Other installed mods logged unrelated v0.4.7 patch/type failures.
 - On 2026-10-10, the orange GSVS `CREATED BY` banner was added after successful runtime registration. A live v0.4.7f12 launch printed the mod version, target/backend, `0.4.7f12-dev1` build identity, `GSVS UK ACM`, `xboxnuker-rgb`, and `Hire. Assign. Deliver.` before the normal initialization message. The game test process was stopped afterward.
 - MelonLoader logged a missing `MethodXrefScanCache.db` while finalizing the first post-update interop generation, but emitted the new assemblies and completed game/mod startup. Treat this as a local MelonLoader generation warning to watch, not Vehicle Handlers runtime evidence.
-- The corrected M2-002 implementation deliberately does not introduce a FishNet prefab. The distinct choice uses a reserved wire discriminator and `vehiclehandler_` employee-ID marker; `CreateEmployee_Server` and `Employee.Initialize` attach only marked Vehicle Handlers to the vanilla employee object. This is compiled but awaiting in-game option/hiring/load and rendered-appearance proof.
-- During the correction, the active local MelonLoader installation changed from `0.7.0` to `0.7.3` and no active `Il2CppAssemblies` directory was present. The build used the preserved out-of-tree-equivalent `0.7.0` generated references whose pinned game/API hashes still passed. The next runtime launch must confirm `0.7.3` regeneration and mod compatibility before hiring.
+- The corrected M2-002 implementation deliberately does not introduce a FishNet prefab. The distinct choice uses a reserved wire discriminator and `vehiclehandler_` employee-ID marker; `CreateEmployee_Server` and `Employee.Initialize` attach only marked Vehicle Handlers to the vanilla employee object.
+- On 2026-10-12 under MelonLoader 0.7.3, the fixer showed vanilla Handler `[3]` and Vehicle Handler `[5]`; hiring created Michelle Martin, attached `HandlerEmployee` to `Il2CppScheduleOne.Employees.Packager`, and rendered the orange waist cue without changing her skin/body.
+- The save stored `vehiclehandler_michelle_martin`. After returning to the menu and reloading, `Employee.Initialize` produced one fresh attachment log and Michelle retained the cue and normal dialogue. No Vehicle Handlers warning or exception occurred.
+- Worker Collision/HWE emitted physical-capsule warnings for all loaded employee types, including Michelle and ordinary vanilla workers. These are unrelated full-mod-set noise, not a Vehicle Handlers failure.
 
 Commands:
 
@@ -55,8 +57,6 @@ Commands:
 
 ## Next work
 
-1. Install the `0.4.7f12-dev3` build and launch it against Schedule I 0.4.7f12 IL2CPP.
-2. Verify the fixer shows both vanilla Handler and a separate fifth Vehicle Handler choice.
-3. Hire the Vehicle Handler and capture the single marker-attachment log, including the concrete vanilla employee wrapper type.
-4. Confirm normal management behavior and visually verify the orange worn-object appearance without changing skin/body color.
-5. Save and reload once to prove idempotent attachment and base lifecycle preservation; then mark `VH-M2-002` done or record the exact runtime blocker.
+1. Merge PR #5 for completed `VH-M2-002`.
+2. Claim `VH-M2-003` on a fresh branch and implement the work lifecycle plus leave/despawn behavior.
+3. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.

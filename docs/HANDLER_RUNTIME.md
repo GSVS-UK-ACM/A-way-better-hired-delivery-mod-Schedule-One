@@ -1,6 +1,6 @@
 # Handler Runtime Worker
 
-Status: Distinct hiring integration compiled; awaiting worker-construction and appearance verification
+Status: Distinct hiring, appearance, and save/load restoration runtime verified
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -29,7 +29,7 @@ The worker therefore keeps the game's gender, body, face, hair, voice, and mugsh
 
 The runtime worker and M2-002 hiring integration do not:
 
-- patch `EmployeeManager.GetEmployeePrefab` or replace either creation method;
+- replace either employee creation method (the custom discriminator is translated by narrow prefix/postfix patches around the vanilla lookup and creation path);
 - clone or register a FishNet spawnable prefab;
 - replace or bypass hiring, wages, beds, lockers, firing, saving, or leave/despawn;
 - implement assignments, management UI, reservations, or vehicle movement.
@@ -62,6 +62,6 @@ On 2026-10-09, Schedule I 0.4.7f12 replaced the avatar settings/body-layer runti
 
 The mod also prints an orange GSVS startup banner after successful Handler runtime registration. The corrected hiring-integration test build reports Vehicle Handlers `v0.1.0`, Schedule I `0.4.7f12 | IL2CPP`, build `0.4.7f12-dev3`, creator `GSVS UK ACM`, project owner `xboxnuker-rgb`, and the `Hire. Assign. Deliver.` tagline.
 
-The current successful installed DLL SHA-256 is `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
+The runtime-verified `0.4.7f12-dev3` DLL SHA-256 is `65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
 
-Startup registration is proven. The first `dev2` gameplay inspection exposed that the broad Handler filter reused the vanilla Handler/packager choice; that build was rejected before hiring. `dev3` adds an independent Vehicle Handler choice and excludes unmarked vanilla Handlers. Hiring, load restoration, marker presence, the concrete vanilla wrapper type, and rendered appearance still require isolated in-game evidence before M2-002 can complete.
+Startup registration is proven. The first `dev2` gameplay inspection exposed that the broad Handler filter reused the vanilla Handler/packager choice; that build was rejected before hiring. On 2026-10-12, `dev3` displayed the independent fifth Vehicle Handler choice, hired Michelle Martin through the concrete `Il2CppScheduleOne.Employees.Packager` wrapper, rendered the orange worn-object cue, saved the `vehiclehandler_michelle_martin` identity, and attached the role exactly once again after a menu/save reload. Ordinary Handlers remained unmarked. `VH-M2-002` is complete; assignments and vehicle work remain deliberately out of scope.

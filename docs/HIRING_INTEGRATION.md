@@ -1,6 +1,6 @@
 # Handler Hiring Integration
 
-Status: Distinct option statically verified; awaiting in-game hiring and load evidence
+Status: Runtime verified on Schedule I 0.4.7f12 with MelonLoader 0.7.3
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -34,11 +34,14 @@ The compatibility gate pins the fixer dialogue, discriminator availability, pref
 
 The 0.4.7f12 build passes 135 API checks, 110 contract assertions, and 39 compiled-runtime checks with zero compiler warnings or errors.
 
-## Required runtime proof
+## Runtime proof
 
-1. Install the exact `0.4.7f12-dev3` test DLL and launch Schedule I 0.4.7f12 IL2CPP.
-2. Confirm the fixer shows both the unchanged vanilla Handler option and a separate fifth Vehicle Handler option.
-3. Hire the Vehicle Handler through the new option.
-4. Confirm one attachment log naming the concrete runtime employee wrapper type and no Vehicle Handlers exception.
-5. Confirm the worker remains a normal manageable employee and visibly receives the orange worn-object cue without skin/body recoloring.
-6. Save, reload, and confirm attachment remains idempotent and the employee lifecycle still works.
+On 2026-10-12, the exact `0.4.7f12-dev3` DLL was exercised in the normal mod set under MelonLoader 0.7.3:
+
+1. The fixer displayed the unchanged vanilla **Handler** option at `[3]` and the distinct **Vehicle Handler (moving owned vehicles)** option at `[5]`.
+2. Hiring `[5]` created Michelle Martin through the vanilla Packager wrapper and logged `Attached HandlerEmployee after Initialize to Il2CppScheduleOne.Employees.Packager.`
+3. Michelle remained a normally interactive employee and displayed the orange worn-object cue without skin/body recoloring.
+4. The save contained `ID":"vehiclehandler_michelle_martin"`, proving the subtype marker entered base employee save data.
+5. After returning to the menu and reloading, initialization logged the same single attachment message again and Michelle retained the orange cue and normal employee dialogue.
+
+No Vehicle Handlers warning or exception occurred. Worker-capsule warnings were emitted by Worker Collision/HWE for every loaded worker, including vanilla employees, and are not attributable to this mod.

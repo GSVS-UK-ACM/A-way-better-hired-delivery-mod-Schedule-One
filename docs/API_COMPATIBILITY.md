@@ -47,7 +47,7 @@ A mismatched hash or changed signature fails immediately with the expected and o
 - A deliberately incorrect `Assembly-CSharp.dll` hash was rejected.
 - The release build completed with zero warnings and zero errors using .NET SDK 8.0.425.
 - Compiled Handler runtime verification passed all 39 checks, including the distinct fixer option, reserved discriminator, persistent ID marker, vanilla-Handler exclusion, client/load attachment, and startup-banner integration.
-- The earlier broad-hook `dev2` build SHA-256 `B54FB9EEF53B0BA217E44C8F075A77DEF23DB8095B38D5B737743F24ED6619DC` was startup-tested but rejected after the UI revealed it reused the vanilla Handler option. The corrected, statically verified and installed `dev3` DLL SHA-256 is `65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2`; runtime evidence remains pending.
+- The earlier broad-hook `dev2` build SHA-256 `B54FB9EEF53B0BA217E44C8F075A77DEF23DB8095B38D5B737743F24ED6619DC` was startup-tested but rejected after the UI revealed it reused the vanilla Handler option. The corrected `dev3` DLL SHA-256 is `65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2`; its distinct option, vanilla construction, persistent marker, orange cue, and menu/save reload attachment were runtime verified on 2026-10-12 under MelonLoader 0.7.3.
 
 ## Boundary
 
