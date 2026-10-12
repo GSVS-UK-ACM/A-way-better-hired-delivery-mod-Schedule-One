@@ -33,7 +33,7 @@ namespace VehicleHandlers.Employees
 
     internal static class HandlerAttachment
     {
-        public static void TryAttach(Employee worker, string source)
+        public static void TryAttach(Employee worker, string source, string guid = null)
         {
             if (worker == null)
             {
@@ -43,8 +43,10 @@ namespace VehicleHandlers.Employees
 
             try
             {
-                if (worker.GetComponent<HandlerEmployee>() != null)
+                HandlerEmployee existing = worker.GetComponent<HandlerEmployee>();
+                if (existing != null)
                 {
+                    existing.BindIdentity(guid);
                     return;
                 }
 
@@ -54,6 +56,8 @@ namespace VehicleHandlers.Employees
                     MelonLogger.Warning($"Handler marker attachment after {source} failed; preserving the vanilla employee.");
                     return;
                 }
+
+                marker.BindIdentity(guid);
 
                 if (!HandlerAppearance.TryApply(worker.Avatar))
                 {
@@ -97,11 +101,11 @@ namespace VehicleHandlers.Employees
         }
 
         [HarmonyPostfix]
-        private static void Postfix(bool __state, Employee __result)
+        private static void Postfix(bool __state, Employee __result, string guid)
         {
             if (__state)
             {
-                HandlerAttachment.TryAttach(__result, nameof(EmployeeManager.CreateEmployee_Server));
+                HandlerAttachment.TryAttach(__result, nameof(EmployeeManager.CreateEmployee_Server), guid);
             }
         }
     }
@@ -120,11 +124,11 @@ namespace VehicleHandlers.Employees
     internal static class HandlerInitializePatch
     {
         [HarmonyPostfix]
-        private static void Postfix(Employee __instance, string id)
+        private static void Postfix(Employee __instance, string id, string guid)
         {
             if (VehicleHandlerIdentity.IsMarkedEmployeeId(id))
             {
-                HandlerAttachment.TryAttach(__instance, nameof(Employee.Initialize));
+                HandlerAttachment.TryAttach(__instance, nameof(Employee.Initialize), guid);
             }
         }
     }

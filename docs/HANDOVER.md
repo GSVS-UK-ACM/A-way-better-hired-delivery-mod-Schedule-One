@@ -9,7 +9,7 @@
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, and Handler runtime PR #4 are merged. `VH-M2-002` is complete: `dev3` adds a separate fifth Vehicle Handler choice, maps an unused wire discriminator to vanilla construction, persists subtype identity in the base employee ID, and reattaches the role after save/load while leaving ordinary Handlers unchanged. Work lifecycle, assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, and hiring PR #5 are merged. `VH-M2-002` is complete and runtime verified. `VH-M2-003` now has a compiling `dev4` lifecycle implementation: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. Assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -27,9 +27,9 @@ Game references remain outside this repository.
 
 ## Verification status
 
-- Strict static API verification passed all 135 checks against the v0.4.7f12 out-of-tree reference set.
+- Strict static API verification passed all 141 checks against the v0.4.7f12 out-of-tree reference set.
 - Dependency-free contract verification passed all 110 assertions, including the complete 9-by-9 trip transition matrix.
-- Compiled Handler runtime verification passed all 39 checks for the distinct fixer choice, unused wire discriminator, persistent ID marker, vanilla-Handler exclusion, composition, native construction, server/client/load attachment, role assignment, v0.4.7 appearance dispatch/mutation/repaint, idempotent injection, and startup-banner integration.
+- Compiled Handler runtime verification passed all 58 checks for hiring plus Handler-only work suppression, base readiness, stable lifecycle identity, idempotent cleanup, sink forwarding, and mod shutdown.
 - An intentionally incorrect `Assembly-CSharp.dll` hash was rejected before API inspection.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
 - Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
@@ -46,6 +46,8 @@ Game references remain outside this repository.
 - On 2026-10-12 under MelonLoader 0.7.3, the fixer showed vanilla Handler `[3]` and Vehicle Handler `[5]`; hiring created Michelle Martin, attached `HandlerEmployee` to `Il2CppScheduleOne.Employees.Packager`, and rendered the orange waist cue without changing her skin/body.
 - The save stored `vehiclehandler_michelle_martin`. After returning to the menu and reloading, `Employee.Initialize` produced one fresh attachment log and Michelle retained the cue and normal dialogue. No Vehicle Handlers warning or exception occurred.
 - Worker Collision/HWE emitted physical-capsule warnings for all loaded employee types, including Michelle and ordinary vanilla workers. These are unrelated full-mod-set noise, not a Vehicle Handlers failure.
+- `0.4.7f12-dev4` compiles with zero warnings/errors and blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. Runtime evidence is pending.
+- Installed `0.4.7f12-dev4` DLL SHA-256: `DA099C336EC4EAE8E22DC8647EADBB27AC37874EC133BE0F967BAB60ED543383`. The proven `dev3` DLL is preserved as `VehicleHandlers.dll.disabled.65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2` for rollback.
 
 Commands:
 
@@ -57,7 +59,8 @@ Commands:
 
 ## Next work
 
-1. Implement a narrow Vehicle Handler lifecycle bridge that excludes marked workers from vanilla Packager work while preserving base pay, home, dialogue, save, and employee management behavior.
-2. Forward firing, deletion, despawn, missing-after-load recovery, and mod unload through the frozen `IHandlerLifecycleSink` boundary without implementing M3/M4 services early.
-3. Verify exact lifecycle signatures, Handler-only filtering, idempotent cleanup, and a zero-warning IL2CPP build before runtime testing.
-4. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.
+1. Install `0.4.7f12-dev4` and launch under MelonLoader 0.7.3.
+2. Confirm Michelle reloads, remains idle, retains normal dialogue, and does not enter vanilla Packager work.
+3. Confirm at least one unmarked vanilla Handler still performs its configured work.
+4. Use an expendable save for a firing/leave test, then inspect for a clean base despawn and no Vehicle Handlers exception.
+5. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.

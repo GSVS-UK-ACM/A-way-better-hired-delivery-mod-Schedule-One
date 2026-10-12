@@ -327,6 +327,20 @@ try {
     Assert-Method "Game" "Il2CppScheduleOne.Employees.Employee" "InitializeAppearance" "System.Void" @(
         "System.Boolean", "System.Int32"
     ) $false 0 $true
+    Assert-Method "Game" "Il2CppScheduleOne.Employees.Packager" "ShouldIdle" "System.Boolean" @() $false 0 $true
+    Assert-Method "Game" "Il2CppScheduleOne.Employees.Packager" "StartPackaging" "System.Void" @(
+        "Il2CppScheduleOne.ObjectScripts.PackagingStation"
+    )
+    Assert-Method "Game" "Il2CppScheduleOne.Employees.Packager" "StartPress" "System.Void" @(
+        "Il2CppScheduleOne.ObjectScripts.BrickPress"
+    )
+    Assert-Method "Game" "Il2CppScheduleOne.Employees.Packager" "StartMoveItem" "System.Void" @(
+        "Il2CppScheduleOne.ObjectScripts.PackagingStation"
+    )
+    Assert-Method "Game" "Il2CppScheduleOne.Employees.Packager" "StartMoveItem" "System.Void" @(
+        "Il2CppScheduleOne.ObjectScripts.BrickPress"
+    )
+    Assert-Method "Game" "Il2CppScheduleOne.Employees.Packager" "Fire" "System.Void" @() $false 0 $true
     Assert-Property "Game" "Il2CppScheduleOne.NPCs.NPC" "Avatar" "Il2CppScheduleOne.AvatarFramework.Avatar" $true
     Assert-Property "Game" "Il2CppScheduleOne.AvatarFramework.Avatar" "Appearance" "Il2CppScheduleOne.Avatar.AvatarAppearance" $false
     Assert-Property "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "_wornObjects" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Core.Avatar.AvatarObject>' $true

@@ -100,6 +100,21 @@ try {
     Assert-Call $awake "*GetComponent*Il2CppScheduleOne.Employees.Employee*" "HandlerEmployee binds to the real game Employee component"
     Assert-Call $awake "*Il2CppScheduleOne.Employees.Employee::set_Type*" "HandlerEmployee Awake applies the Handler role"
 
+    $baseWorkAvailable = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "get_IsBaseWorkAvailable"
+    Assert-Call $baseWorkAvailable "*Il2CppScheduleOne.Employees.Employee::get_Fired*" "Vehicle Handler work eligibility rejects fired employees"
+    Assert-Call $baseWorkAvailable "*Il2CppScheduleOne.Employees.Employee::get_PaidForToday*" "Vehicle Handler work eligibility rejects unpaid employees"
+    Assert-Call $baseWorkAvailable "*Il2CppScheduleOne.Employees.Employee::get_AssignedProperty*" "Vehicle Handler work eligibility requires an assigned property"
+
+    $bindIdentity = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "BindIdentity" @("System.String")
+    Assert-Condition (-not $bindIdentity.IsPublic) "Handler identity binding remains internal to the lifecycle bridge"
+
+    $notifyUnavailable = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "NotifyUnavailable" @(
+        "VehicleHandlers.Contracts.HandlerUnavailableReason"
+    )
+    Assert-Call $notifyUnavailable "*Il2CppScheduleOne.NPCs.NPC::get_GUID*" "Lifecycle cleanup can recover the game-owned Handler GUID"
+    Assert-Call $notifyUnavailable "*VehicleHandlers.Contracts.HandlerId::TryParse*" "Lifecycle cleanup validates the stable Handler identity"
+    Assert-Call $notifyUnavailable "*VehicleHandlers.Employees.HandlerLifecycleBridge::NotifyUnavailable*" "Lifecycle cleanup forwards through the frozen sink boundary"
+
     $identityType = Get-RequiredType "VehicleHandlers.Employees.VehicleHandlerIdentity"
     $choiceLabelField = $identityType.Fields | Where-Object { $_.Name -ceq "ChoiceLabel" } | Select-Object -First 1
     $choiceTextField = $identityType.Fields | Where-Object { $_.Name -ceq "ChoiceText" } | Select-Object -First 1
@@ -116,8 +131,9 @@ try {
     Assert-Call $appearancePostfix "*VehicleHandlers.Employees.HandlerAppearance::TryApply*" "Handler appearance applies the role-specific overlay"
 
     $attachment = Get-RequiredMethod "VehicleHandlers.Employees.HandlerAttachment" "TryAttach" @(
-        "Il2CppScheduleOne.Employees.Employee", "System.String"
+        "Il2CppScheduleOne.Employees.Employee", "System.String", "System.String"
     )
+    Assert-Call $attachment "*VehicleHandlers.Employees.HandlerEmployee::BindIdentity*" "Marker attachment binds the game-owned Handler GUID"
     Assert-Call $attachment "*VehicleHandlers.Employees.HandlerAppearance::TryApply*" "Marker attachment applies the Vehicle Handler appearance after initialization"
 
     $serverPrefix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerCreateEmployeeServerPatch" "Prefix" @(
@@ -128,13 +144,13 @@ try {
     Assert-Call $serverPrefix "*VehicleHandlers.Employees.VehicleHandlerIdentity::MarkEmployeeId*" "Server hiring writes the persistent Vehicle Handler identity"
 
     $serverPostfix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerCreateEmployeeServerPatch" "Postfix" @(
-        "System.Boolean", "Il2CppScheduleOne.Employees.Employee"
+        "System.Boolean", "Il2CppScheduleOne.Employees.Employee", "System.String"
     )
     Assert-Condition ($serverPostfix.IsPrivate -and $serverPostfix.IsStatic) "Server hiring integration uses a static Harmony postfix"
     Assert-Call $serverPostfix "*VehicleHandlers.Employees.HandlerAttachment::TryAttach*" "Server hiring integration attaches the marker to the returned vanilla employee"
 
     $initializePostfix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerInitializePatch" "Postfix" @(
-        "Il2CppScheduleOne.Employees.Employee", "System.String"
+        "Il2CppScheduleOne.Employees.Employee", "System.String", "System.String"
     )
     Assert-Condition ($initializePostfix.IsPrivate -and $initializePostfix.IsStatic) "Employee initialization integration uses a static Harmony postfix"
     Assert-Call $initializePostfix "*VehicleHandlers.Employees.VehicleHandlerIdentity::IsMarkedEmployeeId*" "Employee initialization excludes unmarked vanilla Handlers"
@@ -158,12 +174,53 @@ try {
     )
     Assert-Call $choiceCallbackPostfix "*Il2CppScheduleOne.Dialogue.DialogueController_Fixer::set_selectedEmployeeType*" "Hiring dialogue sends the reserved Vehicle Handler discriminator"
 
+    $lifecycleFilter = Get-RequiredMethod "VehicleHandlers.Employees.HandlerLifecycleFilter" "TryGetMarker" @(
+        "Il2CppScheduleOne.Employees.Employee", "VehicleHandlers.Employees.HandlerEmployee&"
+    )
+    Assert-Call $lifecycleFilter "*GetComponent*VehicleHandlers.Employees.HandlerEmployee*" "Lifecycle filtering excludes every unmarked vanilla Handler"
+
+    $shouldIdlePrefix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerShouldIdlePatch" "Prefix" @(
+        "Il2CppScheduleOne.Employees.Packager", "System.Boolean&"
+    )
+    Assert-Call $shouldIdlePrefix "*VehicleHandlers.Employees.HandlerLifecycleFilter::TryGetMarker*" "Vehicle Handlers are forced idle instead of entering vanilla Packager work"
+
+    foreach ($workPatch in @(
+        "VehicleHandlers.Employees.HandlerStartPackagingPatch",
+        "VehicleHandlers.Employees.HandlerStartPressPatch",
+        "VehicleHandlers.Employees.HandlerStartMovePackagingPatch",
+        "VehicleHandlers.Employees.HandlerStartMovePressPatch"
+    )) {
+        $workPrefix = Get-RequiredMethod $workPatch "Prefix" @("Il2CppScheduleOne.Employees.Packager")
+        Assert-Call $workPrefix "*VehicleHandlers.Employees.HandlerLifecycleFilter::TryGetMarker*" "$workPatch rejects vanilla Packager work only for marked Vehicle Handlers"
+    }
+
+    $firePrefix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerFirePatch" "Prefix" @(
+        "Il2CppScheduleOne.Employees.Packager"
+    )
+    Assert-Call $firePrefix "*VehicleHandlers.Employees.HandlerEmployee::NotifyUnavailable*" "Firing a Vehicle Handler emits lifecycle cleanup"
+
+    $despawnPrefix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerLeaveAndDespawnPatch" "Prefix" @(
+        "Il2CppScheduleOne.Employees.Employee"
+    )
+    Assert-Call $despawnPrefix "*VehicleHandlers.Employees.HandlerEmployee::NotifyUnavailable*" "Vehicle Handler leave/despawn emits lifecycle cleanup"
+
+    $bridgeUnavailable = Get-RequiredMethod "VehicleHandlers.Employees.HandlerLifecycleBridge" "NotifyUnavailable" @(
+        "VehicleHandlers.Contracts.HandlerId", "VehicleHandlers.Contracts.HandlerUnavailableReason"
+    )
+    Assert-Call $bridgeUnavailable "*VehicleHandlers.Contracts.IHandlerLifecycleSink::HandlerUnavailable*" "Lifecycle bridge forwards unavailable events to the registered sink"
+
+    $bridgeUnloading = Get-RequiredMethod "VehicleHandlers.Employees.HandlerLifecycleBridge" "NotifyModUnloading"
+    Assert-Call $bridgeUnloading "*VehicleHandlers.Contracts.IHandlerLifecycleSink::ModUnloading*" "Lifecycle bridge forwards mod unload exactly through the registered sink"
+
     $register = Get-RequiredMethod "VehicleHandlers.Runtime.HandlerRuntimeRegistration" "Register"
     Assert-Call $register "*ClassInjector::IsTypeRegisteredInIl2Cpp*" "Runtime registration is idempotent"
     Assert-Call $register "*ClassInjector::RegisterTypeInIl2Cpp*" "Runtime registration injects HandlerEmployee"
 
     $initialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnInitializeMelon"
     Assert-Call $initialize "*VehicleHandlers.StartupBanner::Print*" "Mod initialization prints the Vehicle Handlers startup banner"
+
+    $deinitialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnDeinitializeMelon"
+    Assert-Call $deinitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::NotifyModUnloading*" "Mod shutdown enters the lifecycle cleanup boundary"
 
     $banner = Get-RequiredMethod "VehicleHandlers.StartupBanner" "Print"
     Assert-Condition ($banner.IsPublic -and $banner.IsStatic) "Startup banner exposes a callable static print method"

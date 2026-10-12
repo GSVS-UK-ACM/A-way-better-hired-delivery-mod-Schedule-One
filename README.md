@@ -35,6 +35,7 @@ IL2CPP and Mono builds are not interchangeable.
 - [Internal contracts](docs/INTERNAL_CONTRACTS.md)
 - [Handler runtime worker](docs/HANDLER_RUNTIME.md)
 - [Hiring integration](docs/HIRING_INTEGRATION.md)
+- [Handler lifecycle](docs/HANDLER_LIFECYCLE.md)
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
 - [Backlog](docs/BACKLOG.md)
 - [Current handover](docs/HANDOVER.md)

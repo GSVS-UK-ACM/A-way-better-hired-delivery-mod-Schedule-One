@@ -1,6 +1,6 @@
 # Handler Runtime Worker
 
-Status: Distinct hiring, appearance, and save/load restoration runtime verified
+Status: Hiring, appearance, and save/load restoration runtime verified; lifecycle `dev4` awaiting runtime proof
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -35,6 +35,8 @@ The runtime worker and M2-002 hiring integration do not:
 - implement assignments, management UI, reservations, or vehicle movement.
 
 The base hiring path is described in [Hiring Integration](HIRING_INTEGRATION.md). Work lifecycle and later behavior remain assigned to subsequent backlog items.
+
+M2-003 now provides the work and cleanup boundary described in [Handler Lifecycle](HANDLER_LIFECYCLE.md). Marked Vehicle Handlers remain idle instead of entering vanilla Packager jobs; the later movement coordinator will consume their base readiness state independently.
 
 ## Verification
 
