@@ -8,8 +8,8 @@ Valid states: `READY`, `IN_PROGRESS`, `BLOCKED`, `VERIFYING`, `DONE`.
 | VH-M0-002 | M0 | DONE | Codex | Collaboration, safety, claim, and release rules. |
 | VH-M1-001 | M1 | DONE | Codex | Exact 0.4.7f12 IL2CPP API verifier. |
 | VH-M1-002 | M1 | DONE | Codex | Frozen internal contracts and state model. |
-| VH-M2-001 | M2 | VERIFYING | Codex | Genuine Handler runtime worker and appearance. |
-| VH-M2-002 | M2 | READY | — | Base hiring integration. |
+| VH-M2-001 | M2 | DONE | Codex | Genuine Handler runtime worker and appearance foundation; constructed-worker visual proof carried into VH-M2-002. |
+| VH-M2-002 | M2 | IN_PROGRESS | Codex | Base hiring integration. |
 | VH-M2-003 | M2 | READY | — | Work lifecycle and leave/despawn behavior. |
 | VH-M3-001 | M3 | READY | — | One-vehicle assignment model. |
 | VH-M3-002 | M3 | READY | — | Clipboard configuration and controls. |

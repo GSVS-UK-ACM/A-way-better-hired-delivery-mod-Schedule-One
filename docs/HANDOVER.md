@@ -2,14 +2,14 @@
 
 ## Active claim
 
-- Backlog: `VH-M2-001`
+- Backlog: `VH-M2-002`
 - Owner: Codex
-- Branch: `feat/vh-m2-001-handler-runtime`
-- Status: `VERIFYING`
+- Branch: `feat/vh-m2-002-hiring-integration`
+- Status: `IN_PROGRESS`
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, and contract PR #3 are merged. Draft PR #4 implements `VH-M2-001`: `HandlerEmployee` is an injected role component that binds to a genuine game `Employee`, applies the existing Handler role, and adds a fail-safe orange worn-object appearance through a Handler-filtered Harmony postfix. The branch has been migrated and startup-tested against Schedule I 0.4.7f12. Hiring, prefab/network wiring, work lifecycle, assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, and Handler runtime PR #4 are merged. `VH-M2-001` is accepted as the startup-verified runtime foundation. `VH-M2-002` now owns the base hiring and construction path plus the carried-over proof that a constructed genuine Employee reports Handler and renders the orange worn-object cue. Work lifecycle, assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -52,6 +52,6 @@ Commands:
 
 ## Next work
 
-1. Exercise Handler component attachment through the M2-002 prefab path, confirm the genuine Employee reports Handler, and visually inspect the outer-layer appearance without changing skin/body color.
-2. Mark `VH-M2-001` `DONE` only with that evidence, then review and merge PR #4 before claiming `VH-M2-002` or `VH-M2-003`.
-3. Preserve the disabled failed DLL outside the repository only until the corrected PR is merged; it is not loadable by MelonLoader.
+1. Verify the safest v0.4.7f12 employee prefab donor and exact hiring entry point without replacing the game-owned Employee/FishNet component.
+2. Attach `HandlerEmployee` before network spawn, route Handler hiring through the base employee creation path, and preserve vanilla wages, beds, lockers, saves, and firing behavior.
+3. Construct a Handler in-game, confirm `EmployeeType == Handler`, and visually verify the orange worn-object appearance without changing skin/body color.
