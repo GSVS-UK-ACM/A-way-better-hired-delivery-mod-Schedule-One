@@ -229,6 +229,23 @@ try {
         $script:PassCount++
     }
 
+    function Assert-EnumValueAvailable(
+        [string] $TypeName,
+        [int] $Value
+    ) {
+        $type = Get-RequiredType "Game" $TypeName
+        $matches = @($type.Fields | Where-Object {
+            $_.HasConstant -and [int] $_.Constant -eq $Value
+        })
+
+        if ($matches.Count -ne 0) {
+            throw "Expected enum discriminator $TypeName value $Value to be unused; found $($matches.Name -join ', ')."
+        }
+
+        Write-Output "PASS enum discriminator $TypeName value $Value is unused"
+        $script:PassCount++
+    }
+
     # Runtime type and singleton contracts.
     Assert-Type "Game" 'Il2CppScheduleOne.DevUtilities.Singleton`1' "UnityEngine.MonoBehaviour"
     Assert-Type "Game" 'Il2CppScheduleOne.DevUtilities.NetworkSingleton`1' "Il2CppFishNet.Object.NetworkBehaviour"
@@ -240,6 +257,9 @@ try {
 
     Assert-Type "Game" "Il2CppScheduleOne.Employees.EmployeeManager" 'Il2CppScheduleOne.DevUtilities.NetworkSingleton`1<Il2CppScheduleOne.Employees.EmployeeManager>'
     Assert-Type "Game" "Il2CppScheduleOne.Employees.Employee" "Il2CppScheduleOne.NPCs.NPC"
+    Assert-Type "Game" "Il2CppScheduleOne.Employees.Packager" "Il2CppScheduleOne.Employees.Employee"
+    Assert-Type "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "Il2CppScheduleOne.Dialogue.DialogueController"
+    Assert-Type "Game" "Il2CppScheduleOne.Dialogue.DialogueChoiceData" "Il2CppSystem.Object"
     Assert-Type "Game" "Il2CppScheduleOne.Property.Property" "Il2CppFishNet.Object.NetworkBehaviour"
     Assert-Type "Game" "Il2CppScheduleOne.Delivery.LoadingDock" "UnityEngine.MonoBehaviour"
     Assert-Type "Game" "Il2CppScheduleOne.Vehicles.LandVehicle" "Il2CppFishNet.Object.NetworkBehaviour"
@@ -267,7 +287,9 @@ try {
 
     # Handler creation and base employee lifecycle.
     Assert-EnumValue "Il2CppScheduleOne.Employees.EEmployeeType" "Handler" 1
+    Assert-EnumValueAvailable "Il2CppScheduleOne.Employees.EEmployeeType" 4
     Assert-Property "Game" "Il2CppScheduleOne.Employees.EmployeeManager" "AllEmployees" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Employees.Employee>' $true
+    Assert-Property "Game" "Il2CppScheduleOne.Employees.EmployeeManager" "PackagerPrefab" "Il2CppScheduleOne.Employees.Packager" $true
     Assert-Method "Game" "Il2CppScheduleOne.Employees.EmployeeManager" "CreateNewEmployee" "System.Void" @(
         "Il2CppScheduleOne.Property.Property", "Il2CppScheduleOne.Employees.EEmployeeType"
     )
@@ -313,7 +335,14 @@ try {
     Assert-Method "Core" 'Il2CppScheduleOne.Core.Avatar.Properties.AvatarProperty`1' "SetValue" "System.Void" @("T")
     Assert-Method "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "RepaintLayers" "System.Void"
     Assert-Property "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "selectedEmployeeType" "Il2CppScheduleOne.Employees.EEmployeeType" $true
+    Assert-Method "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "ChoiceCallback" "System.Void" @("System.String") $false 0 $true
+    Assert-Method "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "ModifyChoiceList" "System.Void" @(
+        "System.String", 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Dialogue.DialogueChoiceData>&'
+    ) $false 0 $true
     Assert-Method "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "Confirm" "System.Void"
+    Assert-Property "Game" "Il2CppScheduleOne.Dialogue.DialogueChoiceData" "ChoiceText" "System.String" $true
+    Assert-Property "Game" "Il2CppScheduleOne.Dialogue.DialogueChoiceData" "ChoiceLabel" "System.String" $true
+    Assert-Method "Game" "Il2CppScheduleOne.Dialogue.DialogueChoiceData" "GetCopy" "Il2CppScheduleOne.Dialogue.DialogueChoiceData"
 
     # Stable identity and owned-object selection.
     Assert-Type "Game" "Il2Cpp.GUIDManager" "Il2CppSystem.Object"

@@ -8,6 +8,29 @@ using UnityEngine;
 
 namespace VehicleHandlers.Employees
 {
+    internal static class VehicleHandlerIdentity
+    {
+        public const string ChoiceLabel = "VehicleHandler";
+        public const string ChoiceText = "Vehicle Handler (moving owned vehicles)";
+        public const string EmployeeIdPrefix = "vehiclehandler_";
+        public const EEmployeeType CustomEmployeeType = (EEmployeeType)4;
+
+        public static bool IsMarkedEmployeeId(string id)
+        {
+            return !string.IsNullOrEmpty(id) && id.StartsWith(EmployeeIdPrefix, StringComparison.Ordinal);
+        }
+
+        public static string MarkEmployeeId(string id)
+        {
+            if (IsMarkedEmployeeId(id))
+            {
+                return id;
+            }
+
+            return EmployeeIdPrefix + id;
+        }
+    }
+
     internal static class HandlerAttachment
     {
         public static void TryAttach(Employee worker, string source)
@@ -30,6 +53,11 @@ namespace VehicleHandlers.Employees
                 {
                     MelonLogger.Warning($"Handler marker attachment after {source} failed; preserving the vanilla employee.");
                     return;
+                }
+
+                if (!HandlerAppearance.TryApply(worker.Avatar))
+                {
+                    MelonLogger.Warning("Vehicle Handler appearance could not find a colorable worn object; preserving the generated employee appearance.");
                 }
 
                 MelonLogger.Msg($"Attached HandlerEmployee after {source} to {worker.GetType().FullName}.");
@@ -56,10 +84,22 @@ namespace VehicleHandlers.Employees
         typeof(string))]
     internal static class HandlerCreateEmployeeServerPatch
     {
-        [HarmonyPostfix]
-        private static void Postfix(EEmployeeType type, Employee __result)
+        [HarmonyPrefix]
+        private static void Prefix(ref EEmployeeType type, ref string id, out bool __state)
         {
-            if (type == EEmployeeType.Handler)
+            __state = type == VehicleHandlerIdentity.CustomEmployeeType || VehicleHandlerIdentity.IsMarkedEmployeeId(id);
+
+            if (type == VehicleHandlerIdentity.CustomEmployeeType)
+            {
+                type = EEmployeeType.Handler;
+                id = VehicleHandlerIdentity.MarkEmployeeId(id);
+            }
+        }
+
+        [HarmonyPostfix]
+        private static void Postfix(bool __state, Employee __result)
+        {
+            if (__state)
             {
                 HandlerAttachment.TryAttach(__result, nameof(EmployeeManager.CreateEmployee_Server));
             }
@@ -80,12 +120,31 @@ namespace VehicleHandlers.Employees
     internal static class HandlerInitializePatch
     {
         [HarmonyPostfix]
-        private static void Postfix(Employee __instance)
+        private static void Postfix(Employee __instance, string id)
         {
-            if (__instance != null && __instance.EmployeeType == EEmployeeType.Handler)
+            if (VehicleHandlerIdentity.IsMarkedEmployeeId(id))
             {
                 HandlerAttachment.TryAttach(__instance, nameof(Employee.Initialize));
             }
+        }
+    }
+
+    [HarmonyPatch(
+        typeof(EmployeeManager),
+        nameof(EmployeeManager.GetEmployeePrefab),
+        typeof(EEmployeeType))]
+    internal static class VehicleHandlerPrefabLookupPatch
+    {
+        [HarmonyPrefix]
+        private static bool Prefix(EmployeeManager __instance, EEmployeeType type, ref Employee __result)
+        {
+            if (type != VehicleHandlerIdentity.CustomEmployeeType)
+            {
+                return true;
+            }
+
+            __result = __instance.PackagerPrefab;
+            return false;
         }
     }
 }

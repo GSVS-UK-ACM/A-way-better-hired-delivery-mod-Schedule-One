@@ -11,7 +11,7 @@ namespace VehicleHandlers.Employees
         [HarmonyPostfix]
         private static void Postfix(Employee __instance)
         {
-            if (__instance == null || __instance.EmployeeType != EEmployeeType.Handler)
+            if (__instance == null || __instance.GetComponent<HandlerEmployee>() == null)
             {
                 return;
             }

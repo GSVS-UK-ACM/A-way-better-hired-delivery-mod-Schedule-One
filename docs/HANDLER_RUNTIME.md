@@ -1,6 +1,6 @@
 # Handler Runtime Worker
 
-Status: Hiring integration compiled; awaiting worker-construction and appearance verification
+Status: Distinct hiring integration compiled; awaiting worker-construction and appearance verification
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -12,7 +12,7 @@ Target: Schedule I 0.4.7f12 IL2CPP
 
 The first runtime attempt used direct inheritance from `Employee`. Schedule I's pinned interop runtime rejected that injected type while resolving the inherited `NPCMovement.WalkResult` virtual signature. Composition avoids that unsupported injection boundary while retaining a genuine base-game Employee as the networked worker.
 
-M2-001 does not manually construct or spawn an employee. M2-002 preserves the vanilla construction path and attaches the registered role component idempotently after server creation and after normal employee initialization. The latter also covers client replicas and workers restored from a save.
+M2-001 does not manually construct or spawn an employee. M2-002 adds a distinct Vehicle Handler fixer choice while preserving the vanilla construction path. A reserved, verifier-guarded wire value is mapped to the base Handler prefab on the server, and a save-safe employee-ID marker identifies only Vehicle Handler hires. The registered role component attaches idempotently after server creation and normal employee initialization; the latter covers client replicas and workers restored from base save data.
 
 ## Appearance
 
@@ -60,8 +60,8 @@ On 2026-09-25, the exact built DLL was installed into the game Mods directory an
 
 On 2026-10-09, Schedule I 0.4.7f12 replaced the avatar settings/body-layer runtime API with `AvatarAppearance` and runtime avatar objects. The appearance implementation and verifier were migrated to that API. The updated DLL registered the Handler component and printed the initialization banner on v0.4.7f12 without a Vehicle Handlers exception.
 
-The mod also prints an orange GSVS startup banner after successful Handler runtime registration. The hiring-integration test build reports Vehicle Handlers `v0.1.0`, Schedule I `0.4.7f12 | IL2CPP`, build `0.4.7f12-dev2`, creator `GSVS UK ACM`, project owner `xboxnuker-rgb`, and the `Hire. Assign. Deliver.` tagline.
+The mod also prints an orange GSVS startup banner after successful Handler runtime registration. The corrected hiring-integration test build reports Vehicle Handlers `v0.1.0`, Schedule I `0.4.7f12 | IL2CPP`, build `0.4.7f12-dev3`, creator `GSVS UK ACM`, project owner `xboxnuker-rgb`, and the `Hire. Assign. Deliver.` tagline.
 
 The current successful installed DLL SHA-256 is `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
 
-Startup registration is proven. The hiring attachment is statically verified and deliberately uses the existing FishNet employee rather than introducing a new prefab. Hiring, load restoration, marker presence, the concrete vanilla wrapper type, and rendered appearance still require isolated in-game evidence before M2-002 can complete.
+Startup registration is proven. The first `dev2` gameplay inspection exposed that the broad Handler filter reused the vanilla Handler/packager choice; that build was rejected before hiring. `dev3` adds an independent Vehicle Handler choice and excludes unmarked vanilla Handlers. Hiring, load restoration, marker presence, the concrete vanilla wrapper type, and rendered appearance still require isolated in-game evidence before M2-002 can complete.

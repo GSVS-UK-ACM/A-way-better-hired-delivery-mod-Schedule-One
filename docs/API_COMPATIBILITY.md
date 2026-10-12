@@ -18,13 +18,13 @@ The verifier also requires every assembly referenced by `VehicleHandlers.Il2Cpp.
 
 ## Compatibility gate
 
-`scripts/verify-game-api.ps1` performs 125 exact checks before compilation:
+`scripts/verify-game-api.ps1` performs 135 exact checks before compilation:
 
 - required MelonLoader and generated IL2CPP reference layout
 - pinned game and FishNet assembly hashes
 - public type existence and exact base types
 - singleton and network-singleton accessors
-- Handler enum value, hiring entry points, and virtual employee lifecycle methods
+- Handler enum value, unused custom wire discriminator, fixer choice mutation, hiring entry points, and virtual employee lifecycle methods
 - GUID lookup and owned property/vehicle selection collections
 - loading-bay availability, occupancy, parking, alignment, and vehicle transition APIs
 - FishNet spawn, server, client, ownership, and network-object signals
@@ -43,11 +43,11 @@ A mismatched hash or changed signature fails immediately with the expected and o
 
 ## Verified result
 
-- All 125 checks passed against the pinned 0.4.7f12 IL2CPP, Unity, MelonLoader interop, and Harmony reference set.
+- All 135 checks passed against the pinned 0.4.7f12 IL2CPP, Unity, MelonLoader interop, and Harmony reference set.
 - A deliberately incorrect `Assembly-CSharp.dll` hash was rejected.
 - The release build completed with zero warnings and zero errors using .NET SDK 8.0.425.
-- Compiled Handler runtime verification passed all 25 checks, including idempotent vanilla-employee attachment, both hiring lifecycle postfixes, and startup-banner integration.
-- The hiring-integration build SHA-256 `B54FB9EEF53B0BA217E44C8F075A77DEF23DB8095B38D5B737743F24ED6619DC` is statically verified and installed; startup and gameplay evidence remain pending. The preceding startup-tested build was `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
+- Compiled Handler runtime verification passed all 39 checks, including the distinct fixer option, reserved discriminator, persistent ID marker, vanilla-Handler exclusion, client/load attachment, and startup-banner integration.
+- The earlier broad-hook `dev2` build SHA-256 `B54FB9EEF53B0BA217E44C8F075A77DEF23DB8095B38D5B737743F24ED6619DC` was startup-tested but rejected after the UI revealed it reused the vanilla Handler option. The corrected, statically verified `dev3` DLL SHA-256 is `65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2`; installation/runtime evidence remains pending.
 
 ## Boundary
 

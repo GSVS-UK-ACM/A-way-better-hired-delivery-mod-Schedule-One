@@ -17,4 +17,6 @@ Format follows Keep a Changelog. The project uses semantic versioning after the 
 - Orange GSVS startup banner with Vehicle Handlers version, target, build identity, creator, project owner, and tagline.
 - Base Handler hiring integration that preserves the vanilla FishNet employee and idempotently attaches the mod marker after server creation and normal initialization, including loaded-save and client paths.
 - Expanded 125-check API gate and 25-check compiled runtime verifier for Unity component attachment and both hiring lifecycle hooks.
+- Replaced the rejected broad vanilla-Handler hook with a separate **Vehicle Handler** fixer choice, a guarded network discriminator, and a save-safe identity marker that leaves normal Handlers untouched.
+- Expanded the compatibility gates to 135 exact API checks and 39 emitted-runtime checks for dialogue injection, identity persistence, and vanilla-worker isolation.
 
