@@ -2,10 +2,10 @@
 
 ## Active claim
 
-- Backlog: none; `VH-M2-002` completed
+- Backlog: `VH-M2-003`
 - Owner: Codex
-- Branch: `feat/vh-m2-002-hiring-integration`
-- Status: `READY_TO_MERGE`
+- Branch: `feat/vh-m2-003-lifecycle`
+- Status: `IN_PROGRESS`
 
 ## Current outcome
 
@@ -57,6 +57,7 @@ Commands:
 
 ## Next work
 
-1. Merge PR #5 for completed `VH-M2-002`.
-2. Claim `VH-M2-003` on a fresh branch and implement the work lifecycle plus leave/despawn behavior.
-3. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.
+1. Implement a narrow Vehicle Handler lifecycle bridge that excludes marked workers from vanilla Packager work while preserving base pay, home, dialogue, save, and employee management behavior.
+2. Forward firing, deletion, despawn, missing-after-load recovery, and mod unload through the frozen `IHandlerLifecycleSink` boundary without implementing M3/M4 services early.
+3. Verify exact lifecycle signatures, Handler-only filtering, idempotent cleanup, and a zero-warning IL2CPP build before runtime testing.
+4. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.
