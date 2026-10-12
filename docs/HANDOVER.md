@@ -2,11 +2,11 @@
 
 ## Active claim
 
-`VH-M3-002` is claimed by Codex on `feat/vh-m3-002-clipboard-controls` for clipboard configuration and controls.
+`VH-M3-002` is owned by Codex on `feat/vh-m3-002-clipboard-controls` and is awaiting in-game clipboard verification.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, and assignment-model PR #7 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority: one snapshot per Handler, exclusive vehicle claims, compare-and-swap revisions, removal tombstones, strict trip binding/transitions, deterministic snapshots, and a bounded save-restore phase. `VH-M3-002` is now adding clipboard configuration and controls; persistence, reservations, live-object validation, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, and assignment-model PR #7 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority. `VH-M3-002` now adds a Vehicle Handler-only management clipboard panel with owned-vehicle, owned-property, loading-bay, enabled, apply, remove, and refresh controls. The panel writes stable identities through the assignment registry and rejects non-server mutation. Persistence, reservations, live-object validation, and physical movement remain unchanged.
 
 ## Compatibility target
 
@@ -54,6 +54,11 @@ Game references remain outside this repository.
 - Built `0.4.7f12-dev6` DLL SHA-256: `0D325D4D978D30E49D5AFE5623C36EA20AFA3222F1A9B2989AC1EACF25C69FC0`. It is a build artifact only and has not been installed; this milestone adds no player-facing control surface.
 - PR #7 merged `VH-M3-001` into `main` as `c7d2f5f3c04d947be24e8b0af89a92f5d40e6e28`.
 - Before claiming `VH-M3-002`, the preserved out-of-tree `0.4.7f12` IL2CPP reference set passed all 141 pinned API checks. The live game's `Assembly-CSharp.dll` is currently modified at startup by Polyfill.Boot and has SHA-256 `2FE6C19C6A14703EB2FD8171C6217F64804D61FE64EC372173796E5417E76971`; it must not replace the canonical preserved build reference.
+- `VH-M3-002` adds 46 dependency-free clipboard-model assertions for stable preselection, cycling, immutable choices, revision updates, control-flag preservation, and unavailable-choice failures.
+- The pinned API gate now includes `UnityEngine.IMGUIModule.dll` SHA-256 `5B8CBAEB25F4F8024675805B819AE0A26DBC44CEE3EE027969390DBFE4670D20` plus exact management-interface, IMGUI, vehicle-name, property, and dock-name members.
+- The complete `0.4.7f12-dev7` gate passes 159 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 46 clipboard assertions, and 81 compiled Handler runtime checks; release compilation has zero warnings and zero errors.
+- Built `0.4.7f12-dev7` DLL SHA-256: `1234E161053D443D4AD6DD5995197012D4EDFC65A01B05EEDFD68E7A34C47DF9`.
+- With the game closed, `dev7` was installed to `Mods/VehicleHandlers.dll` and its installed SHA-256 matched the build. The previous runtime-verified `dev5` DLL was retained in the ignored local install-backup artifacts with SHA-256 `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
 
 Commands:
 
@@ -61,10 +66,12 @@ Commands:
 .\scripts\verify-game-api.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>"
 .\scripts\verify-contracts.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-assignments.ps1 -DotNet "<dotnet-8.0.425>"
+.\scripts\verify-clipboard.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>" -DotNet "<dotnet-8.0.425>"
 ```
 
 ## Next work
 
-1. Implement and verify `VH-M3-002` clipboard configuration and controls against the preserved pinned reference set.
-2. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.
+1. Launch the installed `0.4.7f12-dev7` and perform the runtime checklist in `docs/CLIPBOARD_CONTROLS.md`.
+2. Mark `VH-M3-002` done only after the Vehicle Handler panel, ordinary Packager isolation, apply/reopen/reconfigure/remove flow, duplicate-vehicle rejection, and firing cleanup pass in game.
+3. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.

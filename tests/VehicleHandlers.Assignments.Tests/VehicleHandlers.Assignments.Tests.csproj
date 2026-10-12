@@ -12,6 +12,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="..\..\Source\Contracts\*.cs" Link="Contracts\%(Filename)%(Extension)" />
-    <Compile Include="..\..\Source\Assignments\*.cs" Link="Assignments\%(Filename)%(Extension)" />
+    <Compile Include="..\..\Source\Assignments\HandlerAssignmentRegistry.cs" Link="Assignments\HandlerAssignmentRegistry.cs" />
   </ItemGroup>
 </Project>

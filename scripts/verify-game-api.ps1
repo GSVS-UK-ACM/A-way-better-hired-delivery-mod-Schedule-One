@@ -13,7 +13,9 @@ param(
 
     [string] $ExpectedUnityCoreSha256 = "E993B0A6388D5A21748B28E5E40EBEC1BC43B01DFD550AEBBCB79F3072A48E87",
 
-    [string] $ExpectedHarmonySha256 = "6C898933B52149E8BCF6722305C7E4D94ADD47C9E53B364096F91721624C0877"
+    [string] $ExpectedHarmonySha256 = "6C898933B52149E8BCF6722305C7E4D94ADD47C9E53B364096F91721624C0877",
+
+    [string] $ExpectedImguiSha256 = "5B8CBAEB25F4F8024675805B819AE0A26DBC44CEE3EE027969390DBFE4670D20"
 )
 
 $ErrorActionPreference = "Stop"
@@ -31,7 +33,8 @@ $requiredReferences = @(
     "Il2CppAssemblies\Il2Cppmscorlib.dll",
     "Il2CppAssemblies\Il2CppFishNet.Runtime.dll",
     "Il2CppAssemblies\UnityEngine.dll",
-    "Il2CppAssemblies\UnityEngine.CoreModule.dll"
+    "Il2CppAssemblies\UnityEngine.CoreModule.dll",
+    "Il2CppAssemblies\UnityEngine.IMGUIModule.dll"
 )
 
 foreach ($relativePath in $requiredReferences) {
@@ -50,6 +53,7 @@ $corePath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\Il2CppScheduleOne.Core.
 $interopPath = Join-Path $MelonLoaderRoot "net6\Il2CppInterop.Runtime.dll"
 $unityCorePath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\UnityEngine.CoreModule.dll"
 $harmonyPath = Join-Path $MelonLoaderRoot "net6\0Harmony.dll"
+$imguiPath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\UnityEngine.IMGUIModule.dll"
 $cecilPath = Join-Path $MelonLoaderRoot "net6\Mono.Cecil.dll"
 
 function Assert-FileHash(
@@ -72,6 +76,7 @@ Assert-FileHash $corePath $ExpectedCoreSha256 "Il2CppScheduleOne.Core.dll"
 Assert-FileHash $interopPath $ExpectedInteropSha256 "Il2CppInterop.Runtime.dll"
 Assert-FileHash $unityCorePath $ExpectedUnityCoreSha256 "UnityEngine.CoreModule.dll"
 Assert-FileHash $harmonyPath $ExpectedHarmonySha256 "0Harmony.dll"
+Assert-FileHash $imguiPath $ExpectedImguiSha256 "UnityEngine.IMGUIModule.dll"
 
 [void] [System.Reflection.Assembly]::LoadFrom($cecilPath)
 $gameAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($assemblyPath)
@@ -80,6 +85,7 @@ $coreAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($corePath)
 $interopAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($interopPath)
 $unityCoreAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($unityCorePath)
 $harmonyAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($harmonyPath)
+$imguiAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($imguiPath)
 $assemblies = @{
     Game = $gameAssembly
     FishNet = $fishNetAssembly
@@ -87,6 +93,7 @@ $assemblies = @{
     Interop = $interopAssembly
     Unity = $unityCoreAssembly
     Harmony = $harmonyAssembly
+    Imgui = $imguiAssembly
 }
 
 try {
@@ -273,6 +280,7 @@ try {
     Assert-Type "Unity" "UnityEngine.MonoBehaviour" "UnityEngine.Behaviour"
     Assert-Type "Harmony" "HarmonyLib.HarmonyPatch" "HarmonyLib.HarmonyAttribute"
     Assert-Type "Harmony" "HarmonyLib.HarmonyPostfix" "System.Attribute"
+    Assert-Type "Imgui" "UnityEngine.GUI" "Il2CppSystem.Object"
 
     Assert-Method "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "IsTypeRegisteredInIl2Cpp" "System.Boolean" @() $true 1
     Assert-Method "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "RegisterTypeInIl2Cpp" "System.Void" @() $true 1
@@ -284,6 +292,11 @@ try {
         "System.Type", "System.String", "System.Type[]"
     )
     Assert-Method "Harmony" "HarmonyLib.HarmonyPostfix" ".ctor" "System.Void"
+    Assert-Property "Imgui" "UnityEngine.GUI" "depth" "System.Int32" $true $true
+    Assert-Method "Imgui" "UnityEngine.GUI" "Box" "System.Void" @("UnityEngine.Rect", "System.String") $true
+    Assert-Method "Imgui" "UnityEngine.GUI" "Label" "System.Void" @("UnityEngine.Rect", "System.String") $true
+    Assert-Method "Imgui" "UnityEngine.GUI" "Button" "System.Boolean" @("UnityEngine.Rect", "System.String") $true
+    Assert-Method "Imgui" "UnityEngine.GUI" "Toggle" "System.Boolean" @("UnityEngine.Rect", "System.Boolean", "System.String") $true
 
     # Handler creation and base employee lifecycle.
     Assert-EnumValue "Il2CppScheduleOne.Employees.EEmployeeType" "Handler" 1
@@ -373,12 +386,28 @@ try {
     Assert-Property "Game" "Il2CppScheduleOne.Vehicles.VehicleManager" "PlayerOwnedVehicles" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Vehicles.LandVehicle>' $true
     Assert-Property "Game" "Il2CppScheduleOne.Vehicles.LandVehicle" "GUID" "Il2CppSystem.Guid" $true
     Assert-Property "Game" "Il2CppScheduleOne.Vehicles.LandVehicle" "IsPlayerOwned" "System.Boolean" $true
+    Assert-Property "Game" "Il2CppScheduleOne.Vehicles.LandVehicle" "VehicleName" "System.String" $false
+    Assert-Property "Game" "Il2CppScheduleOne.Vehicles.LandVehicle" "VehicleCode" "System.String" $false
+    Assert-Property "Game" "Il2CppScheduleOne.NPCs.NPC" "FullName" "System.String" $false
+
+    # Management clipboard integration used by Vehicle Handler assignment controls.
+    Assert-Type "Game" "Il2CppScheduleOne.Management.ManagementInterface" 'Il2CppScheduleOne.DevUtilities.Singleton`1<Il2CppScheduleOne.Management.ManagementInterface>'
+    Assert-Type "Game" "Il2CppScheduleOne.Tools.ManagementClipboard_Equippable" "Il2CppScheduleOne.Equipping.Equippable_Viewmodel"
+    Assert-Type "Game" "Il2CppScheduleOne.Management.UI.ConfigPanel" "UnityEngine.MonoBehaviour"
+    Assert-Property "Game" "Il2CppScheduleOne.Management.ManagementInterface" "loadedPanel" "Il2CppScheduleOne.Management.UI.ConfigPanel" $true
+    Assert-Method "Game" "Il2CppScheduleOne.Management.ManagementInterface" "Open" "System.Void" @(
+        'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Management.IConfigurable>',
+        "Il2CppScheduleOne.Tools.ManagementClipboard_Equippable"
+    )
+    Assert-Method "Game" "Il2CppScheduleOne.Management.ManagementInterface" "InitializeConfigPanel" "System.Void"
+    Assert-Method "Game" "Il2CppScheduleOne.Management.ManagementInterface" "Close" "System.Void" @("System.Boolean")
 
     # Delivery availability, dock occupancy, parking, and physical movement.
     Assert-Method "Game" "Il2CppScheduleOne.Delivery.DeliveryManager" "IsLoadingBayFree" "System.Boolean" @(
         "Il2CppScheduleOne.Property.Property", "System.Int32"
     )
     Assert-Property "Game" "Il2CppScheduleOne.Delivery.LoadingDock" "GUID" "Il2CppSystem.Guid" $true
+    Assert-Property "Game" "Il2CppScheduleOne.Delivery.LoadingDock" "Name" "System.String" $false
     Assert-Property "Game" "Il2CppScheduleOne.Delivery.LoadingDock" "ParentProperty" "Il2CppScheduleOne.Property.Property" $true
     Assert-Property "Game" "Il2CppScheduleOne.Delivery.LoadingDock" "DynamicOccupant" "Il2CppScheduleOne.Vehicles.LandVehicle" $true
     Assert-Property "Game" "Il2CppScheduleOne.Delivery.LoadingDock" "StaticOccupant" "Il2CppScheduleOne.Vehicles.LandVehicle" $true
@@ -448,4 +477,5 @@ finally {
     $interopAssembly.Dispose()
     $unityCoreAssembly.Dispose()
     $harmonyAssembly.Dispose()
+    $imguiAssembly.Dispose()
 }
