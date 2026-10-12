@@ -1,6 +1,6 @@
 # Vehicle Handler Lifecycle
 
-Status: `dev5` startup, save restoration, and expendable firing runtime verified; active work isolation remains
+Status: Complete and runtime verified on `dev5`
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -50,10 +50,12 @@ On 2026-10-12, `dev5` registered the component without the `dev4` assembly error
 
 An additional Vehicle Handler was then hired and fired on the test save. The runtime emitted exactly one `Fired` event for Handler GUID `64baf792-6d7a-4b60-91f3-037ffac126ae`; the later leave/despawn path did not emit duplicate cleanup, and no Vehicle Handlers exception followed.
 
+During the active work period, the owner confirmed that Michelle remained idle while an ordinary unmarked Handler continued normal Packager work. This verifies both sides of the narrow filter: marked Vehicle Handlers are isolated from vanilla work without disabling the base role globally. The game subsequently exited without duplicate Vehicle Handlers cleanup or an exception; save restoration had already been demonstrated by the same `dev5` build.
+
 ## Required runtime proof
 
 1. ~~Launch `0.4.7f12-dev5` under MelonLoader 0.7.3 and confirm clean startup plus load-time role attachment without the `dev4` assembly-registration error.~~ Passed on 2026-10-12.
-2. Confirm Michelle remains idle and keeps normal employee dialogue without performing any previously configured Packager job. Save-load appearance and interaction prompt passed; active work isolation remains to be observed.
-3. Confirm an ordinary vanilla Handler can still perform its configured Packager work.
+2. ~~Confirm Michelle remains idle and keeps normal employee dialogue without performing any previously configured Packager job.~~ Passed on 2026-10-12.
+3. ~~Confirm an ordinary vanilla Handler can still perform its configured Packager work.~~ Passed on 2026-10-12.
 4. ~~Fire a disposable Vehicle Handler only on an expendable test save and confirm the base firing/leave path completes without a Vehicle Handlers exception.~~ Passed on 2026-10-12 with exactly one `Fired` notification and no duplicate cleanup.
-5. Return to the menu and exit once, confirming shutdown does not corrupt the saved Vehicle Handler or emit duplicate cleanup failures.
+5. ~~Return to the menu and exit once, confirming shutdown does not corrupt the saved Vehicle Handler or emit duplicate cleanup failures.~~ Exit produced no duplicate cleanup or exception; `dev5` save restoration was verified earlier in the same session.

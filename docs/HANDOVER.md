@@ -2,14 +2,11 @@
 
 ## Active claim
 
-- Backlog: `VH-M2-003`
-- Owner: Codex
-- Branch: `feat/vh-m2-003-lifecycle`
-- Status: `IN_PROGRESS`
+None. `VH-M2-003` is complete on `feat/vh-m2-003-lifecycle` and awaits owner-approved merge.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, and hiring PR #5 are merged. `VH-M2-002` is complete and runtime verified. `VH-M2-003` now has a compiling `dev5` lifecycle implementation: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. Assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, and hiring PR #5 are merged. All M2 work is complete and runtime verified on `dev5`: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. Assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -50,7 +47,8 @@ Game references remain outside this repository.
 - Installed `0.4.7f12-dev5` SHA-256: `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
 - On 2026-10-12, `dev5` registered without the `dev4` assembly error, reached the main menu, loaded the existing save, and attached exactly one marker to Michelle. She retained the orange cue and normal interaction prompt; Vehicle Handlers emitted no warning or exception. The full mod set's HWE and DeliverySpotsPlus errors were unrelated.
 - A second Vehicle Handler was hired and fired on the test save. GUID `64baf792-6d7a-4b60-91f3-037ffac126ae` emitted exactly one `Fired` lifecycle event, the later leave/despawn path produced no duplicate cleanup, and no Vehicle Handlers exception followed.
-- `0.4.7f12-dev5` blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. Active work isolation remains to be observed.
+- During the active work period, Michelle remained idle while an ordinary unmarked Handler continued normal Packager work. This runtime-verifies both sides of the narrow work filter.
+- `0.4.7f12-dev5` blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. `VH-M2-003` is complete.
 
 Commands:
 
@@ -62,7 +60,6 @@ Commands:
 
 ## Next work
 
-1. Confirm Michelle remains idle, retains normal dialogue, and does not enter vanilla Packager work during an active work opportunity.
-2. Confirm at least one unmarked vanilla Handler still performs its configured work.
-3. Return to the menu and exit once, confirming shutdown does not corrupt the saved Vehicle Handler or emit duplicate cleanup failures.
-4. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.
+1. Obtain owner approval and merge `feat/vh-m2-003-lifecycle`.
+2. Claim `VH-M3-001` for the one-vehicle assignment model.
+3. Keep clipboard UI, persistence adapters, reservations, and vehicle movement in their respective later backlog items.
