@@ -83,6 +83,17 @@ try {
         Assert-Condition ($matches.Count -gt 0) $Label
     }
 
+    function Assert-HiddenFromIl2Cpp(
+        [Mono.Cecil.MethodDefinition] $Method,
+        [string] $Label
+    ) {
+        $hidden = @($Method.CustomAttributes | Where-Object {
+            $_.AttributeType.FullName -ceq "Il2CppInterop.Runtime.Attributes.HideFromIl2CppAttribute"
+        })
+
+        Assert-Condition ($hidden.Count -eq 1) $Label
+    }
+
     $handlerType = Get-RequiredType "VehicleHandlers.Employees.HandlerEmployee"
     Assert-Condition ($handlerType.IsPublic) "HandlerEmployee is public for IL2CPP registration"
     Assert-Condition ($handlerType.BaseType.FullName -ceq "UnityEngine.MonoBehaviour") "HandlerEmployee uses the supported MonoBehaviour injection boundary"
@@ -101,21 +112,25 @@ try {
     Assert-Call $awake "*Il2CppScheduleOne.Employees.Employee::set_Type*" "HandlerEmployee Awake applies the Handler role"
 
     $baseWorkAvailable = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "get_IsBaseWorkAvailable"
+    Assert-HiddenFromIl2Cpp $baseWorkAvailable "Managed-only work eligibility is hidden from IL2CPP method injection"
     Assert-Call $baseWorkAvailable "*Il2CppScheduleOne.Employees.Employee::get_Fired*" "Vehicle Handler work eligibility rejects fired employees"
     Assert-Call $baseWorkAvailable "*Il2CppScheduleOne.Employees.Employee::get_PaidForToday*" "Vehicle Handler work eligibility rejects unpaid employees"
     Assert-Call $baseWorkAvailable "*Il2CppScheduleOne.Employees.Employee::get_AssignedProperty*" "Vehicle Handler work eligibility requires an assigned property"
 
     $bindIdentity = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "BindIdentity" @("System.String")
     Assert-Condition (-not $bindIdentity.IsPublic) "Handler identity binding remains internal to the lifecycle bridge"
+    Assert-HiddenFromIl2Cpp $bindIdentity "Managed-only identity binding is hidden from IL2CPP method injection"
 
     $notifyUnavailable = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "NotifyUnavailable" @(
         "VehicleHandlers.Contracts.HandlerUnavailableReason"
     )
+    Assert-HiddenFromIl2Cpp $notifyUnavailable "Managed-only lifecycle signaling is hidden from IL2CPP method injection"
     Assert-Call $notifyUnavailable "*Il2CppScheduleOne.NPCs.NPC::get_GUID*" "Lifecycle cleanup can recover the game-owned Handler GUID"
     Assert-Call $notifyUnavailable "*VehicleHandlers.Contracts.HandlerId::TryParse*" "Lifecycle cleanup validates the stable Handler identity"
     Assert-Call $notifyUnavailable "*VehicleHandlers.Employees.HandlerLifecycleBridge::NotifyUnavailable*" "Lifecycle cleanup forwards through the frozen sink boundary"
 
     $reportWorkBlocked = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "ReportVanillaWorkBlocked"
+    Assert-HiddenFromIl2Cpp $reportWorkBlocked "Managed-only work diagnostics are hidden from IL2CPP method injection"
     Assert-Call $reportWorkBlocked "*MelonLoader.MelonLogger::Msg*" "Vanilla-work suppression emits a one-shot runtime diagnostic"
 
     $identityType = Get-RequiredType "VehicleHandlers.Employees.VehicleHandlerIdentity"

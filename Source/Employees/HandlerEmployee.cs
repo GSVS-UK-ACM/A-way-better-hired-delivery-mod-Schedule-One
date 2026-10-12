@@ -1,4 +1,5 @@
 using System;
+using Il2CppInterop.Runtime.Attributes;
 using Il2CppScheduleOne.Employees;
 using MelonLoader;
 using UnityEngine;
@@ -47,13 +48,21 @@ namespace VehicleHandlers.Employees
             worker.Type = EEmployeeType.Handler;
         }
 
-        internal bool IsBaseWorkAvailable =>
-            worker != null &&
-            !unavailableNotified &&
-            !worker.Fired &&
-            worker.PaidForToday &&
-            worker.AssignedProperty != null;
+        internal bool IsBaseWorkAvailable
+        {
+            [HideFromIl2Cpp]
+            get
+            {
+                return
+                    worker != null &&
+                    !unavailableNotified &&
+                    !worker.Fired &&
+                    worker.PaidForToday &&
+                    worker.AssignedProperty != null;
+            }
+        }
 
+        [HideFromIl2Cpp]
         internal void BindIdentity(string guid)
         {
             if (!string.IsNullOrWhiteSpace(guid))
@@ -62,6 +71,7 @@ namespace VehicleHandlers.Employees
             }
         }
 
+        [HideFromIl2Cpp]
         internal void NotifyUnavailable(HandlerUnavailableReason reason)
         {
             if (unavailableNotified)
@@ -86,6 +96,7 @@ namespace VehicleHandlers.Employees
             HandlerLifecycleBridge.NotifyUnavailable(handler, reason);
         }
 
+        [HideFromIl2Cpp]
         internal void ReportVanillaWorkBlocked()
         {
             if (workGuardLogged)

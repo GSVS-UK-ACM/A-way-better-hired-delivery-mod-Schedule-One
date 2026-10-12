@@ -9,7 +9,7 @@
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, and hiring PR #5 are merged. `VH-M2-002` is complete and runtime verified. `VH-M2-003` now has a compiling `dev4` lifecycle implementation: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. Assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, and hiring PR #5 are merged. `VH-M2-002` is complete and runtime verified. `VH-M2-003` now has a compiling `dev5` lifecycle implementation: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. Assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -29,7 +29,7 @@ Game references remain outside this repository.
 
 - Strict static API verification passed all 141 checks against the v0.4.7f12 out-of-tree reference set.
 - Dependency-free contract verification passed all 110 assertions, including the complete 9-by-9 trip transition matrix.
-- Compiled Handler runtime verification passed all 60 checks for hiring plus Handler-only work suppression, base readiness, stable lifecycle identity, one-shot diagnostics, idempotent cleanup, sink forwarding, and mod shutdown.
+- Compiled Handler runtime verification passed all 64 checks for hiring plus Handler-only work suppression, base readiness, stable lifecycle identity, one-shot diagnostics, managed/native injection isolation, idempotent cleanup, sink forwarding, and mod shutdown.
 - An intentionally incorrect `Assembly-CSharp.dll` hash was rejected before API inspection.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
 - Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
@@ -46,8 +46,9 @@ Game references remain outside this repository.
 - On 2026-10-12 under MelonLoader 0.7.3, the fixer showed vanilla Handler `[3]` and Vehicle Handler `[5]`; hiring created Michelle Martin, attached `HandlerEmployee` to `Il2CppScheduleOne.Employees.Packager`, and rendered the orange waist cue without changing her skin/body.
 - The save stored `vehiclehandler_michelle_martin`. After returning to the menu and reloading, `Employee.Initialize` produced one fresh attachment log and Michelle retained the cue and normal dialogue. No Vehicle Handlers warning or exception occurred.
 - Worker Collision/HWE emitted physical-capsule warnings for all loaded employee types, including Michelle and ordinary vanilla workers. These are unrelated full-mod-set noise, not a Vehicle Handlers failure.
-- `0.4.7f12-dev4` compiles with zero warnings/errors and blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. Runtime evidence is pending.
-- Installed `0.4.7f12-dev4` DLL SHA-256: `2197AF72FA74238DEC0EACAD047327B1BB6B1BE767D9AF27EB7B786E47F102E7`. The proven `dev3` DLL is preserved as `VehicleHandlers.dll.disabled.65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2` for rollback.
+- The first `0.4.7f12-dev4` menu launch registered the component and initialized the mod, but IL2CPP logged an assembly-registration error while scanning managed-only component helpers. The game then exited abruptly during save loading immediately after `Load start!`, without a managed exception. `dev5` decorates those helpers with `HideFromIl2Cpp` and adds verifier coverage for the boundary.
+- Statically verified `0.4.7f12-dev5` candidate SHA-256: `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
+- `0.4.7f12-dev5` blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. Runtime evidence is pending.
 
 Commands:
 
@@ -59,7 +60,7 @@ Commands:
 
 ## Next work
 
-1. Install `0.4.7f12-dev4` and launch under MelonLoader 0.7.3.
+1. Install `0.4.7f12-dev5` and launch under MelonLoader 0.7.3.
 2. Confirm Michelle reloads, remains idle, retains normal dialogue, and does not enter vanilla Packager work.
 3. Confirm at least one unmarked vanilla Handler still performs its configured work.
 4. Use an expendable save for a firing/leave test, then inspect for a clean base despawn and no Vehicle Handlers exception.

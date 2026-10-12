@@ -1,6 +1,6 @@
 # Vehicle Handler Lifecycle
 
-Status: Statically verified; awaiting in-game `0.4.7f12-dev4` evidence
+Status: Statically verified; awaiting clean in-game `0.4.7f12-dev5` evidence
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -41,14 +41,14 @@ Current result:
 
 - 141 exact game/API checks;
 - 110 dependency-free contract assertions;
-- 60 compiled-runtime checks;
+- 64 compiled-runtime checks;
 - zero compiler warnings and zero compiler errors.
 
-The installed `0.4.7f12-dev4` test DLL SHA-256 is `2197AF72FA74238DEC0EACAD047327B1BB6B1BE767D9AF27EB7B786E47F102E7`. The runtime-verified `dev3` DLL is preserved under a disabled extension for rollback.
+The first `dev4` menu launch registered `HandlerEmployee` and initialized the mod, but IL2CPP logged `Assembly VehicleHandlers.dll is not registered in il2cpp` while scanning a managed-only helper whose signature referenced the mod-owned lifecycle enum. The game then exited abruptly during save loading immediately after `Load start!`, without a managed exception. Those helpers are now explicitly decorated with `HideFromIl2Cpp`; the statically verified `dev5` candidate SHA-256 is `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`. The runtime-verified `dev3` DLL remains preserved under a disabled extension for rollback.
 
 ## Required runtime proof
 
-1. Launch `0.4.7f12-dev4` under MelonLoader 0.7.3 and confirm normal startup plus load-time role attachment.
+1. Launch `0.4.7f12-dev5` under MelonLoader 0.7.3 and confirm clean startup plus load-time role attachment without the `dev4` assembly-registration error.
 2. Confirm Michelle remains idle and keeps normal employee dialogue without performing any previously configured Packager job.
 3. Confirm an ordinary vanilla Handler can still perform its configured Packager work.
 4. Fire a disposable Vehicle Handler only on an expendable test save and confirm the base firing/leave path completes without a Vehicle Handlers exception.
