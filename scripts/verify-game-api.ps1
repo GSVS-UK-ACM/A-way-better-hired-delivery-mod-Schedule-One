@@ -248,6 +248,7 @@ try {
     Assert-Type "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "UnityEngine.MonoBehaviour"
     Assert-Type "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "System.Object"
     Assert-Type "Unity" "UnityEngine.Component" "UnityEngine.Object"
+    Assert-Type "Unity" "UnityEngine.GameObject" "UnityEngine.Object"
     Assert-Type "Unity" "UnityEngine.Behaviour" "UnityEngine.Component"
     Assert-Type "Unity" "UnityEngine.MonoBehaviour" "UnityEngine.Behaviour"
     Assert-Type "Harmony" "HarmonyLib.HarmonyPatch" "HarmonyLib.HarmonyAttribute"
@@ -256,6 +257,8 @@ try {
     Assert-Method "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "IsTypeRegisteredInIl2Cpp" "System.Boolean" @() $true 1
     Assert-Method "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "RegisterTypeInIl2Cpp" "System.Void" @() $true 1
     Assert-Method "Unity" "UnityEngine.Component" "GetComponent" "T" @() $false 1
+    Assert-Property "Unity" "UnityEngine.Component" "gameObject" "UnityEngine.GameObject" $false
+    Assert-Method "Unity" "UnityEngine.GameObject" "AddComponent" "T" @() $false 1
     Assert-Property "Unity" "UnityEngine.Behaviour" "enabled" "System.Boolean" $true
     Assert-Method "Harmony" "HarmonyLib.HarmonyPatch" ".ctor" "System.Void" @(
         "System.Type", "System.String", "System.Type[]"

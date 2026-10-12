@@ -90,6 +90,11 @@ try {
     $nativeConstructor = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" ".ctor" @("System.IntPtr")
     Assert-Condition ($nativeConstructor.IsPublic) "HandlerEmployee exposes the native-pointer constructor"
 
+    $ensureAttached = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "EnsureAttached" @("Il2CppScheduleOne.Employees.Employee")
+    Assert-Condition ($ensureAttached.IsPublic -and $ensureAttached.IsStatic) "HandlerEmployee exposes idempotent attachment"
+    Assert-Call $ensureAttached "*GetComponent*VehicleHandlers.Employees.HandlerEmployee*" "HandlerEmployee attachment reuses an existing marker"
+    Assert-Call $ensureAttached "*UnityEngine.GameObject::AddComponent*VehicleHandlers.Employees.HandlerEmployee*" "HandlerEmployee attachment adds the injected marker to the vanilla employee object"
+
     $awake = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "Awake"
     Assert-Condition ($awake.IsPublic) "HandlerEmployee exposes the Unity Awake message"
     Assert-Call $awake "*GetComponent*Il2CppScheduleOne.Employees.Employee*" "HandlerEmployee binds to the real game Employee component"
@@ -99,6 +104,17 @@ try {
     Assert-Condition ($appearancePostfix.IsPrivate -and $appearancePostfix.IsStatic) "Handler appearance is isolated in a static Harmony postfix"
     Assert-Call $appearancePostfix "*Il2CppScheduleOne.Employees.Employee::get_EmployeeType*" "Handler appearance filters on the game Handler role"
     Assert-Call $appearancePostfix "*VehicleHandlers.Employees.HandlerAppearance::TryApply*" "Handler appearance applies the role-specific overlay"
+
+    $serverPostfix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerCreateEmployeeServerPatch" "Postfix" @(
+        "Il2CppScheduleOne.Employees.EEmployeeType", "Il2CppScheduleOne.Employees.Employee"
+    )
+    Assert-Condition ($serverPostfix.IsPrivate -and $serverPostfix.IsStatic) "Server hiring integration uses a static Harmony postfix"
+    Assert-Call $serverPostfix "*VehicleHandlers.Employees.HandlerAttachment::TryAttach*" "Server hiring integration attaches the marker to the returned vanilla employee"
+
+    $initializePostfix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerInitializePatch" "Postfix" @("Il2CppScheduleOne.Employees.Employee")
+    Assert-Condition ($initializePostfix.IsPrivate -and $initializePostfix.IsStatic) "Employee initialization integration uses a static Harmony postfix"
+    Assert-Call $initializePostfix "*Il2CppScheduleOne.Employees.Employee::get_EmployeeType*" "Employee initialization integration filters on the game Handler role"
+    Assert-Call $initializePostfix "*VehicleHandlers.Employees.HandlerAttachment::TryAttach*" "Employee initialization integration covers clients and loaded saves"
 
     $register = Get-RequiredMethod "VehicleHandlers.Runtime.HandlerRuntimeRegistration" "Register"
     Assert-Call $register "*ClassInjector::IsTypeRegisteredInIl2Cpp*" "Runtime registration is idempotent"

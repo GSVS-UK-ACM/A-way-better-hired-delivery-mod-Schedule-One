@@ -9,7 +9,7 @@
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, and Handler runtime PR #4 are merged. `VH-M2-001` is accepted as the startup-verified runtime foundation. `VH-M2-002` now owns the base hiring and construction path plus the carried-over proof that a constructed genuine Employee reports Handler and renders the orange worn-object cue. Work lifecycle, assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, and Handler runtime PR #4 are merged. `VH-M2-001` is accepted as the startup-verified runtime foundation. `VH-M2-002` now has a compiled base hiring integration: the vanilla manager creates and owns the networked Handler while the mod attaches its role marker after server creation and normal initialization. Work lifecycle, assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -27,12 +27,13 @@ Game references remain outside this repository.
 
 ## Verification status
 
-- Strict static API verification passed all 122 checks against the v0.4.7f12 out-of-tree reference set.
+- Strict static API verification passed all 125 checks against the v0.4.7f12 out-of-tree reference set.
 - Dependency-free contract verification passed all 110 assertions, including the complete 9-by-9 trip transition matrix.
-- Compiled Handler runtime verification passed all 17 checks for inheritance, native construction, base delegation, role assignment, v0.4.7 appearance dispatch/mutation/repaint, idempotent injection, and startup-banner integration.
+- Compiled Handler runtime verification passed all 25 checks for composition, native construction, idempotent marker attachment, server creation, client/load initialization, role assignment, v0.4.7 appearance dispatch/mutation/repaint, idempotent injection, and startup-banner integration.
 - An intentionally incorrect `Assembly-CSharp.dll` hash was rejected before API inspection.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
 - Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
+- Statically verified `0.4.7f12-dev2` hiring-integration DLL SHA-256: `B54FB9EEF53B0BA217E44C8F075A77DEF23DB8095B38D5B737743F24ED6619DC` (not yet installed or runtime-tested).
 - The production project now compiles only `Properties/AssemblyInfo.cs` and `Source/**/*.cs`; test build artifacts cannot leak into the mod DLL.
 - First in-game launch rejected direct `Employee` subclass injection because the interop runtime could not map inherited `NPCMovement.WalkResult`; the game remained responsive and no worker was created.
 - Second launch with component composition registered `VehicleHandlers.Employees.HandlerEmployee` successfully and printed the mod initialization banner with no Vehicle Handlers exception.
@@ -40,7 +41,7 @@ Game references remain outside this repository.
 - The v0.4.7-compatible DLL was installed and launched. MelonLoader again registered `VehicleHandlers.Employees.HandlerEmployee` and printed the Vehicle Handlers initialization banner with no Vehicle Handlers exception. Other installed mods logged unrelated v0.4.7 patch/type failures.
 - On 2026-10-10, the orange GSVS `CREATED BY` banner was added after successful runtime registration. A live v0.4.7f12 launch printed the mod version, target/backend, `0.4.7f12-dev1` build identity, `GSVS UK ACM`, `xboxnuker-rgb`, and `Hire. Assign. Deliver.` before the normal initialization message. The game test process was stopped afterward.
 - MelonLoader logged a missing `MethodXrefScanCache.db` while finalizing the first post-update interop generation, but emitted the new assemblies and completed game/mod startup. Treat this as a local MelonLoader generation warning to watch, not Vehicle Handlers runtime evidence.
-- Worker attachment to a later FishNet prefab and rendered appearance remain untested until M2-002 supplies the construction path.
+- The M2-002 implementation deliberately does not introduce a FishNet prefab. `CreateEmployee_Server` and `Employee.Initialize` postfixes attach the marker to the vanilla employee object; this is compiled but awaiting in-game hiring/load and rendered-appearance proof.
 
 Commands:
 
@@ -52,6 +53,7 @@ Commands:
 
 ## Next work
 
-1. Verify the safest v0.4.7f12 employee prefab donor and exact hiring entry point without replacing the game-owned Employee/FishNet component.
-2. Attach `HandlerEmployee` before network spawn, route Handler hiring through the base employee creation path, and preserve vanilla wages, beds, lockers, saves, and firing behavior.
-3. Construct a Handler in-game, confirm `EmployeeType == Handler`, and visually verify the orange worn-object appearance without changing skin/body color.
+1. Install the `0.4.7f12-dev2` build and launch it against Schedule I 0.4.7f12 IL2CPP.
+2. Hire or load a Handler and capture the single marker-attachment log, including the concrete vanilla employee wrapper type.
+3. Confirm normal management behavior and visually verify the orange worn-object appearance without changing skin/body color.
+4. Save and reload once to prove idempotent attachment and base lifecycle preservation; then mark `VH-M2-002` done or record the exact runtime blocker.

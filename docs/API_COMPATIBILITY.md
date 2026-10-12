@@ -18,7 +18,7 @@ The verifier also requires every assembly referenced by `VehicleHandlers.Il2Cpp.
 
 ## Compatibility gate
 
-`scripts/verify-game-api.ps1` performs 122 exact checks before compilation:
+`scripts/verify-game-api.ps1` performs 125 exact checks before compilation:
 
 - required MelonLoader and generated IL2CPP reference layout
 - pinned game and FishNet assembly hashes
@@ -43,11 +43,11 @@ A mismatched hash or changed signature fails immediately with the expected and o
 
 ## Verified result
 
-- All 122 checks passed against the pinned 0.4.7f12 IL2CPP, Unity, MelonLoader interop, and Harmony reference set.
+- All 125 checks passed against the pinned 0.4.7f12 IL2CPP, Unity, MelonLoader interop, and Harmony reference set.
 - A deliberately incorrect `Assembly-CSharp.dll` hash was rejected.
 - The release build completed with zero warnings and zero errors using .NET SDK 8.0.425.
-- Compiled Handler runtime verification passed all 17 checks, including startup-banner integration.
-- Latest verified, installed, and startup-tested output DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
+- Compiled Handler runtime verification passed all 25 checks, including idempotent vanilla-employee attachment, both hiring lifecycle postfixes, and startup-banner integration.
+- Latest installed and startup-tested output remains SHA-256 `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`; the newer hiring-integration build is statically verified and awaiting installation and gameplay evidence.
 
 ## Boundary
 

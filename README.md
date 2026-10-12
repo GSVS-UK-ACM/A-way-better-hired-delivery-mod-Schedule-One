@@ -4,7 +4,7 @@ Vehicle Handlers is a standalone Schedule I mod that adds a hireable Handler/Dri
 
 ## Current status
 
-**The Schedule I 0.4.7f12 IL2CPP compatibility layer and shared internal contracts are complete. The Handler role component now registers successfully in-game, but employee construction and the role appearance still require verification through the upcoming hiring integration; the mod is not ready for general installation.**
+**The Schedule I 0.4.7f12 IL2CPP compatibility layer, shared internal contracts, and base hiring integration are complete. The Handler marker now attaches to the vanilla Handler employee path without replacing its FishNet object; hiring, loaded-save attachment, and the orange appearance cue still require in-game verification before general installation.**
 
 The first release will support one owned vehicle and one destination loading bay per Handler. A Handler uses the normal employee lifecycle for hiring, wages, beds, lockers, saves, firing, and leaving work. Vehicle travel is represented by a short timed trip using the same physical vehicle, followed by reservation-aware placement in the selected loading bay.
 
@@ -34,6 +34,7 @@ IL2CPP and Mono builds are not interchangeable.
 - [Verified game API surface](docs/API_COMPATIBILITY.md)
 - [Internal contracts](docs/INTERNAL_CONTRACTS.md)
 - [Handler runtime worker](docs/HANDLER_RUNTIME.md)
+- [Hiring integration](docs/HIRING_INTEGRATION.md)
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
 - [Backlog](docs/BACKLOG.md)
 - [Current handover](docs/HANDOVER.md)
