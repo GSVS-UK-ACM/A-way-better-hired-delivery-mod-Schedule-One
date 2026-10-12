@@ -47,7 +47,7 @@ A mismatched hash or changed signature fails immediately with the expected and o
 - A deliberately incorrect `Assembly-CSharp.dll` hash was rejected.
 - The release build completed with zero warnings and zero errors using .NET SDK 8.0.425.
 - Compiled Handler runtime verification passed all 25 checks, including idempotent vanilla-employee attachment, both hiring lifecycle postfixes, and startup-banner integration.
-- Latest installed and startup-tested output remains SHA-256 `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`; the newer hiring-integration build is statically verified and awaiting installation and gameplay evidence.
+- The hiring-integration build SHA-256 `B54FB9EEF53B0BA217E44C8F075A77DEF23DB8095B38D5B737743F24ED6619DC` is statically verified and installed; startup and gameplay evidence remain pending. The preceding startup-tested build was `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
 
 ## Boundary
 
