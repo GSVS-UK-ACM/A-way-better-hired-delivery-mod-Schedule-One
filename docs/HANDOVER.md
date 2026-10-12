@@ -2,11 +2,11 @@
 
 ## Active claim
 
-None. `VH-M3-001` is complete on `feat/vh-m3-001-assignment-model` and awaits owner-approved merge.
+`VH-M3-002` is claimed by Codex on `feat/vh-m3-002-clipboard-controls` for clipboard configuration and controls.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, and lifecycle PR #6 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` now supplies the in-memory assignment authority: one snapshot per Handler, exclusive vehicle claims, compare-and-swap revisions, removal tombstones, strict trip binding/transitions, deterministic snapshots, and a bounded save-restore phase. Clipboard controls, persistence, reservations, live-object validation, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, and assignment-model PR #7 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority: one snapshot per Handler, exclusive vehicle claims, compare-and-swap revisions, removal tombstones, strict trip binding/transitions, deterministic snapshots, and a bounded save-restore phase. `VH-M3-002` is now adding clipboard configuration and controls; persistence, reservations, live-object validation, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -52,6 +52,8 @@ Game references remain outside this repository.
 - `VH-M3-001` adds a dependency-free assignment verifier with 51 assertions covering one-vehicle exclusivity, immutable snapshots, stale-write rejection, active-trip reconfiguration/removal blocks, exact trip ownership, legal transitions, revision tombstones, and restore conflicts.
 - The complete `0.4.7f12-dev6` gate passes 141 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, and 64 compiled Handler runtime checks; release compilation has zero warnings and zero errors.
 - Built `0.4.7f12-dev6` DLL SHA-256: `0D325D4D978D30E49D5AFE5623C36EA20AFA3222F1A9B2989AC1EACF25C69FC0`. It is a build artifact only and has not been installed; this milestone adds no player-facing control surface.
+- PR #7 merged `VH-M3-001` into `main` as `c7d2f5f3c04d947be24e8b0af89a92f5d40e6e28`.
+- Before claiming `VH-M3-002`, the preserved out-of-tree `0.4.7f12` IL2CPP reference set passed all 141 pinned API checks. The live game's `Assembly-CSharp.dll` is currently modified at startup by Polyfill.Boot and has SHA-256 `2FE6C19C6A14703EB2FD8171C6217F64804D61FE64EC372173796E5417E76971`; it must not replace the canonical preserved build reference.
 
 Commands:
 
@@ -64,6 +66,5 @@ Commands:
 
 ## Next work
 
-1. Obtain owner approval and merge `feat/vh-m3-001-assignment-model`.
-2. Claim `VH-M3-002` for clipboard configuration and controls.
-3. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.
+1. Implement and verify `VH-M3-002` clipboard configuration and controls against the preserved pinned reference set.
+2. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.
