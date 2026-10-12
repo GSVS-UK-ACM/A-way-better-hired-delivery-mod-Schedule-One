@@ -2,11 +2,11 @@
 
 ## Active claim
 
-None. `VH-M2-003` is complete on `feat/vh-m2-003-lifecycle` and awaits owner-approved merge.
+`VH-M3-001` is claimed by Codex on `feat/vh-m3-001-assignment-model`. Scope is the in-memory, server-owned one-vehicle assignment registry and its dependency-free verification. Clipboard UI, persistence, reservations, validation against live game objects, and vehicle movement remain in their later backlog items.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, and hiring PR #5 are merged. All M2 work is complete and runtime verified on `dev5`: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. Assignments, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, and lifecycle PR #6 are merged. All M2 work is complete and runtime verified on `dev5`: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. `VH-M3-001` is now implementing the assignment authority; clipboard controls, persistence, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -60,6 +60,6 @@ Commands:
 
 ## Next work
 
-1. Obtain owner approval and merge `feat/vh-m2-003-lifecycle`.
-2. Claim `VH-M3-001` for the one-vehicle assignment model.
-3. Keep clipboard UI, persistence adapters, reservations, and vehicle movement in their respective later backlog items.
+1. Implement and dependency-free verify `VH-M3-001` on `feat/vh-m3-001-assignment-model`.
+2. Keep clipboard UI, persistence adapters, reservations, and vehicle movement in their respective later backlog items.
+3. Submit the completed assignment-model branch for owner review and merge approval.
