@@ -29,7 +29,7 @@ Game references remain outside this repository.
 
 - Strict static API verification passed all 141 checks against the v0.4.7f12 out-of-tree reference set.
 - Dependency-free contract verification passed all 110 assertions, including the complete 9-by-9 trip transition matrix.
-- Compiled Handler runtime verification passed all 58 checks for hiring plus Handler-only work suppression, base readiness, stable lifecycle identity, idempotent cleanup, sink forwarding, and mod shutdown.
+- Compiled Handler runtime verification passed all 60 checks for hiring plus Handler-only work suppression, base readiness, stable lifecycle identity, one-shot diagnostics, idempotent cleanup, sink forwarding, and mod shutdown.
 - An intentionally incorrect `Assembly-CSharp.dll` hash was rejected before API inspection.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
 - Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
@@ -47,7 +47,7 @@ Game references remain outside this repository.
 - The save stored `vehiclehandler_michelle_martin`. After returning to the menu and reloading, `Employee.Initialize` produced one fresh attachment log and Michelle retained the cue and normal dialogue. No Vehicle Handlers warning or exception occurred.
 - Worker Collision/HWE emitted physical-capsule warnings for all loaded employee types, including Michelle and ordinary vanilla workers. These are unrelated full-mod-set noise, not a Vehicle Handlers failure.
 - `0.4.7f12-dev4` compiles with zero warnings/errors and blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. Runtime evidence is pending.
-- Installed `0.4.7f12-dev4` DLL SHA-256: `DA099C336EC4EAE8E22DC8647EADBB27AC37874EC133BE0F967BAB60ED543383`. The proven `dev3` DLL is preserved as `VehicleHandlers.dll.disabled.65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2` for rollback.
+- Installed `0.4.7f12-dev4` DLL SHA-256: `2197AF72FA74238DEC0EACAD047327B1BB6B1BE767D9AF27EB7B786E47F102E7`. The proven `dev3` DLL is preserved as `VehicleHandlers.dll.disabled.65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2` for rollback.
 
 Commands:
 

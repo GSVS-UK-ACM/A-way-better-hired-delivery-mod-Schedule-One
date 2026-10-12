@@ -35,16 +35,16 @@ Generic Unity destruction is deliberately not treated as deletion because return
 
 ## Static verification
 
-The exact API gate now pins all six Packager lifecycle/work signatures in addition to the existing employee lifecycle surface. The compiled verifier confirms Handler-only filtering, all vanilla work guards, stable GUID validation, idempotent unavailable signaling, sink forwarding, and mod-unload cleanup.
+The exact API gate now pins all six Packager lifecycle/work signatures in addition to the existing employee lifecycle surface. The compiled verifier confirms Handler-only filtering, all vanilla work guards, stable GUID validation, idempotent unavailable signaling, sink forwarding, and mod-unload cleanup. One-shot diagnostics report the first active work guard, unavailable reason, and lifecycle shutdown without per-tick log spam.
 
 Current result:
 
 - 141 exact game/API checks;
 - 110 dependency-free contract assertions;
-- 58 compiled-runtime checks;
+- 60 compiled-runtime checks;
 - zero compiler warnings and zero compiler errors.
 
-The installed `0.4.7f12-dev4` test DLL SHA-256 is `DA099C336EC4EAE8E22DC8647EADBB27AC37874EC133BE0F967BAB60ED543383`. The runtime-verified `dev3` DLL is preserved under a disabled extension for rollback.
+The installed `0.4.7f12-dev4` test DLL SHA-256 is `2197AF72FA74238DEC0EACAD047327B1BB6B1BE767D9AF27EB7B786E47F102E7`. The runtime-verified `dev3` DLL is preserved under a disabled extension for rollback.
 
 ## Required runtime proof
 

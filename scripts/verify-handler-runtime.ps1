@@ -115,6 +115,9 @@ try {
     Assert-Call $notifyUnavailable "*VehicleHandlers.Contracts.HandlerId::TryParse*" "Lifecycle cleanup validates the stable Handler identity"
     Assert-Call $notifyUnavailable "*VehicleHandlers.Employees.HandlerLifecycleBridge::NotifyUnavailable*" "Lifecycle cleanup forwards through the frozen sink boundary"
 
+    $reportWorkBlocked = Get-RequiredMethod "VehicleHandlers.Employees.HandlerEmployee" "ReportVanillaWorkBlocked"
+    Assert-Call $reportWorkBlocked "*MelonLoader.MelonLogger::Msg*" "Vanilla-work suppression emits a one-shot runtime diagnostic"
+
     $identityType = Get-RequiredType "VehicleHandlers.Employees.VehicleHandlerIdentity"
     $choiceLabelField = $identityType.Fields | Where-Object { $_.Name -ceq "ChoiceLabel" } | Select-Object -First 1
     $choiceTextField = $identityType.Fields | Where-Object { $_.Name -ceq "ChoiceText" } | Select-Object -First 1
@@ -179,10 +182,15 @@ try {
     )
     Assert-Call $lifecycleFilter "*GetComponent*VehicleHandlers.Employees.HandlerEmployee*" "Lifecycle filtering excludes every unmarked vanilla Handler"
 
+    $blockVanillaWork = Get-RequiredMethod "VehicleHandlers.Employees.HandlerLifecycleFilter" "BlockVanillaWork" @(
+        "Il2CppScheduleOne.Employees.Packager"
+    )
+    Assert-Call $blockVanillaWork "*VehicleHandlers.Employees.HandlerEmployee::ReportVanillaWorkBlocked*" "Vanilla-work suppression reports through the marked Handler component"
+
     $shouldIdlePrefix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerShouldIdlePatch" "Prefix" @(
         "Il2CppScheduleOne.Employees.Packager", "System.Boolean&"
     )
-    Assert-Call $shouldIdlePrefix "*VehicleHandlers.Employees.HandlerLifecycleFilter::TryGetMarker*" "Vehicle Handlers are forced idle instead of entering vanilla Packager work"
+    Assert-Call $shouldIdlePrefix "*VehicleHandlers.Employees.HandlerLifecycleFilter::BlockVanillaWork*" "Vehicle Handlers are forced idle instead of entering vanilla Packager work"
 
     foreach ($workPatch in @(
         "VehicleHandlers.Employees.HandlerStartPackagingPatch",
@@ -191,7 +199,7 @@ try {
         "VehicleHandlers.Employees.HandlerStartMovePressPatch"
     )) {
         $workPrefix = Get-RequiredMethod $workPatch "Prefix" @("Il2CppScheduleOne.Employees.Packager")
-        Assert-Call $workPrefix "*VehicleHandlers.Employees.HandlerLifecycleFilter::TryGetMarker*" "$workPatch rejects vanilla Packager work only for marked Vehicle Handlers"
+        Assert-Call $workPrefix "*VehicleHandlers.Employees.HandlerLifecycleFilter::BlockVanillaWork*" "$workPatch rejects vanilla Packager work only for marked Vehicle Handlers"
     }
 
     $firePrefix = Get-RequiredMethod "VehicleHandlers.Employees.HandlerFirePatch" "Prefix" @(

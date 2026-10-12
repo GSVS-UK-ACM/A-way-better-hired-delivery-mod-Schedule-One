@@ -11,6 +11,7 @@ namespace VehicleHandlers.Employees
         private Employee worker;
         private string handlerGuid;
         private bool unavailableNotified;
+        private bool workGuardLogged;
 
         public HandlerEmployee(IntPtr nativePointer)
             : base(nativePointer)
@@ -81,7 +82,19 @@ namespace VehicleHandlers.Employees
                 return;
             }
 
+            MelonLogger.Msg($"Vehicle Handler {handler} became unavailable: {reason}.");
             HandlerLifecycleBridge.NotifyUnavailable(handler, reason);
+        }
+
+        internal void ReportVanillaWorkBlocked()
+        {
+            if (workGuardLogged)
+            {
+                return;
+            }
+
+            workGuardLogged = true;
+            MelonLogger.Msg("Vehicle Handler lifecycle active; vanilla Packager work is disabled for this marked employee.");
         }
     }
 }

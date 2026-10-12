@@ -45,6 +45,7 @@ namespace VehicleHandlers.Employees
             unloadingNotified = true;
             IHandlerLifecycleSink current = sink;
             sink = null;
+            MelonLogger.Msg("Vehicle Handler lifecycle bridge shut down.");
             if (current == null)
             {
                 return;
@@ -68,6 +69,17 @@ namespace VehicleHandlers.Employees
             marker = worker == null ? null : worker.GetComponent<HandlerEmployee>();
             return marker != null;
         }
+
+        internal static bool BlockVanillaWork(Packager worker)
+        {
+            if (!TryGetMarker(worker, out HandlerEmployee marker))
+            {
+                return false;
+            }
+
+            marker.ReportVanillaWorkBlocked();
+            return true;
+        }
     }
 
     [HarmonyPatch(typeof(Packager), "ShouldIdle", new Type[] { })]
@@ -76,7 +88,7 @@ namespace VehicleHandlers.Employees
         [HarmonyPrefix]
         private static bool Prefix(Packager __instance, ref bool __result)
         {
-            if (!HandlerLifecycleFilter.TryGetMarker(__instance, out _))
+            if (!HandlerLifecycleFilter.BlockVanillaWork(__instance))
             {
                 return true;
             }
@@ -91,7 +103,7 @@ namespace VehicleHandlers.Employees
     {
         [HarmonyPrefix]
         private static bool Prefix(Packager __instance) =>
-            !HandlerLifecycleFilter.TryGetMarker(__instance, out _);
+            !HandlerLifecycleFilter.BlockVanillaWork(__instance);
     }
 
     [HarmonyPatch(typeof(Packager), nameof(Packager.StartPress), typeof(BrickPress))]
@@ -99,7 +111,7 @@ namespace VehicleHandlers.Employees
     {
         [HarmonyPrefix]
         private static bool Prefix(Packager __instance) =>
-            !HandlerLifecycleFilter.TryGetMarker(__instance, out _);
+            !HandlerLifecycleFilter.BlockVanillaWork(__instance);
     }
 
     [HarmonyPatch(typeof(Packager), nameof(Packager.StartMoveItem), typeof(PackagingStation))]
@@ -107,7 +119,7 @@ namespace VehicleHandlers.Employees
     {
         [HarmonyPrefix]
         private static bool Prefix(Packager __instance) =>
-            !HandlerLifecycleFilter.TryGetMarker(__instance, out _);
+            !HandlerLifecycleFilter.BlockVanillaWork(__instance);
     }
 
     [HarmonyPatch(typeof(Packager), nameof(Packager.StartMoveItem), typeof(BrickPress))]
@@ -115,7 +127,7 @@ namespace VehicleHandlers.Employees
     {
         [HarmonyPrefix]
         private static bool Prefix(Packager __instance) =>
-            !HandlerLifecycleFilter.TryGetMarker(__instance, out _);
+            !HandlerLifecycleFilter.BlockVanillaWork(__instance);
     }
 
     [HarmonyPatch(typeof(Packager), "Fire", new Type[] { })]
