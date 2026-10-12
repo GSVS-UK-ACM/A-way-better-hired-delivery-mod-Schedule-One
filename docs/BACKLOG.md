@@ -11,7 +11,7 @@ Valid states: `READY`, `IN_PROGRESS`, `BLOCKED`, `VERIFYING`, `DONE`.
 | VH-M2-001 | M2 | DONE | Codex | Genuine Handler runtime worker and appearance foundation; constructed-worker visual proof carried into VH-M2-002. |
 | VH-M2-002 | M2 | DONE | Codex | Distinct base hiring integration; in-game hire, appearance, save marker, and reload attachment verified. |
 | VH-M2-003 | M2 | DONE | Codex | Work lifecycle and leave/despawn behavior; work isolation, save restoration, and firing runtime verified. |
-| VH-M3-001 | M3 | IN_PROGRESS | Codex | One-vehicle assignment model. |
+| VH-M3-001 | M3 | DONE | Codex | One-vehicle assignment model. |
 | VH-M3-002 | M3 | READY | — | Clipboard configuration and controls. |
 | VH-M3-003 | M3 | READY | — | Versioned assignment persistence. |
 | VH-M4-001 | M4 | READY | — | Server-authoritative bay reservation registry. |

@@ -2,11 +2,11 @@
 
 ## Active claim
 
-`VH-M3-001` is claimed by Codex on `feat/vh-m3-001-assignment-model`. Scope is the in-memory, server-owned one-vehicle assignment registry and its dependency-free verification. Clipboard UI, persistence, reservations, validation against live game objects, and vehicle movement remain in their later backlog items.
+None. `VH-M3-001` is complete on `feat/vh-m3-001-assignment-model` and awaits owner-approved merge.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, and lifecycle PR #6 are merged. All M2 work is complete and runtime verified on `dev5`: marked Vehicle Handlers are excluded from vanilla Packager work, expose base work readiness, and forward fire/despawn/unload cleanup through `IHandlerLifecycleSink`. `VH-M3-001` is now implementing the assignment authority; clipboard controls, persistence, reservations, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, and lifecycle PR #6 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` now supplies the in-memory assignment authority: one snapshot per Handler, exclusive vehicle claims, compare-and-swap revisions, removal tombstones, strict trip binding/transitions, deterministic snapshots, and a bounded save-restore phase. Clipboard controls, persistence, reservations, live-object validation, and movement remain unchanged.
 
 ## Compatibility target
 
@@ -49,17 +49,21 @@ Game references remain outside this repository.
 - A second Vehicle Handler was hired and fired on the test save. GUID `64baf792-6d7a-4b60-91f3-037ffac126ae` emitted exactly one `Fired` lifecycle event, the later leave/despawn path produced no duplicate cleanup, and no Vehicle Handlers exception followed.
 - During the active work period, Michelle remained idle while an ordinary unmarked Handler continued normal Packager work. This runtime-verifies both sides of the narrow work filter.
 - `0.4.7f12-dev5` blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. `VH-M2-003` is complete.
+- `VH-M3-001` adds a dependency-free assignment verifier with 51 assertions covering one-vehicle exclusivity, immutable snapshots, stale-write rejection, active-trip reconfiguration/removal blocks, exact trip ownership, legal transitions, revision tombstones, and restore conflicts.
+- The complete `0.4.7f12-dev6` gate passes 141 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, and 64 compiled Handler runtime checks; release compilation has zero warnings and zero errors.
+- Built `0.4.7f12-dev6` DLL SHA-256: `0D325D4D978D30E49D5AFE5623C36EA20AFA3222F1A9B2989AC1EACF25C69FC0`. It is a build artifact only and has not been installed; this milestone adds no player-facing control surface.
 
 Commands:
 
 ```powershell
 .\scripts\verify-game-api.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>"
 .\scripts\verify-contracts.ps1 -DotNet "<dotnet-8.0.425>"
+.\scripts\verify-assignments.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>" -DotNet "<dotnet-8.0.425>"
 ```
 
 ## Next work
 
-1. Implement and dependency-free verify `VH-M3-001` on `feat/vh-m3-001-assignment-model`.
-2. Keep clipboard UI, persistence adapters, reservations, and vehicle movement in their respective later backlog items.
-3. Submit the completed assignment-model branch for owner review and merge approval.
+1. Obtain owner approval and merge `feat/vh-m3-001-assignment-model`.
+2. Claim `VH-M3-002` for clipboard configuration and controls.
+3. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.
