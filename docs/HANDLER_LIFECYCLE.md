@@ -1,6 +1,6 @@
 # Vehicle Handler Lifecycle
 
-Status: Statically verified; awaiting clean in-game `0.4.7f12-dev5` evidence
+Status: `dev5` startup and save restoration runtime verified; work isolation and expendable firing checks remain
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -46,10 +46,12 @@ Current result:
 
 The first `dev4` menu launch registered `HandlerEmployee` and initialized the mod, but IL2CPP logged `Assembly VehicleHandlers.dll is not registered in il2cpp` while scanning a managed-only helper whose signature referenced the mod-owned lifecycle enum. The game then exited abruptly during save loading immediately after `Load start!`, without a managed exception. Those helpers are now explicitly decorated with `HideFromIl2Cpp`; the statically verified `dev5` candidate SHA-256 is `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`. The runtime-verified `dev3` DLL remains preserved under a disabled extension for rollback.
 
+On 2026-10-12, `dev5` registered the component without the `dev4` assembly error, reached the main menu, loaded the existing save, and attached exactly one `HandlerEmployee` to Michelle. She retained the orange Vehicle Handler cue and normal interaction prompt. No Vehicle Handlers warning or exception occurred. HWE and DeliverySpotsPlus emitted unrelated errors in the full mod set.
+
 ## Required runtime proof
 
-1. Launch `0.4.7f12-dev5` under MelonLoader 0.7.3 and confirm clean startup plus load-time role attachment without the `dev4` assembly-registration error.
-2. Confirm Michelle remains idle and keeps normal employee dialogue without performing any previously configured Packager job.
+1. ~~Launch `0.4.7f12-dev5` under MelonLoader 0.7.3 and confirm clean startup plus load-time role attachment without the `dev4` assembly-registration error.~~ Passed on 2026-10-12.
+2. Confirm Michelle remains idle and keeps normal employee dialogue without performing any previously configured Packager job. Save-load appearance and interaction prompt passed; active work isolation remains to be observed.
 3. Confirm an ordinary vanilla Handler can still perform its configured Packager work.
 4. Fire a disposable Vehicle Handler only on an expendable test save and confirm the base firing/leave path completes without a Vehicle Handlers exception.
 5. Return to the menu and exit once, confirming shutdown does not corrupt the saved Vehicle Handler or emit duplicate cleanup failures.

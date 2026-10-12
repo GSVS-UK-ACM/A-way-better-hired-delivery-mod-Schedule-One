@@ -47,8 +47,9 @@ Game references remain outside this repository.
 - The save stored `vehiclehandler_michelle_martin`. After returning to the menu and reloading, `Employee.Initialize` produced one fresh attachment log and Michelle retained the cue and normal dialogue. No Vehicle Handlers warning or exception occurred.
 - Worker Collision/HWE emitted physical-capsule warnings for all loaded employee types, including Michelle and ordinary vanilla workers. These are unrelated full-mod-set noise, not a Vehicle Handlers failure.
 - The first `0.4.7f12-dev4` menu launch registered the component and initialized the mod, but IL2CPP logged an assembly-registration error while scanning managed-only component helpers. The game then exited abruptly during save loading immediately after `Load start!`, without a managed exception. `dev5` decorates those helpers with `HideFromIl2Cpp` and adds verifier coverage for the boundary.
-- Statically verified `0.4.7f12-dev5` candidate SHA-256: `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
-- `0.4.7f12-dev5` blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. Runtime evidence is pending.
+- Installed `0.4.7f12-dev5` SHA-256: `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
+- On 2026-10-12, `dev5` registered without the `dev4` assembly error, reached the main menu, loaded the existing save, and attached exactly one marker to Michelle. She retained the orange cue and normal interaction prompt; Vehicle Handlers emitted no warning or exception. The full mod set's HWE and DeliverySpotsPlus errors were unrelated.
+- `0.4.7f12-dev5` blocks only marked Vehicle Handlers from `ShouldIdle`, packaging, pressing, and both Packager item-moving entry points. Fire, leave/despawn, and mod shutdown enter the frozen lifecycle sink boundary. Active work isolation and an expendable firing test remain.
 
 Commands:
 
@@ -60,8 +61,7 @@ Commands:
 
 ## Next work
 
-1. Install `0.4.7f12-dev5` and launch under MelonLoader 0.7.3.
-2. Confirm Michelle reloads, remains idle, retains normal dialogue, and does not enter vanilla Packager work.
-3. Confirm at least one unmarked vanilla Handler still performs its configured work.
-4. Use an expendable save for a firing/leave test, then inspect for a clean base despawn and no Vehicle Handlers exception.
-5. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.
+1. Confirm Michelle remains idle, retains normal dialogue, and does not enter vanilla Packager work during an active work opportunity.
+2. Confirm at least one unmarked vanilla Handler still performs its configured work.
+3. Use an expendable save for a firing/leave test, then inspect for a clean base despawn and no Vehicle Handlers exception.
+4. Keep job assignment UI, assignment persistence, reservations, and vehicle movement in their later backlog items.
