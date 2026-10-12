@@ -12,6 +12,22 @@ namespace VehicleHandlers.Employees
         {
         }
 
+        public static HandlerEmployee EnsureAttached(Employee worker)
+        {
+            if (worker == null)
+            {
+                return null;
+            }
+
+            HandlerEmployee existing = worker.GetComponent<HandlerEmployee>();
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            return worker.gameObject.AddComponent<HandlerEmployee>();
+        }
+
         public void Awake()
         {
             Employee worker = GetComponent<Employee>();

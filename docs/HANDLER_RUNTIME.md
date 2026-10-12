@@ -1,6 +1,6 @@
 # Handler Runtime Worker
 
-Status: Startup verified; awaiting worker-construction and appearance verification
+Status: Distinct hiring, appearance, and save/load restoration runtime verified
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -12,7 +12,7 @@ Target: Schedule I 0.4.7f12 IL2CPP
 
 The first runtime attempt used direct inheritance from `Employee`. Schedule I's pinned interop runtime rejected that injected type while resolving the inherited `NPCMovement.WalkResult` virtual signature. Composition avoids that unsupported injection boundary while retaining a genuine base-game Employee as the networked worker.
 
-M2-001 does not manually construct or spawn an employee. The hiring integration in M2-002 must attach the registered role component to its employee construction donor before spawn.
+M2-001 does not manually construct or spawn an employee. M2-002 adds a distinct Vehicle Handler fixer choice while preserving the vanilla construction path. A reserved, verifier-guarded wire value is mapped to the base Handler prefab on the server, and a save-safe employee-ID marker identifies only Vehicle Handler hires. The registered role component attaches idempotently after server creation and normal employee initialization; the latter covers client replicas and workers restored from base save data.
 
 ## Appearance
 
@@ -27,14 +27,14 @@ The worker therefore keeps the game's gender, body, face, hair, voice, and mugsh
 
 ## Scope boundary
 
-This task supplies the injected runtime class and its appearance behavior only. It does not:
+The runtime worker and M2-002 hiring integration do not:
 
-- patch `EmployeeManager.GetEmployeePrefab` or either creation method;
+- replace either employee creation method (the custom discriminator is translated by narrow prefix/postfix patches around the vanilla lookup and creation path);
 - clone or register a FishNet spawnable prefab;
-- change hiring, wages, beds, lockers, firing, saving, or leave/despawn;
+- replace or bypass hiring, wages, beds, lockers, firing, saving, or leave/despawn;
 - implement assignments, management UI, reservations, or vehicle movement.
 
-Those behaviors remain assigned to M2-002 and later backlog items.
+The base hiring path is described in [Hiring Integration](HIRING_INTEGRATION.md). Work lifecycle and later behavior remain assigned to subsequent backlog items.
 
 ## Verification
 
@@ -44,8 +44,10 @@ After compilation, `scripts/verify-handler-runtime.ps1` inspects the produced as
 
 - public `MonoBehaviour` injection boundary;
 - the native-pointer constructor;
+- idempotent marker reuse and `GameObject.AddComponent<HandlerEmployee>` attachment;
 - Unity `Awake` binding to the real Employee component;
 - Handler role assignment;
+- server-creation and normal-initialization postfix dispatch;
 - Handler-filtered Harmony appearance dispatch, worn-object color mutation, and repaint;
 - idempotent IL2CPP registration.
 
@@ -58,8 +60,8 @@ On 2026-09-25, the exact built DLL was installed into the game Mods directory an
 
 On 2026-10-09, Schedule I 0.4.7f12 replaced the avatar settings/body-layer runtime API with `AvatarAppearance` and runtime avatar objects. The appearance implementation and verifier were migrated to that API. The updated DLL registered the Handler component and printed the initialization banner on v0.4.7f12 without a Vehicle Handlers exception.
 
-The mod also prints an orange GSVS startup banner after successful Handler runtime registration. The banner reports Vehicle Handlers `v0.1.0`, Schedule I `0.4.7f12 | IL2CPP`, build `0.4.7f12-dev1`, creator `GSVS UK ACM`, project owner `xboxnuker-rgb`, and the `Hire. Assign. Deliver.` tagline.
+The mod also prints an orange GSVS startup banner after successful Handler runtime registration. The corrected hiring-integration test build reports Vehicle Handlers `v0.1.0`, Schedule I `0.4.7f12 | IL2CPP`, build `0.4.7f12-dev3`, creator `GSVS UK ACM`, project owner `xboxnuker-rgb`, and the `Hire. Assign. Deliver.` tagline.
 
-The current successful installed DLL SHA-256 is `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
+The runtime-verified `0.4.7f12-dev3` DLL SHA-256 is `65F4C312643A2C2D7B3382651F3963186E74863E7F56CEA3038BF618178A59A2`. Superseded DLLs are retained outside the repository with disabled extensions and cannot be loaded by MelonLoader.
 
-Startup registration is now proven. A future FishNet prefab, component attachment, role persistence, and rendered appearance still require isolated in-game evidence through M2-002 before this item moves from `VERIFYING` to `DONE`.
+Startup registration is proven. The first `dev2` gameplay inspection exposed that the broad Handler filter reused the vanilla Handler/packager choice; that build was rejected before hiring. On 2026-10-12, `dev3` displayed the independent fifth Vehicle Handler choice, hired Michelle Martin through the concrete `Il2CppScheduleOne.Employees.Packager` wrapper, rendered the orange worn-object cue, saved the `vehiclehandler_michelle_martin` identity, and attached the role exactly once again after a menu/save reload. Ordinary Handlers remained unmarked. `VH-M2-002` is complete; assignments and vehicle work remain deliberately out of scope.
