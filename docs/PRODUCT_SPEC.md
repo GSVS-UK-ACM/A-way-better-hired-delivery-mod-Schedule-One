@@ -1,7 +1,7 @@
 # Vehicle Handlers Product Specification
 
 Status: Approved for implementation  
-Target: Schedule I 0.4.6f13 IL2CPP
+Target: Schedule I 0.4.7f12 IL2CPP
 
 ## Outcome
 

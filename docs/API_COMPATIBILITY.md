@@ -1,20 +1,24 @@
 # Verified Game API Surface
 
 Status: Verified
-Target: Schedule I 0.4.6f13 IL2CPP
+Target: Schedule I 0.4.7f12 IL2CPP
 
 ## Pinned inputs
 
 | Assembly | SHA-256 |
 | --- | --- |
-| `Assembly-CSharp.dll` | `0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA` |
-| `Il2CppFishNet.Runtime.dll` | `202E89D1E5B27E19403F66DA1779CA82E6E08D17199F2D2593C86CFDC65EF0F4` |
+| `Assembly-CSharp.dll` | `CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC` |
+| `Il2CppFishNet.Runtime.dll` | `E8972F81F848077A0A8B337D343D724A44E6B312A1C8B92E3892097175B59C80` |
+| `Il2CppScheduleOne.Core.dll` | `A4932C4750637F901F122DF90AD0101F09DDFC3E8F204B1F3C3B5BD77F462926` |
+| `Il2CppInterop.Runtime.dll` | `A1154A31EC72D4097A0A1DB50E046D97AA6C9B60BCFEB4D0489DF6230960F674` |
+| `UnityEngine.CoreModule.dll` | `E993B0A6388D5A21748B28E5E40EBEC1BC43B01DFD550AEBBCB79F3072A48E87` |
+| `0Harmony.dll` | `6C898933B52149E8BCF6722305C7E4D94ADD47C9E53B364096F91721624C0877` |
 
 The verifier also requires every assembly referenced by `VehicleHandlers.Il2Cpp.csproj` to exist in the supplied MelonLoader root. Game assemblies and toolchains remain outside the repository.
 
 ## Compatibility gate
 
-`scripts/verify-game-api.ps1` performs 95 exact checks before compilation:
+`scripts/verify-game-api.ps1` performs 122 exact checks before compilation:
 
 - required MelonLoader and generated IL2CPP reference layout
 - pinned game and FishNet assembly hashes
@@ -25,6 +29,7 @@ The verifier also requires every assembly referenced by `VehicleHandlers.Il2Cpp.
 - loading-bay availability, occupancy, parking, alignment, and vehicle transition APIs
 - FishNet spawn, server, client, ownership, and network-object signals
 - save and load events and active save-path identifiers
+- IL2CPP class injection, Unity component composition, Handler role assignment, Harmony patch attributes, avatar access, and instance-owned worn-object appearance APIs
 - method return types, parameter types, generic arity, static/instance status, and selected virtual flags
 - property types, static/instance status, and getter/setter shape
 
@@ -38,10 +43,11 @@ A mismatched hash or changed signature fails immediately with the expected and o
 
 ## Verified result
 
-- All 95 checks passed against the pinned 0.4.6f13 IL2CPP reference set.
+- All 122 checks passed against the pinned 0.4.7f12 IL2CPP, Unity, MelonLoader interop, and Harmony reference set.
 - A deliberately incorrect `Assembly-CSharp.dll` hash was rejected.
 - The release build completed with zero warnings and zero errors using .NET SDK 8.0.425.
-- Output DLL SHA-256: `E7A2DC413DAA588C64AC0EE60151EE2862295F550E45902921E07C6B75CC24CC`.
+- Compiled Handler runtime verification passed all 17 checks, including startup-banner integration.
+- Latest verified, installed, and startup-tested output DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
 
 ## Boundary
 

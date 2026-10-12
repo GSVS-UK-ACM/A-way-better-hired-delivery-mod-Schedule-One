@@ -10,7 +10,7 @@ The versioned cross-milestone types and mutation boundaries are frozen in [Inter
 
 ### Handler employee
 
-`HandlerEmployee` supplies the missing runtime worker for the existing `EEmployeeType.Handler` value. An existing employee prefab may be used as a construction donor, but role-specific behavior is replaced and the resulting worker is identified and displayed as Handler.
+`HandlerEmployee` is an injected IL2CPP role component attached beside a genuine base-game `Employee`; it does not subclass or replace the game's FishNet employee component. This composition is required because the pinned interop runtime cannot inject through one inherited `Employee` virtual signature. The component applies the existing `EEmployeeType.Handler` role, while a Handler-filtered Harmony postfix adds a fail-safe high-visibility outer-layer color without mutating shared appearance assets. An existing employee prefab may be used as a construction donor, but role-specific behavior is replaced and the resulting worker is identified and displayed as Handler. See [Handler Runtime Worker](HANDLER_RUNTIME.md).
 
 ### Assignment registry
 

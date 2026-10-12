@@ -4,7 +4,7 @@ Status: Frozen for parallel M2-M4 implementation
 
 Contract version: `1`
 
-Target: Schedule I 0.4.6f13 IL2CPP
+Target: Schedule I 0.4.7f12 IL2CPP
 
 These contracts are internal to the mod assembly. Changes to names, enum values, identity rules, transition rules, or service semantics require a coordinated contract-version change and a handover update. New enum values are appended; existing numeric values are not reordered or reused.
 

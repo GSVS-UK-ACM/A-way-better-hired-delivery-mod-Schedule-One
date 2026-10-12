@@ -26,5 +26,10 @@ if (-not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
     throw "Build completed without the expected output: $outputPath"
 }
 
+& (Join-Path $PSScriptRoot "verify-handler-runtime.ps1") `
+    -MelonLoaderRoot $MelonLoaderRoot `
+    -AssemblyPath $outputPath
+if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
 Write-Output "Built $outputPath"
 

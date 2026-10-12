@@ -3,9 +3,17 @@ param(
     [Parameter(Mandatory = $true)]
     [string] $MelonLoaderRoot,
 
-    [string] $ExpectedAssemblySha256 = "0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA",
+    [string] $ExpectedAssemblySha256 = "CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC",
 
-    [string] $ExpectedFishNetSha256 = "202E89D1E5B27E19403F66DA1779CA82E6E08D17199F2D2593C86CFDC65EF0F4"
+    [string] $ExpectedFishNetSha256 = "E8972F81F848077A0A8B337D343D724A44E6B312A1C8B92E3892097175B59C80",
+
+    [string] $ExpectedCoreSha256 = "A4932C4750637F901F122DF90AD0101F09DDFC3E8F204B1F3C3B5BD77F462926",
+
+    [string] $ExpectedInteropSha256 = "A1154A31EC72D4097A0A1DB50E046D97AA6C9B60BCFEB4D0489DF6230960F674",
+
+    [string] $ExpectedUnityCoreSha256 = "E993B0A6388D5A21748B28E5E40EBEC1BC43B01DFD550AEBBCB79F3072A48E87",
+
+    [string] $ExpectedHarmonySha256 = "6C898933B52149E8BCF6722305C7E4D94ADD47C9E53B364096F91721624C0877"
 )
 
 $ErrorActionPreference = "Stop"
@@ -38,6 +46,10 @@ $script:PassCount++
 
 $assemblyPath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\Assembly-CSharp.dll"
 $fishNetPath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\Il2CppFishNet.Runtime.dll"
+$corePath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\Il2CppScheduleOne.Core.dll"
+$interopPath = Join-Path $MelonLoaderRoot "net6\Il2CppInterop.Runtime.dll"
+$unityCorePath = Join-Path $MelonLoaderRoot "Il2CppAssemblies\UnityEngine.CoreModule.dll"
+$harmonyPath = Join-Path $MelonLoaderRoot "net6\0Harmony.dll"
 $cecilPath = Join-Path $MelonLoaderRoot "net6\Mono.Cecil.dll"
 
 function Assert-FileHash(
@@ -56,13 +68,25 @@ function Assert-FileHash(
 
 Assert-FileHash $assemblyPath $ExpectedAssemblySha256 "Assembly-CSharp.dll"
 Assert-FileHash $fishNetPath $ExpectedFishNetSha256 "Il2CppFishNet.Runtime.dll"
+Assert-FileHash $corePath $ExpectedCoreSha256 "Il2CppScheduleOne.Core.dll"
+Assert-FileHash $interopPath $ExpectedInteropSha256 "Il2CppInterop.Runtime.dll"
+Assert-FileHash $unityCorePath $ExpectedUnityCoreSha256 "UnityEngine.CoreModule.dll"
+Assert-FileHash $harmonyPath $ExpectedHarmonySha256 "0Harmony.dll"
 
 [void] [System.Reflection.Assembly]::LoadFrom($cecilPath)
 $gameAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($assemblyPath)
 $fishNetAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($fishNetPath)
+$coreAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($corePath)
+$interopAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($interopPath)
+$unityCoreAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($unityCorePath)
+$harmonyAssembly = [Mono.Cecil.AssemblyDefinition]::ReadAssembly($harmonyPath)
 $assemblies = @{
     Game = $gameAssembly
     FishNet = $fishNetAssembly
+    Core = $coreAssembly
+    Interop = $interopAssembly
+    Unity = $unityCoreAssembly
+    Harmony = $harmonyAssembly
 }
 
 try {
@@ -220,6 +244,23 @@ try {
     Assert-Type "Game" "Il2CppScheduleOne.Delivery.LoadingDock" "UnityEngine.MonoBehaviour"
     Assert-Type "Game" "Il2CppScheduleOne.Vehicles.LandVehicle" "Il2CppFishNet.Object.NetworkBehaviour"
     Assert-Type "Game" "Il2CppScheduleOne.Vehicles.VehicleManager" 'Il2CppScheduleOne.DevUtilities.NetworkSingleton`1<Il2CppScheduleOne.Vehicles.VehicleManager>'
+    Assert-Type "Game" "Il2CppScheduleOne.AvatarFramework.Avatar" "UnityEngine.MonoBehaviour"
+    Assert-Type "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "UnityEngine.MonoBehaviour"
+    Assert-Type "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "System.Object"
+    Assert-Type "Unity" "UnityEngine.Component" "UnityEngine.Object"
+    Assert-Type "Unity" "UnityEngine.Behaviour" "UnityEngine.Component"
+    Assert-Type "Unity" "UnityEngine.MonoBehaviour" "UnityEngine.Behaviour"
+    Assert-Type "Harmony" "HarmonyLib.HarmonyPatch" "HarmonyLib.HarmonyAttribute"
+    Assert-Type "Harmony" "HarmonyLib.HarmonyPostfix" "System.Attribute"
+
+    Assert-Method "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "IsTypeRegisteredInIl2Cpp" "System.Boolean" @() $true 1
+    Assert-Method "Interop" "Il2CppInterop.Runtime.Injection.ClassInjector" "RegisterTypeInIl2Cpp" "System.Void" @() $true 1
+    Assert-Method "Unity" "UnityEngine.Component" "GetComponent" "T" @() $false 1
+    Assert-Property "Unity" "UnityEngine.Behaviour" "enabled" "System.Boolean" $true
+    Assert-Method "Harmony" "HarmonyLib.HarmonyPatch" ".ctor" "System.Void" @(
+        "System.Type", "System.String", "System.Type[]"
+    )
+    Assert-Method "Harmony" "HarmonyLib.HarmonyPostfix" ".ctor" "System.Void"
 
     # Handler creation and base employee lifecycle.
     Assert-EnumValue "Il2CppScheduleOne.Employees.EEmployeeType" "Handler" 1
@@ -242,6 +283,7 @@ try {
     Assert-Property "Game" "Il2CppScheduleOne.Employees.Employee" "AssignedProperty" "Il2CppScheduleOne.Property.Property" $true
     Assert-Property "Game" "Il2CppScheduleOne.Employees.Employee" "EmployeeIndex" "System.Int32" $true
     Assert-Property "Game" "Il2CppScheduleOne.Employees.Employee" "PaidForToday" "System.Boolean" $true
+    Assert-Property "Game" "Il2CppScheduleOne.Employees.Employee" "Type" "Il2CppScheduleOne.Employees.EEmployeeType" $true
     Assert-Property "Game" "Il2CppScheduleOne.Employees.Employee" "EmployeeType" "Il2CppScheduleOne.Employees.EEmployeeType" $false
     Assert-Property "Game" "Il2CppScheduleOne.Employees.Employee" "Fired" "System.Boolean" $true
     Assert-Method "Game" "Il2CppScheduleOne.Employees.Employee" "Initialize" "System.Void" @(
@@ -257,6 +299,16 @@ try {
     Assert-Method "Game" "Il2CppScheduleOne.Employees.Employee" "GetHome" "Il2CppScheduleOne.Employees.EmployeeHome" @() $false 0 $true
     Assert-Method "Game" "Il2CppScheduleOne.Employees.Employee" "RemoveDailyWage" "System.Void"
     Assert-Method "Game" "Il2CppScheduleOne.Employees.Employee" "ShouldSave" "System.Boolean" @() $false 0 $true
+    Assert-Method "Game" "Il2CppScheduleOne.Employees.Employee" "InitializeAppearance" "System.Void" @(
+        "System.Boolean", "System.Int32"
+    ) $false 0 $true
+    Assert-Property "Game" "Il2CppScheduleOne.NPCs.NPC" "Avatar" "Il2CppScheduleOne.AvatarFramework.Avatar" $true
+    Assert-Property "Game" "Il2CppScheduleOne.AvatarFramework.Avatar" "Appearance" "Il2CppScheduleOne.Avatar.AvatarAppearance" $false
+    Assert-Property "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "_wornObjects" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Core.Avatar.AvatarObject>' $true
+    Assert-Property "Core" "Il2CppScheduleOne.Core.Avatar.AvatarObject" "PropertyCollection" "Il2CppScheduleOne.Core.Avatar.Properties.AvatarPropertyCollection" $false
+    Assert-Method "Core" "Il2CppScheduleOne.Core.Avatar.Properties.AvatarPropertyCollection" "GetFirstColorProperty" "Il2CppScheduleOne.Core.Avatar.Properties.ColorProperty"
+    Assert-Method "Core" 'Il2CppScheduleOne.Core.Avatar.Properties.AvatarProperty`1' "SetValue" "System.Void" @("T")
+    Assert-Method "Game" "Il2CppScheduleOne.Avatar.AvatarAppearance" "RepaintLayers" "System.Void"
     Assert-Property "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "selectedEmployeeType" "Il2CppScheduleOne.Employees.EEmployeeType" $true
     Assert-Method "Game" "Il2CppScheduleOne.Dialogue.DialogueController_Fixer" "Confirm" "System.Void"
 
@@ -341,9 +393,13 @@ try {
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "onLoadComplete" "UnityEngine.Events.UnityEvent" $true
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "IsLoading" "System.Boolean" $true
 
-    Write-Output "Schedule I 0.4.6f13 IL2CPP Vehicle Handlers API verification passed ($script:PassCount checks)."
+    Write-Output "Schedule I 0.4.7f12 IL2CPP Vehicle Handlers API verification passed ($script:PassCount checks)."
 }
 finally {
     $gameAssembly.Dispose()
     $fishNetAssembly.Dispose()
+    $coreAssembly.Dispose()
+    $interopAssembly.Dispose()
+    $unityCoreAssembly.Dispose()
+    $harmonyAssembly.Dispose()
 }

@@ -2,34 +2,45 @@
 
 ## Active claim
 
-- Backlog: `VH-M1-002`
+- Backlog: `VH-M2-001`
 - Owner: Codex
-- Branch: `feat/vh-m1-002-contracts`
-- Status: `DONE`
+- Branch: `feat/vh-m2-001-handler-runtime`
+- Status: `VERIFYING`
 
 ## Current outcome
 
-Foundation PR #1 and exact API-verifier PR #2 are merged. Draft PR #3 completes `VH-M1-002` with contract version 1: strongly typed identities, immutable revisioned assignments, stable validation outcomes, an explicit trip transition policy, owner-and-trip reservation leases, and server-authoritative service boundaries. M2, M3, and M4 can implement against these contracts after PR #3 is merged.
+Foundation PR #1, exact API-verifier PR #2, and contract PR #3 are merged. Draft PR #4 implements `VH-M2-001`: `HandlerEmployee` is an injected role component that binds to a genuine game `Employee`, applies the existing Handler role, and adds a fail-safe orange worn-object appearance through a Handler-filtered Harmony postfix. The branch has been migrated and startup-tested against Schedule I 0.4.7f12. Hiring, prefab/network wiring, work lifecycle, assignments, reservations, and movement remain unchanged.
 
 ## Compatibility target
 
-- Schedule I: `0.4.6f13`
+- Schedule I: `0.4.7f12`
 - Backend: IL2CPP
 - MelonLoader: `0.7.0 Open-Beta` reference layout
-- `Assembly-CSharp.dll` SHA-256: `0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA`
-- `Il2CppFishNet.Runtime.dll` SHA-256: `202E89D1E5B27E19403F66DA1779CA82E6E08D17199F2D2593C86CFDC65EF0F4`
+- `Assembly-CSharp.dll` SHA-256: `CEC1F3D02B38CEBB59A977FB8C23400094203C63FF7AAA5094143925475BB2CC`
+- `Il2CppFishNet.Runtime.dll` SHA-256: `E8972F81F848077A0A8B337D343D724A44E6B312A1C8B92E3892097175B59C80`
+- `Il2CppScheduleOne.Core.dll` SHA-256: `A4932C4750637F901F122DF90AD0101F09DDFC3E8F204B1F3C3B5BD77F462926`
+- `Il2CppInterop.Runtime.dll` SHA-256: `A1154A31EC72D4097A0A1DB50E046D97AA6C9B60BCFEB4D0489DF6230960F674`
+- `UnityEngine.CoreModule.dll` SHA-256: `E993B0A6388D5A21748B28E5E40EBEC1BC43B01DFD550AEBBCB79F3072A48E87`
+- `0Harmony.dll` SHA-256: `6C898933B52149E8BCF6722305C7E4D94ADD47C9E53B364096F91721624C0877`
 
 Game references remain outside this repository.
 
 ## Verification status
 
-- Strict static API verification passed all 95 checks against the out-of-tree reference set.
+- Strict static API verification passed all 122 checks against the v0.4.7f12 out-of-tree reference set.
 - Dependency-free contract verification passed all 110 assertions, including the complete 9-by-9 trip transition matrix.
+- Compiled Handler runtime verification passed all 17 checks for inheritance, native construction, base delegation, role assignment, v0.4.7 appearance dispatch/mutation/repaint, idempotent injection, and startup-banner integration.
 - An intentionally incorrect `Assembly-CSharp.dll` hash was rejected before API inspection.
 - Release build completed with zero warnings and zero errors using .NET SDK `8.0.425`.
-- Verified contract-layer DLL SHA-256: `CCE4B75045CEAE2725D6AA1D77867AF604392539B849376D47F9B7DC989BA058`.
+- Verified and installed Handler-worker DLL SHA-256: `6271DB9D892DF71A83E90C3A656C6BD9CAA2A646847FA4AD8AA9DC1A013955E4`.
 - The production project now compiles only `Properties/AssemblyInfo.cs` and `Source/**/*.cs`; test build artifacts cannot leak into the mod DLL.
-- Runtime behavior remains untested because gameplay implementation has not started.
+- First in-game launch rejected direct `Employee` subclass injection because the interop runtime could not map inherited `NPCMovement.WalkResult`; the game remained responsive and no worker was created.
+- Second launch with component composition registered `VehicleHandlers.Employees.HandlerEmployee` successfully and printed the mod initialization banner with no Vehicle Handlers exception.
+- On 2026-10-09, MelonLoader identified game version `0.4.7f12`, regenerated changed interop assemblies, and exposed removal of the old `Avatar.CurrentSettings`/`SetBodyLayer` path. The Handler appearance now mutates the first color property on an instance-owned worn object and calls `AvatarAppearance.RepaintLayers`; the strict v0.4.7 verifier and build pass.
+- The v0.4.7-compatible DLL was installed and launched. MelonLoader again registered `VehicleHandlers.Employees.HandlerEmployee` and printed the Vehicle Handlers initialization banner with no Vehicle Handlers exception. Other installed mods logged unrelated v0.4.7 patch/type failures.
+- On 2026-10-10, the orange GSVS `CREATED BY` banner was added after successful runtime registration. A live v0.4.7f12 launch printed the mod version, target/backend, `0.4.7f12-dev1` build identity, `GSVS UK ACM`, `xboxnuker-rgb`, and `Hire. Assign. Deliver.` before the normal initialization message. The game test process was stopped afterward.
+- MelonLoader logged a missing `MethodXrefScanCache.db` while finalizing the first post-update interop generation, but emitted the new assemblies and completed game/mod startup. Treat this as a local MelonLoader generation warning to watch, not Vehicle Handlers runtime evidence.
+- Worker attachment to a later FishNet prefab and rendered appearance remain untested until M2-002 supplies the construction path.
 
 Commands:
 
@@ -41,6 +52,6 @@ Commands:
 
 ## Next work
 
-1. Review and merge draft PR #3 with owner approval.
-2. After merge, claim `VH-M2-001`, `VH-M3-001`, or `VH-M4-001` on separate branches; these milestone roots may now proceed independently.
-3. Preserve contract version 1 semantics and coordinate any contract change through the handover before parallel work consumes it.
+1. Exercise Handler component attachment through the M2-002 prefab path, confirm the genuine Employee reports Handler, and visually inspect the outer-layer appearance without changing skin/body color.
+2. Mark `VH-M2-001` `DONE` only with that evidence, then review and merge PR #4 before claiming `VH-M2-002` or `VH-M2-003`.
+3. Preserve the disabled failed DLL outside the repository only until the corrected PR is merged; it is not loadable by MelonLoader.
