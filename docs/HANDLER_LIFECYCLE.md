@@ -1,6 +1,6 @@
 # Vehicle Handler Lifecycle
 
-Status: `dev5` startup and save restoration runtime verified; work isolation and expendable firing checks remain
+Status: `dev5` startup, save restoration, and expendable firing runtime verified; active work isolation remains
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
@@ -48,10 +48,12 @@ The first `dev4` menu launch registered `HandlerEmployee` and initialized the mo
 
 On 2026-10-12, `dev5` registered the component without the `dev4` assembly error, reached the main menu, loaded the existing save, and attached exactly one `HandlerEmployee` to Michelle. She retained the orange Vehicle Handler cue and normal interaction prompt. No Vehicle Handlers warning or exception occurred. HWE and DeliverySpotsPlus emitted unrelated errors in the full mod set.
 
+An additional Vehicle Handler was then hired and fired on the test save. The runtime emitted exactly one `Fired` event for Handler GUID `64baf792-6d7a-4b60-91f3-037ffac126ae`; the later leave/despawn path did not emit duplicate cleanup, and no Vehicle Handlers exception followed.
+
 ## Required runtime proof
 
 1. ~~Launch `0.4.7f12-dev5` under MelonLoader 0.7.3 and confirm clean startup plus load-time role attachment without the `dev4` assembly-registration error.~~ Passed on 2026-10-12.
 2. Confirm Michelle remains idle and keeps normal employee dialogue without performing any previously configured Packager job. Save-load appearance and interaction prompt passed; active work isolation remains to be observed.
 3. Confirm an ordinary vanilla Handler can still perform its configured Packager work.
-4. Fire a disposable Vehicle Handler only on an expendable test save and confirm the base firing/leave path completes without a Vehicle Handlers exception.
+4. ~~Fire a disposable Vehicle Handler only on an expendable test save and confirm the base firing/leave path completes without a Vehicle Handlers exception.~~ Passed on 2026-10-12 with exactly one `Fired` notification and no duplicate cleanup.
 5. Return to the menu and exit once, confirming shutdown does not corrupt the saved Vehicle Handler or emit duplicate cleanup failures.

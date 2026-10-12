@@ -1,6 +1,6 @@
 # Handler Runtime Worker
 
-Status: Hiring, appearance, save/load restoration, and lifecycle `dev5` load safety runtime verified; work/firing checks remain
+Status: Hiring, appearance, save/load restoration, and lifecycle `dev5` load/fire safety runtime verified; active work isolation remains
 
 Target: Schedule I 0.4.7f12 IL2CPP
 
