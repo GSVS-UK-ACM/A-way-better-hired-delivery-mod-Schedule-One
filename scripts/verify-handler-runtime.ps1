@@ -253,10 +253,37 @@ try {
     $assignmentRuntimeInitialize = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime" "Initialize"
     Assert-Call $assignmentRuntimeInitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::SetSink*" "Assignment runtime receives Handler lifecycle cleanup"
 
+    $assignmentBeginRestore = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime" "BeginRestore"
+    Assert-Call $assignmentBeginRestore "*VehicleHandlers.Assignments.HandlerAssignmentRegistry::.ctor*" "Load starts with a fresh assignment registry"
+    Assert-Call $assignmentBeginRestore "*System.Collections.Generic.Dictionary*::Clear*" "Load clears cached assignment revisions"
+
     $assignmentLifecycle = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime/AssignmentLifecycleSink" "HandlerUnavailable" @(
         "VehicleHandlers.Contracts.HandlerId", "VehicleHandlers.Contracts.HandlerUnavailableReason"
     )
     Assert-Call $assignmentLifecycle "*VehicleHandlers.Assignments.HandlerAssignmentRegistry::TryRemove*" "Unavailable Handlers release idle vehicle assignments"
+
+    $prepareLoad = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "PrepareLoad" @("System.String")
+    Assert-Call $prepareLoad "*VehicleHandlers.Assignments.HandlerAssignmentRuntime::BeginRestore*" "Persistence resets process-local assignments before each load"
+    Assert-Call $prepareLoad "*VehicleHandlers.Persistence.AssignmentPersistenceFile::BuildPath*" "Persistence resolves a per-save UserData document"
+    Assert-Call $prepareLoad "*VehicleHandlers.Persistence.AssignmentPersistenceFile::TryLoad*" "Persistence reads the versioned assignment document"
+    Assert-Call $prepareLoad "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::TryRestore*" "Persistence restores only through the authoritative registry"
+
+    $saveActive = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "SaveActive" @("System.String")
+    Assert-Call $saveActive "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::Snapshot*" "Persistence saves an immutable registry snapshot"
+    Assert-Call $saveActive "*VehicleHandlers.Persistence.AssignmentPersistenceFile::Save*" "Persistence writes through the atomic file layer"
+
+    $loadPatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentLoadPatch" "Prefix" @("Il2CppScheduleOne.Persistence.SaveInfo")
+    Assert-Call $loadPatch "*Il2CppScheduleOne.Persistence.SaveInfo::get_SavePath*" "Load integration uses the selected save's exact root"
+    Assert-Call $loadPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::PrepareLoad*" "StartGame enters assignment restore"
+
+    $savePatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentSavePatch" "Prefix"
+    Assert-Call $savePatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::SaveActive*" "Default game save persists Handler assignments"
+
+    $namedSavePatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentNamedSavePatch" "Prefix" @("System.String")
+    Assert-Call $namedSavePatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::SaveActive*" "Named game save persists Handler assignments"
+
+    $loadCleanupPatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentLoadCleanupPatch" "Postfix"
+    Assert-Call $loadCleanupPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::ClearActiveSave*" "Leaving a save clears process-local assignment state"
 
     $clipboardOpen = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerManagementOpenPatch" "Prefix" @(
         'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Management.IConfigurable>'

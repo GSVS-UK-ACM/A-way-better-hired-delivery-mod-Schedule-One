@@ -2,11 +2,11 @@
 
 ## Active claim
 
-`VH-M3-003` is owned by Codex on `feat/vh-m3-003-assignment-persistence`.
+`VH-M3-003` is owned by Codex on `feat/vh-m3-003-assignment-persistence` and is awaiting in-game save/reload verification.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, and clipboard-controls PR #8 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority, and `VH-M3-002` supplies the runtime-verified Vehicle Handler clipboard panel. `VH-M3-003` will add versioned save/load persistence for those assignments. Reservations, live-object validation, and physical movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, and clipboard-controls PR #8 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority, `VH-M3-002` supplies the runtime-verified Vehicle Handler clipboard panel, and `VH-M3-003` now adds versioned per-save persistence for those assignments. Reservations, live-object validation, and physical movement remain unchanged.
 
 ## Compatibility target
 
@@ -68,6 +68,8 @@ Game references remain outside this repository.
 - Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
 - Selecting an ordinary unmarked vanilla Handler still opened the standard base-game Packager management panel. The Vehicle Handler overlay remained isolated to marked workers.
 - PR #8 merged the runtime-verified `VH-M3-002` branch into `main` as `fdcef4f`. Before claiming `VH-M3-003`, the preserved out-of-tree 0.4.7f12 IL2CPP reference set passed all 159 pinned API checks and no overlapping pull request was open.
+- `VH-M3-003` adds schema-version-1 per-save assignment documents at `<save folder>/UserData/VehicleHandlers.json`, atomic temporary-file replacement, previous-valid backup recovery, strict stable-ID/state decoding, fresh-registry load isolation, and exact `StartGame`, `Save()`, `Save(string)`, and `CleanUp` lifecycle patches.
+- The `dev9` gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `C0F58FBEC5D1243733DCC32EB30012284082E7019FD4E978AC5337F752738E40`.
 
 Commands:
 
@@ -76,11 +78,12 @@ Commands:
 .\scripts\verify-contracts.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-assignments.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-clipboard.ps1 -DotNet "<dotnet-8.0.425>"
+.\scripts\verify-persistence.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>" -DotNet "<dotnet-8.0.425>"
 ```
 
 ## Next work
 
-1. Define and verify the versioned `UserData/VehicleHandlers.json` persistence schema without storing base-game objects or spawning vehicles.
-2. Bind save/load adapters to the exact pinned game lifecycle and restore only through `IHandlerAssignmentRegistry.TryRestore`.
-3. Keep reservations, live-object recovery, and vehicle movement in their respective later backlog items.
+1. Install `0.4.7f12-dev9` with the game closed.
+2. Apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
+3. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.

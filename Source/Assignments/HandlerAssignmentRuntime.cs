@@ -7,7 +7,7 @@ namespace VehicleHandlers.Assignments
 {
     internal static class HandlerAssignmentRuntime
     {
-        private static readonly HandlerAssignmentRegistry registry = new HandlerAssignmentRegistry();
+        private static HandlerAssignmentRegistry registry = new HandlerAssignmentRegistry();
         private static readonly Dictionary<HandlerId, long> knownRevisions =
             new Dictionary<HandlerId, long>();
 
@@ -16,6 +16,12 @@ namespace VehicleHandlers.Assignments
         public static void Initialize()
         {
             HandlerLifecycleBridge.SetSink(new AssignmentLifecycleSink());
+        }
+
+        public static void BeginRestore()
+        {
+            registry = new HandlerAssignmentRegistry();
+            knownRevisions.Clear();
         }
 
         public static long GetExpectedRevision(
@@ -63,7 +69,7 @@ namespace VehicleHandlers.Assignments
 
             public void ModUnloading()
             {
-                // The registry is process-local until VH-M3-003 adds persistence.
+                // Normal game saves own persistence; shutdown performs no extra file mutation.
             }
         }
     }
