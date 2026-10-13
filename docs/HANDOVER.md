@@ -76,6 +76,7 @@ Game references remain outside this repository.
 - With the game closed, `dev10` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev9` was retained in ignored local install-backup artifacts with SHA-256 `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
 - Runtime testing rejected `dev10`: it loaded and restored safely, but the game's `onSaveComplete` event did not invoke the managed listener during the tested save, so no save log or assignment document was produced.
 - `dev11` replaces that event dependency with Harmony postfixes on both exact `SaveManager.Save` overloads. The complete gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `CEAE6815D540E9A16BD1F684ACCBCAB82E5E7BF5C4FBFE7CC8B9F20DDA0A807C`.
+- With the game closed, `dev11` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev10` was retained in ignored local install-backup artifacts with SHA-256 `6DAAD15621AEF061543577D760760FFF98DFE618749C8429F7AE798DF6F1773F`.
 
 Commands:
 
@@ -90,5 +91,5 @@ Commands:
 
 ## Next work
 
-1. Install `0.4.7f12-dev11` with the game closed, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
+1. Launch `0.4.7f12-dev11`, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
 2. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.
