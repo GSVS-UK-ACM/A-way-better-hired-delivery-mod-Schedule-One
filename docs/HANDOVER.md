@@ -2,7 +2,7 @@
 
 ## Active claim
 
-`VH-M3-003` is owned by Codex on `feat/vh-m3-003-assignment-persistence`; same-save persistence is runtime verified and cross-save isolation remains to verify.
+No implementation branch is active. PR #9 merged `VH-M3-003` into `main`; same-save persistence is runtime verified and cross-save isolation remains to verify.
 
 ## Current outcome
 
@@ -84,6 +84,7 @@ Game references remain outside this repository.
 - `dev13` stages the selected save at `StartGame`, subscribes idempotently to the live `LoadManager.onLoadComplete` event before load begins, and restores only after the game's final load boundary. It no longer clears the registry from the game's mid-load `CleanUp` route; starting another save and mod shutdown remain isolation boundaries. The complete gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 107 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `122E9206D8B696E289AA36C24B0E1742F1EAE24A53CAB5E7C2EF705CECCCE175`.
 - With the game closed, `dev13` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Runtime-verified save-writing build `dev12` was retained in ignored local install-backup artifacts with SHA-256 `46BE57EE5F2E4390B23B07FB57DF262BAE75BE41DA950D5296C045D4800A1663`.
 - In-game `dev13` verification saved one enabled revision-1 assignment, preserved the 436-byte schema-v1 document through the menu transition, armed final-load restoration, and logged `Restored 1 Vehicle Handler assignment(s).` after employee reconstruction. Michelle's reopened panel showed revision 1, idle, enabled, the same Veeper, Docks Warehouse, and Loading Dock 1 without reapplying the assignment.
+- PR #9 merged the same-save runtime-verified `VH-M3-003` implementation into `main` as `9ff4c91862cb0a19aba9c233d1f9a62493205b94`. Cross-save isolation remains explicitly tracked under the `VERIFYING` backlog state.
 
 Commands:
 
