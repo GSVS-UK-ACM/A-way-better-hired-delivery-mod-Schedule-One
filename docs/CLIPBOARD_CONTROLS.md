@@ -2,7 +2,7 @@
 
 Status: Implemented; awaiting in-game verification  
 Target: Schedule I `0.4.7f12` IL2CPP  
-Build: `0.4.7f12-dev7`
+Build: `0.4.7f12-dev8`
 
 ## Player flow
 
@@ -17,11 +17,13 @@ The Vehicle Handler panel replaces the misleading vanilla Packager configuration
 ## Controls and safety
 
 - Vehicle and destination choices are rebuilt from the current game-owned lists.
+- A vehicle currently detected as a loading-dock occupant is labelled with that dock and property; vehicles without a recognised dock retain their short stable-ID suffix.
+- Vehicles claimed by another Vehicle Handler are omitted from the chooser. The selected Handler's own claimed vehicle remains visible for review and reconfiguration.
 - Every selection stores the stable vehicle GUID, property code, dock GUID, and dock index; display names are never used as identity.
 - Properties without a loading dock and docks whose parent property does not match are excluded.
 - Apply and remove call the single `IHandlerAssignmentRegistry` authority with compare-and-swap revisions.
 - Reconfiguration and removal remain blocked by the registry while a trip is active.
-- A vehicle already assigned to another Handler is rejected rather than reassigned.
+- The registry still rejects a vehicle already assigned to another Handler if a stale panel attempts to claim it.
 - Mutations are accepted only when the selected employee reports server initialization. A non-host client receives a read-only rejection instead of mutating local state.
 - Firing or despawning a Handler removes its idle assignment so the vehicle can be reused.
 

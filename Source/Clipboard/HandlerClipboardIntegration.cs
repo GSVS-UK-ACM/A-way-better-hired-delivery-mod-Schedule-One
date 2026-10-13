@@ -378,6 +378,9 @@ namespace VehicleHandlers.Clipboard
                 return choices;
             }
 
+            IReadOnlyList<HandlerAssignmentSnapshot> assignments =
+                HandlerAssignmentRuntime.Registry.Snapshot();
+
             for (int index = 0; index < vehicles.Count; index++)
             {
                 LandVehicle vehicle = vehicles[index];
@@ -387,12 +390,25 @@ namespace VehicleHandlers.Clipboard
                     continue;
                 }
 
+                if (!HandlerClipboardChoicePolicy.IsVehicleAvailableForHandler(
+                    id,
+                    handler,
+                    assignments))
+                {
+                    continue;
+                }
+
                 string name = string.IsNullOrWhiteSpace(vehicle.VehicleName)
                     ? vehicle.VehicleCode
                     : vehicle.VehicleName;
+                TryFindLoadingDockLocation(id, out string dockName, out string propertyName);
                 choices.Add(new ClipboardVehicleChoice(
                     id,
-                    $"{name} ({ShortId(id.ToString())})"));
+                    HandlerClipboardChoicePolicy.FormatVehicleDisplayName(
+                        name,
+                        id,
+                        dockName,
+                        propertyName)));
             }
 
             choices.Sort((left, right) => string.Compare(
@@ -401,6 +417,55 @@ namespace VehicleHandlers.Clipboard
                 StringComparison.OrdinalIgnoreCase));
             return choices;
         }
+
+        private static bool TryFindLoadingDockLocation(
+            VehicleId vehicle,
+            out string dockName,
+            out string propertyName)
+        {
+            dockName = string.Empty;
+            propertyName = string.Empty;
+            Il2CppSystem.Collections.Generic.List<Property> properties = Property.OwnedProperties;
+            if (properties == null)
+            {
+                return false;
+            }
+
+            for (int propertyIndex = 0; propertyIndex < properties.Count; propertyIndex++)
+            {
+                Property property = properties[propertyIndex];
+                if (property == null || !property.IsOwned || property.LoadingDocks == null)
+                {
+                    continue;
+                }
+
+                for (int dockIndex = 0; dockIndex < property.LoadingDocks.Length; dockIndex++)
+                {
+                    LoadingDock dock = property.LoadingDocks[dockIndex];
+                    if (dock == null || dock.ParentProperty != property ||
+                        (!MatchesVehicle(dock.DynamicOccupant, vehicle) &&
+                         !MatchesVehicle(dock.StaticOccupant, vehicle)))
+                    {
+                        continue;
+                    }
+
+                    dockName = string.IsNullOrWhiteSpace(dock.Name)
+                        ? $"Loading bay {dockIndex + 1}"
+                        : dock.Name;
+                    propertyName = string.IsNullOrWhiteSpace(property.PropertyName)
+                        ? property.PropertyCode
+                        : property.PropertyName;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool MatchesVehicle(LandVehicle candidate, VehicleId vehicle) =>
+            candidate != null &&
+            VehicleId.TryParse(candidate.GUID.ToString(), out VehicleId candidateId) &&
+            candidateId == vehicle;
 
         private static List<ClipboardPropertyChoice> BuildPropertyChoices()
         {

@@ -289,6 +289,15 @@ try {
     $vehicleChoices = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "BuildVehicleChoices"
     Assert-Call $vehicleChoices "*Il2CppScheduleOne.Vehicles.VehicleManager::get_PlayerOwnedVehicles*" "Clipboard vehicle choices come from the player-owned vehicle list"
     Assert-Call $vehicleChoices "*Il2CppScheduleOne.Vehicles.LandVehicle::get_GUID*" "Clipboard vehicle choices retain stable vehicle GUIDs"
+    Assert-Call $vehicleChoices "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::Snapshot*" "Clipboard vehicle choices inspect authoritative assignment claims"
+    Assert-Call $vehicleChoices "*VehicleHandlers.Clipboard.HandlerClipboardChoicePolicy::IsVehicleAvailableForHandler*" "Clipboard hides vehicles assigned to other Handlers"
+
+    $vehicleLocation = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "TryFindLoadingDockLocation" @(
+        "VehicleHandlers.Contracts.VehicleId", "System.String&", "System.String&"
+    )
+    Assert-Call $vehicleLocation "*Il2CppScheduleOne.Property.Property::get_OwnedProperties*" "Vehicle location labels inspect owned properties"
+    Assert-Call $vehicleLocation "*Il2CppScheduleOne.Delivery.LoadingDock::get_DynamicOccupant*" "Vehicle location labels inspect live dock occupants"
+    Assert-Call $vehicleLocation "*Il2CppScheduleOne.Delivery.LoadingDock::get_StaticOccupant*" "Vehicle location labels inspect parked dock occupants"
 
     $propertyChoices = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "BuildPropertyChoices"
     Assert-Call $propertyChoices "*Il2CppScheduleOne.Property.Property::get_OwnedProperties*" "Clipboard destination choices come from owned properties"

@@ -16,6 +16,7 @@ namespace VehicleHandlers.Clipboard.Tests
                 VerifyInitialAndExistingSelections();
                 VerifyCyclingAndConfiguration();
                 VerifyUnavailableChoices();
+                VerifyVehicleChoicePolicy();
                 VerifyValidationBoundaries();
 
                 Console.WriteLine($"Vehicle Handlers clipboard verification passed ({assertionCount} assertions).");
@@ -195,6 +196,50 @@ namespace VehicleHandlers.Clipboard.Tests
             AssertThrows<ArgumentOutOfRangeException>(
                 () => draft.ObserveRevision(-1),
                 "Drafts reject a negative observed revision.");
+        }
+
+        private static void VerifyVehicleChoicePolicy()
+        {
+            HandlerId currentHandler = Handler(1);
+            HandlerAssignmentSnapshot ownAssignment = new HandlerAssignmentSnapshot(
+                currentHandler,
+                Vehicle(1),
+                Bay(1, 1),
+                true,
+                false,
+                default,
+                HandlerTripState.Idle,
+                1);
+            HandlerAssignmentSnapshot otherAssignment = new HandlerAssignmentSnapshot(
+                Handler(2),
+                Vehicle(2),
+                Bay(2, 1),
+                true,
+                false,
+                default,
+                HandlerTripState.Idle,
+                1);
+            IReadOnlyList<HandlerAssignmentSnapshot> assignments =
+                new[] { ownAssignment, otherAssignment };
+
+            Assert(HandlerClipboardChoicePolicy.IsVehicleAvailableForHandler(
+                Vehicle(1), currentHandler, assignments),
+                "The current Handler keeps its assigned vehicle in the chooser.");
+            Assert(!HandlerClipboardChoicePolicy.IsVehicleAvailableForHandler(
+                Vehicle(2), currentHandler, assignments),
+                "A vehicle assigned to another Handler is removed from the chooser.");
+            Assert(HandlerClipboardChoicePolicy.IsVehicleAvailableForHandler(
+                Vehicle(3), currentHandler, assignments),
+                "An unassigned vehicle remains available in the chooser.");
+
+            string located = HandlerClipboardChoicePolicy.FormatVehicleDisplayName(
+                "Veeper", Vehicle(1), "Loading Dock 1", "Storage Unit");
+            Assert(located == "Veeper (Loading Dock 1, Storage Unit)",
+                "A dock occupant is labelled with its loading bay and property.");
+            string fallback = HandlerClipboardChoicePolicy.FormatVehicleDisplayName(
+                "Bruiser", Vehicle(2), string.Empty, string.Empty);
+            Assert(fallback.StartsWith("Bruiser (") && fallback.EndsWith(")"),
+                "An unlocated vehicle keeps a short stable-ID fallback label.");
         }
 
         private static IReadOnlyList<ClipboardVehicleChoice> Vehicles() =>

@@ -4,6 +4,64 @@ using VehicleHandlers.Contracts;
 
 namespace VehicleHandlers.Clipboard
 {
+    internal static class HandlerClipboardChoicePolicy
+    {
+        public static bool IsVehicleAvailableForHandler(
+            VehicleId vehicle,
+            HandlerId handler,
+            IReadOnlyList<HandlerAssignmentSnapshot> assignments)
+        {
+            if (vehicle.IsEmpty)
+            {
+                throw new ArgumentException("A vehicle is required.", nameof(vehicle));
+            }
+
+            if (handler.IsEmpty)
+            {
+                throw new ArgumentException("A Handler is required.", nameof(handler));
+            }
+
+            if (assignments == null)
+            {
+                throw new ArgumentNullException(nameof(assignments));
+            }
+
+            for (int index = 0; index < assignments.Count; index++)
+            {
+                HandlerAssignmentSnapshot assignment = assignments[index];
+                if (assignment != null && assignment.Vehicle == vehicle)
+                {
+                    return assignment.Handler == handler;
+                }
+            }
+
+            return true;
+        }
+
+        public static string FormatVehicleDisplayName(
+            string vehicleName,
+            VehicleId vehicle,
+            string dockName,
+            string propertyName)
+        {
+            if (vehicle.IsEmpty)
+            {
+                throw new ArgumentException("A vehicle is required.", nameof(vehicle));
+            }
+
+            string name = string.IsNullOrWhiteSpace(vehicleName)
+                ? "Owned vehicle"
+                : vehicleName.Trim();
+            if (!string.IsNullOrWhiteSpace(dockName) &&
+                !string.IsNullOrWhiteSpace(propertyName))
+            {
+                return $"{name} ({dockName.Trim()}, {propertyName.Trim()})";
+            }
+
+            return $"{name} ({vehicle.ToString().Substring(0, 8)})";
+        }
+    }
+
     internal sealed class ClipboardVehicleChoice
     {
         public ClipboardVehicleChoice(VehicleId id, string displayName)

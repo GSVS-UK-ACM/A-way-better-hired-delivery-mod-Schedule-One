@@ -2,7 +2,7 @@
 
 ## Active claim
 
-`VH-M3-002` is owned by Codex on `feat/vh-m3-002-clipboard-controls` and is awaiting in-game clipboard verification.
+`VH-M3-002` is owned by Codex on `feat/vh-m3-002-clipboard-controls` and is awaiting final in-game clipboard verification.
 
 ## Current outcome
 
@@ -59,6 +59,9 @@ Game references remain outside this repository.
 - The complete `0.4.7f12-dev7` gate passes 159 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 46 clipboard assertions, and 81 compiled Handler runtime checks; release compilation has zero warnings and zero errors.
 - Built `0.4.7f12-dev7` DLL SHA-256: `1234E161053D443D4AD6DD5995197012D4EDFC65A01B05EEDFD68E7A34C47DF9`.
 - With the game closed, `dev7` was installed to `Mods/VehicleHandlers.dll` and its installed SHA-256 matched the build. The previous runtime-verified `dev5` DLL was retained in the ignored local install-backup artifacts with SHA-256 `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
+- In-game `dev7` verification passed Vehicle Handler panel rendering, stable vehicle/property/dock resolution, apply and reopen persistence at revision 1, disable and reopen persistence at revision 2, and enabled reconfiguration at revision 3. No Vehicle Handlers exception appeared; the observed `DeliverySpotsPlus` coroutine exception was unrelated.
+- Player feedback identified that short GUIDs alone do not make same-model vehicles easy to distinguish. `dev8` labels vehicles recognised as a `LoadingDock.DynamicOccupant` or `StaticOccupant` with the dock and property, and omits vehicles claimed by another Handler while retaining the current Handler's own claim.
+- The `dev8` gate passes 159 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, and 86 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
 
 Commands:
 
@@ -72,6 +75,6 @@ Commands:
 
 ## Next work
 
-1. Launch the installed `0.4.7f12-dev7` and perform the runtime checklist in `docs/CLIPBOARD_CONTROLS.md`.
+1. With the game closed, install `0.4.7f12-dev8`, then verify the dock/property vehicle label and cross-Handler claimed-vehicle filtering.
 2. Mark `VH-M3-002` done only after the Vehicle Handler panel, ordinary Packager isolation, apply/reopen/reconfigure/remove flow, duplicate-vehicle rejection, and firing cleanup pass in game.
 3. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.
