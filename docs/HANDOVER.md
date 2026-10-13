@@ -2,7 +2,7 @@
 
 ## Active claim
 
-`VH-M3-002` is owned by Codex on `feat/vh-m3-002-clipboard-controls` and is awaiting final in-game clipboard verification.
+`VH-M3-002` is complete on `feat/vh-m3-002-clipboard-controls` and is ready for owner-approved merge.
 
 ## Current outcome
 
@@ -66,6 +66,7 @@ Game references remain outside this repository.
 - In-game `dev8` verification recognised a manually parked Veeper as `Veeper (Loading Dock 1, Storage Unit)`. After Michelle claimed it, the Veeper remained visible in Michelle's panel but disappeared from another Vehicle Handler's chooser. The live log contained no Vehicle Handlers warning or exception; observed HWE and DeliverySpotsPlus errors were unrelated.
 - Removing Michelle's idle assignment in `dev8` released its vehicle claim immediately; the vehicle returned to the other Vehicle Handler's available chooser entries.
 - Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
+- Selecting an ordinary unmarked vanilla Handler still opened the standard base-game Packager management panel. The Vehicle Handler overlay remained isolated to marked workers.
 
 Commands:
 
@@ -79,6 +80,6 @@ Commands:
 
 ## Next work
 
-1. With the game closed, install `0.4.7f12-dev8`, then verify the dock/property vehicle label and cross-Handler claimed-vehicle filtering.
-2. Mark `VH-M3-002` done only after the Vehicle Handler panel, ordinary Packager isolation, apply/reopen/reconfigure/remove flow, duplicate-vehicle rejection, and firing cleanup pass in game.
-3. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.
+1. Merge `feat/vh-m3-002-clipboard-controls` only after explicit owner approval.
+2. Claim `VH-M3-003` before beginning versioned assignment persistence.
+3. Keep reservations and vehicle movement in their respective later backlog items.
