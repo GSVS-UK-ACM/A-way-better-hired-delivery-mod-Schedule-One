@@ -4,6 +4,7 @@ using System.IO;
 using HarmonyLib;
 using Il2CppScheduleOne.Persistence;
 using MelonLoader;
+using UnityEngine.Events;
 using VehicleHandlers.Assignments;
 using VehicleHandlers.Contracts;
 
@@ -12,6 +13,37 @@ namespace VehicleHandlers.Persistence
     internal static class HandlerAssignmentPersistenceRuntime
     {
         private static string activeSaveRoot = string.Empty;
+        private static SaveManager subscribedSaveManager;
+        private static UnityAction saveCompleteAction;
+
+        public static void AttachSaveManager(SaveManager manager)
+        {
+            if (manager == null || manager.onSaveComplete == null)
+            {
+                MelonLogger.Warning("Vehicle Handler persistence could not attach to the save-complete event.");
+                return;
+            }
+
+            if (saveCompleteAction == null)
+            {
+                saveCompleteAction = (UnityAction)new Action(SaveCompleted);
+            }
+
+            bool changedManager = subscribedSaveManager != manager;
+            if (subscribedSaveManager != null && subscribedSaveManager.onSaveComplete != null)
+            {
+                subscribedSaveManager.onSaveComplete.RemoveListener(saveCompleteAction);
+            }
+
+            subscribedSaveManager = manager;
+            subscribedSaveManager.onSaveComplete.RemoveListener(saveCompleteAction);
+            subscribedSaveManager.onSaveComplete.AddListener(saveCompleteAction);
+
+            if (changedManager)
+            {
+                MelonLogger.Msg("Vehicle Handler assignment persistence armed for completed saves.");
+            }
+        }
 
         public static void PrepareLoad(string saveRoot)
         {
@@ -96,6 +128,24 @@ namespace VehicleHandlers.Persistence
             HandlerAssignmentRuntime.BeginRestore();
         }
 
+        public static void Shutdown()
+        {
+            if (subscribedSaveManager != null &&
+                subscribedSaveManager.onSaveComplete != null &&
+                saveCompleteAction != null)
+            {
+                subscribedSaveManager.onSaveComplete.RemoveListener(saveCompleteAction);
+            }
+
+            subscribedSaveManager = null;
+            ClearActiveSave();
+        }
+
+        private static void SaveCompleted()
+        {
+            SaveActive();
+        }
+
         private static string ResolveActiveSaveRoot(string hint)
         {
             string normalizedHint = NormalizeRoot(hint);
@@ -154,26 +204,30 @@ namespace VehicleHandlers.Persistence
         public static void Postfix(SaveInfo __0)
         {
             HandlerAssignmentPersistenceRuntime.PrepareLoad(__0?.SavePath);
+            if (SaveManager.InstanceExists && SaveManager.Instance != null)
+            {
+                HandlerAssignmentPersistenceRuntime.AttachSaveManager(SaveManager.Instance);
+            }
         }
     }
 
     [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.Save), new Type[0])]
     internal static class HandlerAssignmentSavePatch
     {
-        [HarmonyPostfix]
-        public static void Postfix()
+        [HarmonyPrefix]
+        public static void Prefix(SaveManager __instance)
         {
-            HandlerAssignmentPersistenceRuntime.SaveActive();
+            HandlerAssignmentPersistenceRuntime.AttachSaveManager(__instance);
         }
     }
 
     [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.Save), new Type[] { typeof(string) })]
     internal static class HandlerAssignmentNamedSavePatch
     {
-        [HarmonyPostfix]
-        public static void Postfix(string __0)
+        [HarmonyPrefix]
+        public static void Prefix(SaveManager __instance)
         {
-            HandlerAssignmentPersistenceRuntime.SaveActive(__0);
+            HandlerAssignmentPersistenceRuntime.AttachSaveManager(__instance);
         }
     }
 

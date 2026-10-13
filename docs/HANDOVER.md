@@ -68,7 +68,7 @@ Game references remain outside this repository.
 - Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
 - Selecting an ordinary unmarked vanilla Handler still opened the standard base-game Packager management panel. The Vehicle Handler overlay remained isolated to marked workers.
 - PR #8 merged the runtime-verified `VH-M3-002` branch into `main` as `fdcef4f`. Before claiming `VH-M3-003`, the preserved out-of-tree 0.4.7f12 IL2CPP reference set passed all 159 pinned API checks and no overlapping pull request was open.
-- `VH-M3-003` adds schema-version-1 per-save assignment documents at `<save folder>/UserData/VehicleHandlers.json`, atomic temporary-file replacement, previous-valid backup recovery, strict stable-ID/state decoding, fresh-registry load isolation, and exact `StartGame`, post-save `Save()`/`Save(string)`, and `CleanUp` lifecycle integration.
+- `VH-M3-003` adds schema-version-1 per-save assignment documents at `<save folder>/UserData/VehicleHandlers.json`, atomic temporary-file replacement, previous-valid backup recovery, strict stable-ID/state decoding, fresh-registry load isolation, and exact `StartGame`, `Save()`/`Save(string)` plus `onSaveComplete`, and `CleanUp` lifecycle integration.
 - The `dev9` gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Restore runs after `StartGame` returns so synchronous base-game cleanup cannot erase the fresh registry. Built DLL SHA-256: `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
 - With the game closed, `dev9` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev8` DLL was retained in ignored local install-backup artifacts with SHA-256 `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
 - Runtime testing rejected `dev9`: its save prefix logged `Saved 1 Vehicle Handler assignment(s).`, but the base game's remaining save cleanup removed the mod-owned directory before save completion, leaving no `VehicleHandlers.json` to reload.
@@ -77,6 +77,8 @@ Game references remain outside this repository.
 - Runtime testing rejected `dev10`: it loaded and restored safely, but the game's `onSaveComplete` event did not invoke the managed listener during the tested save, so no save log or assignment document was produced.
 - `dev11` replaces that event dependency with Harmony postfixes on both exact `SaveManager.Save` overloads. The complete gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `CEAE6815D540E9A16BD1F684ACCBCAB82E5E7BF5C4FBFE7CC8B9F20DDA0A807C`.
 - With the game closed, `dev11` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev10` was retained in ignored local install-backup artifacts with SHA-256 `6DAAD15621AEF061543577D760760FFF98DFE618749C8429F7AE798DF6F1773F`.
+- Runtime testing rejected `dev11`: its postfix logged one saved assignment, but the game continued asynchronous cleanup after `Save()` returned and removed the document. No `VehicleHandlers.json` survived under the save tree.
+- `dev12` attaches the `onSaveComplete` listener from the loaded-game integration and again idempotently at both exact save entry points, where the live `SaveManager` is guaranteed to exist. It also emits positive evidence when persistence is armed. The complete gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 104 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `46BE57EE5F2E4390B23B07FB57DF262BAE75BE41DA950D5296C045D4800A1663`.
 
 Commands:
 
@@ -91,5 +93,5 @@ Commands:
 
 ## Next work
 
-1. Launch `0.4.7f12-dev11`, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
+1. Install and launch `0.4.7f12-dev12`, confirm the persistence-armed log, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
 2. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.

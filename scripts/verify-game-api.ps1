@@ -475,6 +475,8 @@ try {
         "Il2CppScheduleOne.Persistence.SaveInfo", "System.Boolean", "System.Boolean"
     )
     Assert-Method "Game" "Il2CppScheduleOne.Persistence.LoadManager" "CleanUp" "System.Void" @() $true
+    Assert-Method "Unity" "UnityEngine.Events.UnityEvent" "AddListener" "System.Void" @("UnityEngine.Events.UnityAction")
+    Assert-Method "Unity" "UnityEngine.Events.UnityEvent" "RemoveListener" "System.Void" @("UnityEngine.Events.UnityAction")
 
     Write-Output "Schedule I 0.4.7f12 IL2CPP Vehicle Handlers API verification passed ($script:PassCount checks)."
 }
