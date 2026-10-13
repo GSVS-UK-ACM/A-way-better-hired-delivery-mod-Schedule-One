@@ -79,6 +79,7 @@ Game references remain outside this repository.
 - With the game closed, `dev11` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev10` was retained in ignored local install-backup artifacts with SHA-256 `6DAAD15621AEF061543577D760760FFF98DFE618749C8429F7AE798DF6F1773F`.
 - Runtime testing rejected `dev11`: its postfix logged one saved assignment, but the game continued asynchronous cleanup after `Save()` returned and removed the document. No `VehicleHandlers.json` survived under the save tree.
 - `dev12` attaches the `onSaveComplete` listener from the loaded-game integration and again idempotently at both exact save entry points, where the live `SaveManager` is guaranteed to exist. It also emits positive evidence when persistence is armed. The complete gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 104 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `46BE57EE5F2E4390B23B07FB57DF262BAE75BE41DA950D5296C045D4800A1663`.
+- With the game closed, `dev12` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev11` was retained in ignored local install-backup artifacts with SHA-256 `CEAE6815D540E9A16BD1F684ACCBCAB82E5E7BF5C4FBFE7CC8B9F20DDA0A807C`.
 
 Commands:
 
@@ -93,5 +94,5 @@ Commands:
 
 ## Next work
 
-1. Install and launch `0.4.7f12-dev12`, confirm the persistence-armed log, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
+1. Launch `0.4.7f12-dev12`, confirm the persistence-armed log, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
 2. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.
