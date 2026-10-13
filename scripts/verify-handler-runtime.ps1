@@ -249,14 +249,57 @@ try {
     $deinitialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnDeinitializeMelon"
     Assert-Call $deinitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::NotifyModUnloading*" "Mod shutdown enters the lifecycle cleanup boundary"
     Assert-Call $deinitialize "*VehicleHandlers.Clipboard.HandlerClipboardSession::End*" "Mod shutdown closes the clipboard assignment session"
+    Assert-Call $deinitialize "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::Shutdown*" "Mod shutdown detaches assignment persistence"
 
     $assignmentRuntimeInitialize = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime" "Initialize"
     Assert-Call $assignmentRuntimeInitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::SetSink*" "Assignment runtime receives Handler lifecycle cleanup"
+
+    $assignmentBeginRestore = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime" "BeginRestore"
+    Assert-Call $assignmentBeginRestore "*VehicleHandlers.Assignments.HandlerAssignmentRegistry::.ctor*" "Load starts with a fresh assignment registry"
+    Assert-Call $assignmentBeginRestore "*System.Collections.Generic.Dictionary*::Clear*" "Load clears cached assignment revisions"
 
     $assignmentLifecycle = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime/AssignmentLifecycleSink" "HandlerUnavailable" @(
         "VehicleHandlers.Contracts.HandlerId", "VehicleHandlers.Contracts.HandlerUnavailableReason"
     )
     Assert-Call $assignmentLifecycle "*VehicleHandlers.Assignments.HandlerAssignmentRegistry::TryRemove*" "Unavailable Handlers release idle vehicle assignments"
+
+    $prepareLoad = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "PrepareLoad" @("System.String")
+    Assert-Call $prepareLoad "*VehicleHandlers.Assignments.HandlerAssignmentRuntime::BeginRestore*" "Persistence resets process-local assignments before each load"
+
+    $restoreActive = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "RestoreActive"
+    Assert-Call $restoreActive "*VehicleHandlers.Persistence.AssignmentPersistenceFile::BuildPath*" "Persistence resolves a per-save UserData document"
+    Assert-Call $restoreActive "*VehicleHandlers.Persistence.AssignmentPersistenceFile::TryLoad*" "Persistence reads the versioned assignment document"
+    Assert-Call $restoreActive "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::TryRestore*" "Persistence restores only through the authoritative registry"
+
+    $saveActive = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "SaveActive" @("System.String")
+    Assert-Call $saveActive "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::Snapshot*" "Persistence saves an immutable registry snapshot"
+    Assert-Call $saveActive "*VehicleHandlers.Persistence.AssignmentPersistenceFile::Save*" "Persistence writes through the atomic file layer"
+
+    $loadPatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentLoadPatch" "Prefix" @("Il2CppScheduleOne.Persistence.LoadManager", "Il2CppScheduleOne.Persistence.SaveInfo")
+    Assert-Call $loadPatch "*Il2CppScheduleOne.Persistence.SaveInfo::get_SavePath*" "Load integration uses the selected save's exact root"
+    Assert-Call $loadPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::PrepareLoad*" "StartGame enters assignment restore"
+    Assert-Call $loadPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::AttachSaveManager*" "Loaded-game integration arms completed-save persistence"
+    Assert-Call $loadPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::AttachLoadManager*" "Loaded-game integration arms final assignment restoration"
+
+    $attachLoadManager = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "AttachLoadManager" @("Il2CppScheduleOne.Persistence.LoadManager")
+    Assert-Call $attachLoadManager "*UnityEngine.Events.UnityEvent::RemoveListener*" "Load-complete attachment is idempotent"
+    Assert-Call $attachLoadManager "*UnityEngine.Events.UnityEvent::AddListener*" "Persistence subscribes to the completed-load event"
+
+    $loadCompleted = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "LoadCompleted"
+    Assert-Call $loadCompleted "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::RestoreActive*" "Completed game loads restore Handler assignments"
+
+    $attachSaveManager = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "AttachSaveManager" @("Il2CppScheduleOne.Persistence.SaveManager")
+    Assert-Call $attachSaveManager "*UnityEngine.Events.UnityEvent::RemoveListener*" "Persistence attachment is idempotent"
+    Assert-Call $attachSaveManager "*UnityEngine.Events.UnityEvent::AddListener*" "Persistence subscribes to the completed-save event"
+
+    $saveCompleted = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "SaveCompleted"
+    Assert-Call $saveCompleted "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::SaveActive*" "Completed game saves persist Handler assignments"
+
+    $savePatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentSavePatch" "Prefix" @("Il2CppScheduleOne.Persistence.SaveManager")
+    Assert-Call $savePatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::AttachSaveManager*" "Default save arms completed-save persistence"
+
+    $namedSavePatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentNamedSavePatch" "Prefix" @("Il2CppScheduleOne.Persistence.SaveManager")
+    Assert-Call $namedSavePatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::AttachSaveManager*" "Named save arms completed-save persistence"
 
     $clipboardOpen = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerManagementOpenPatch" "Prefix" @(
         'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Management.IConfigurable>'

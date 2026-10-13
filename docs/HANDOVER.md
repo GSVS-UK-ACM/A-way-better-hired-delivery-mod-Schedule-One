@@ -2,11 +2,11 @@
 
 ## Active claim
 
-`VH-M3-002` is complete on `feat/vh-m3-002-clipboard-controls` and is ready for owner-approved merge.
+`VH-M3-003` is owned by Codex on `feat/vh-m3-003-assignment-persistence`; same-save persistence is runtime verified and cross-save isolation remains to verify.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, and assignment-model PR #7 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority. `VH-M3-002` now adds a Vehicle Handler-only management clipboard panel with owned-vehicle, owned-property, loading-bay, enabled, apply, remove, and refresh controls. The panel writes stable identities through the assignment registry and rejects non-server mutation. Persistence, reservations, live-object validation, and physical movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, and clipboard-controls PR #8 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority, `VH-M3-002` supplies the runtime-verified Vehicle Handler clipboard panel, and `VH-M3-003` now adds versioned per-save persistence for those assignments. Reservations, live-object validation, and physical movement remain unchanged.
 
 ## Compatibility target
 
@@ -67,6 +67,23 @@ Game references remain outside this repository.
 - Removing Michelle's idle assignment in `dev8` released its vehicle claim immediately; the vehicle returned to the other Vehicle Handler's available chooser entries.
 - Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
 - Selecting an ordinary unmarked vanilla Handler still opened the standard base-game Packager management panel. The Vehicle Handler overlay remained isolated to marked workers.
+- PR #8 merged the runtime-verified `VH-M3-002` branch into `main` as `fdcef4f`. Before claiming `VH-M3-003`, the preserved out-of-tree 0.4.7f12 IL2CPP reference set passed all 159 pinned API checks and no overlapping pull request was open.
+- `VH-M3-003` adds schema-version-1 per-save assignment documents at `<save folder>/UserData/VehicleHandlers.json`, atomic temporary-file replacement, previous-valid backup recovery, strict stable-ID/state decoding, fresh-registry load isolation, and exact `StartGame`/`onLoadComplete` plus `Save()`/`Save(string)`/`onSaveComplete` lifecycle integration.
+- The `dev9` gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Restore runs after `StartGame` returns so synchronous base-game cleanup cannot erase the fresh registry. Built DLL SHA-256: `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
+- With the game closed, `dev9` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev8` DLL was retained in ignored local install-backup artifacts with SHA-256 `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
+- Runtime testing rejected `dev9`: its save prefix logged `Saved 1 Vehicle Handler assignment(s).`, but the base game's remaining save cleanup removed the mod-owned directory before save completion, leaving no `VehicleHandlers.json` to reload.
+- `dev10` moves persistence to the exact `SaveManager.onSaveComplete` event and attaches idempotently both during mod initialization and from an exact `SaveManager.Awake` postfix. The complete gate passes 168 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 103 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `6DAAD15621AEF061543577D760760FFF98DFE618749C8429F7AE798DF6F1773F`.
+- With the game closed, `dev10` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev9` was retained in ignored local install-backup artifacts with SHA-256 `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
+- Runtime testing rejected `dev10`: it loaded and restored safely, but the game's `onSaveComplete` event did not invoke the managed listener during the tested save, so no save log or assignment document was produced.
+- `dev11` replaces that event dependency with Harmony postfixes on both exact `SaveManager.Save` overloads. The complete gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `CEAE6815D540E9A16BD1F684ACCBCAB82E5E7BF5C4FBFE7CC8B9F20DDA0A807C`.
+- With the game closed, `dev11` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev10` was retained in ignored local install-backup artifacts with SHA-256 `6DAAD15621AEF061543577D760760FFF98DFE618749C8429F7AE798DF6F1773F`.
+- Runtime testing rejected `dev11`: its postfix logged one saved assignment, but the game continued asynchronous cleanup after `Save()` returned and removed the document. No `VehicleHandlers.json` survived under the save tree.
+- `dev12` attaches the `onSaveComplete` listener from the loaded-game integration and again idempotently at both exact save entry points, where the live `SaveManager` is guaranteed to exist. It also emits positive evidence when persistence is armed. The complete gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 104 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `46BE57EE5F2E4390B23B07FB57DF262BAE75BE41DA950D5296C045D4800A1663`.
+- With the game closed, `dev12` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev11` was retained in ignored local install-backup artifacts with SHA-256 `CEAE6815D540E9A16BD1F684ACCBCAB82E5E7BF5C4FBFE7CC8B9F20DDA0A807C`.
+- Runtime testing confirmed `dev12` save persistence: the listener armed after load, `onSaveComplete` wrote one enabled revision-1 assignment, and the 436-byte schema-v1 document survived at the exact save path. Reload then logged `Restored 1`, and the saved Handler GUID matched Michelle's game-owned GUID, but restoration ran roughly 20 seconds before employee reconstruction completed; the later load phase erased the process-local registry and the panel showed no assignment.
+- `dev13` stages the selected save at `StartGame`, subscribes idempotently to the live `LoadManager.onLoadComplete` event before load begins, and restores only after the game's final load boundary. It no longer clears the registry from the game's mid-load `CleanUp` route; starting another save and mod shutdown remain isolation boundaries. The complete gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 107 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `122E9206D8B696E289AA36C24B0E1742F1EAE24A53CAB5E7C2EF705CECCCE175`.
+- With the game closed, `dev13` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Runtime-verified save-writing build `dev12` was retained in ignored local install-backup artifacts with SHA-256 `46BE57EE5F2E4390B23B07FB57DF262BAE75BE41DA950D5296C045D4800A1663`.
+- In-game `dev13` verification saved one enabled revision-1 assignment, preserved the 436-byte schema-v1 document through the menu transition, armed final-load restoration, and logged `Restored 1 Vehicle Handler assignment(s).` after employee reconstruction. Michelle's reopened panel showed revision 1, idle, enabled, the same Veeper, Docks Warehouse, and Loading Dock 1 without reapplying the assignment.
 
 Commands:
 
@@ -75,11 +92,10 @@ Commands:
 .\scripts\verify-contracts.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-assignments.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-clipboard.ps1 -DotNet "<dotnet-8.0.425>"
+.\scripts\verify-persistence.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>" -DotNet "<dotnet-8.0.425>"
 ```
 
 ## Next work
 
-1. Merge `feat/vh-m3-002-clipboard-controls` only after explicit owner approval.
-2. Claim `VH-M3-003` before beginning versioned assignment persistence.
-3. Keep reservations and vehicle movement in their respective later backlog items.
+1. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.

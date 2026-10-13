@@ -30,11 +30,11 @@ The registry maintains a reverse vehicle index, compare-and-swap revisions, remo
 
 ### Management UI
 
-The management-interface patch recognizes exactly one marked, Packager-backed Vehicle Handler and hides only that employee's misleading vanilla Packager panel. A dedicated clipboard overlay enumerates player-owned vehicles and owned properties with loading docks, carries stable GUID/code/index identities into a pure draft model, and applies compare-and-swap mutations through `IHandlerAssignmentRegistry`. Ordinary Handlers and other configurables keep the base UI. Writes are host/server-only; persistence remains M3-003 and movement actions remain locked until M4. See [Vehicle Handler Clipboard Controls](CLIPBOARD_CONTROLS.md).
+The management-interface patch recognizes exactly one marked, Packager-backed Vehicle Handler and hides only that employee's misleading vanilla Packager panel. A dedicated clipboard overlay enumerates player-owned vehicles and owned properties with loading docks, carries stable GUID/code/index identities into a pure draft model, and applies compare-and-swap mutations through `IHandlerAssignmentRegistry`. Ordinary Handlers and other configurables keep the base UI. Writes are host/server-only; movement actions remain locked until M4. See [Vehicle Handler Clipboard Controls](CLIPBOARD_CONTROLS.md).
 
 ## Persistence
 
-Base employee and vehicle data remains owned by the game. Mod-only assignment and in-progress state is stored in `UserData/VehicleHandlers.json`. Loading resolves GUIDs against existing runtime objects and never spawns a missing vehicle.
+Base employee and vehicle data remains owned by the game. Each save stores mod-only assignment and in-progress state in `<save folder>/UserData/VehicleHandlers.json`. Loading rebuilds a fresh assignment registry from stable IDs and never spawns a missing vehicle. See [Assignment Persistence](ASSIGNMENT_PERSISTENCE.md).
 
 ## Failure handling
 

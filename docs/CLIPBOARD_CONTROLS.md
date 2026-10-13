@@ -31,7 +31,7 @@ The current milestone intentionally does not move or hide vehicles. The panel ex
 
 ## Current boundary
 
-Assignments are process-local until `VH-M3-003` adds versioned persistence. Closing and reopening the clipboard preserves the assignment during the same loaded process; restarting the game does not yet restore it.
+`VH-M3-003` persists assignments per save. Reservations, live-object recovery, and physical movement remain deferred to M4.
 
 ## Verification
 

@@ -459,6 +459,7 @@ try {
     # Save and load integration points for mod-owned assignment state.
     Assert-Type "Game" "Il2CppScheduleOne.Persistence.SaveManager" 'Il2CppScheduleOne.DevUtilities.PersistentSingleton`1<Il2CppScheduleOne.Persistence.SaveManager>'
     Assert-Type "Game" "Il2CppScheduleOne.Persistence.LoadManager" 'Il2CppScheduleOne.DevUtilities.PersistentSingleton`1<Il2CppScheduleOne.Persistence.LoadManager>'
+    Assert-Type "Game" "Il2CppScheduleOne.Persistence.SaveInfo" "Il2CppSystem.Object"
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.SaveManager" "onSaveStart" "UnityEngine.Events.UnityEvent" $true
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.SaveManager" "onSaveComplete" "UnityEngine.Events.UnityEvent" $true
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.SaveManager" "PlayersSavePath" "System.String" $true
@@ -467,6 +468,15 @@ try {
     Assert-Method "Game" "Il2CppScheduleOne.Persistence.SaveManager" "Save" "System.Void" @("System.String")
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "onLoadComplete" "UnityEngine.Events.UnityEvent" $true
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "IsLoading" "System.Boolean" $true
+    Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "LoadedGameFolderPath" "System.String" $true
+    Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "ActiveSaveInfo" "Il2CppScheduleOne.Persistence.SaveInfo" $true
+    Assert-Property "Game" "Il2CppScheduleOne.Persistence.SaveInfo" "SavePath" "System.String" $true
+    Assert-Method "Game" "Il2CppScheduleOne.Persistence.LoadManager" "StartGame" "System.Void" @(
+        "Il2CppScheduleOne.Persistence.SaveInfo", "System.Boolean", "System.Boolean"
+    )
+    Assert-Method "Game" "Il2CppScheduleOne.Persistence.LoadManager" "CleanUp" "System.Void" @() $true
+    Assert-Method "Unity" "UnityEngine.Events.UnityEvent" "AddListener" "System.Void" @("UnityEngine.Events.UnityAction")
+    Assert-Method "Unity" "UnityEngine.Events.UnityEvent" "RemoveListener" "System.Void" @("UnityEngine.Events.UnityAction")
 
     Write-Output "Schedule I 0.4.7f12 IL2CPP Vehicle Handlers API verification passed ($script:PassCount checks)."
 }
