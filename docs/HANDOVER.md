@@ -2,11 +2,11 @@
 
 ## Active claim
 
-`VH-M3-002` is complete on `feat/vh-m3-002-clipboard-controls` and is ready for owner-approved merge.
+`VH-M3-003` is owned by Codex on `feat/vh-m3-003-assignment-persistence`.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, and assignment-model PR #7 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority. `VH-M3-002` now adds a Vehicle Handler-only management clipboard panel with owned-vehicle, owned-property, loading-bay, enabled, apply, remove, and refresh controls. The panel writes stable identities through the assignment registry and rejects non-server mutation. Persistence, reservations, live-object validation, and physical movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, and clipboard-controls PR #8 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority, and `VH-M3-002` supplies the runtime-verified Vehicle Handler clipboard panel. `VH-M3-003` will add versioned save/load persistence for those assignments. Reservations, live-object validation, and physical movement remain unchanged.
 
 ## Compatibility target
 
@@ -67,6 +67,7 @@ Game references remain outside this repository.
 - Removing Michelle's idle assignment in `dev8` released its vehicle claim immediately; the vehicle returned to the other Vehicle Handler's available chooser entries.
 - Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
 - Selecting an ordinary unmarked vanilla Handler still opened the standard base-game Packager management panel. The Vehicle Handler overlay remained isolated to marked workers.
+- PR #8 merged the runtime-verified `VH-M3-002` branch into `main` as `fdcef4f`. Before claiming `VH-M3-003`, the preserved out-of-tree 0.4.7f12 IL2CPP reference set passed all 159 pinned API checks and no overlapping pull request was open.
 
 Commands:
 
@@ -80,6 +81,6 @@ Commands:
 
 ## Next work
 
-1. Merge `feat/vh-m3-002-clipboard-controls` only after explicit owner approval.
-2. Claim `VH-M3-003` before beginning versioned assignment persistence.
-3. Keep reservations and vehicle movement in their respective later backlog items.
+1. Define and verify the versioned `UserData/VehicleHandlers.json` persistence schema without storing base-game objects or spawning vehicles.
+2. Bind save/load adapters to the exact pinned game lifecycle and restore only through `IHandlerAssignmentRegistry.TryRestore`.
+3. Keep reservations, live-object recovery, and vehicle movement in their respective later backlog items.
