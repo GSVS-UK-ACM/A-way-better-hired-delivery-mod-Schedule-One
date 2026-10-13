@@ -65,6 +65,7 @@ Game references remain outside this repository.
 - With the game closed, `dev8` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev7` DLL was retained in ignored local install-backup artifacts with SHA-256 `1234E161053D443D4AD6DD5995197012D4EDFC65A01B05EEDFD68E7A34C47DF9`.
 - In-game `dev8` verification recognised a manually parked Veeper as `Veeper (Loading Dock 1, Storage Unit)`. After Michelle claimed it, the Veeper remained visible in Michelle's panel but disappeared from another Vehicle Handler's chooser. The live log contained no Vehicle Handlers warning or exception; observed HWE and DeliverySpotsPlus errors were unrelated.
 - Removing Michelle's idle assignment in `dev8` released its vehicle claim immediately; the vehicle returned to the other Vehicle Handler's available chooser entries.
+- Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
 
 Commands:
 
