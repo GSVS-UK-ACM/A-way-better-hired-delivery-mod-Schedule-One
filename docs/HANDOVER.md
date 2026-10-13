@@ -70,6 +70,7 @@ Game references remain outside this repository.
 - PR #8 merged the runtime-verified `VH-M3-002` branch into `main` as `fdcef4f`. Before claiming `VH-M3-003`, the preserved out-of-tree 0.4.7f12 IL2CPP reference set passed all 159 pinned API checks and no overlapping pull request was open.
 - `VH-M3-003` adds schema-version-1 per-save assignment documents at `<save folder>/UserData/VehicleHandlers.json`, atomic temporary-file replacement, previous-valid backup recovery, strict stable-ID/state decoding, fresh-registry load isolation, and exact `StartGame`, `Save()`, `Save(string)`, and `CleanUp` lifecycle patches.
 - The `dev9` gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Restore runs after `StartGame` returns so synchronous base-game cleanup cannot erase the fresh registry. Built DLL SHA-256: `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
+- With the game closed, `dev9` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev8` DLL was retained in ignored local install-backup artifacts with SHA-256 `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
 
 Commands:
 
