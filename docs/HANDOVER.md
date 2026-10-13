@@ -68,12 +68,14 @@ Game references remain outside this repository.
 - Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
 - Selecting an ordinary unmarked vanilla Handler still opened the standard base-game Packager management panel. The Vehicle Handler overlay remained isolated to marked workers.
 - PR #8 merged the runtime-verified `VH-M3-002` branch into `main` as `fdcef4f`. Before claiming `VH-M3-003`, the preserved out-of-tree 0.4.7f12 IL2CPP reference set passed all 159 pinned API checks and no overlapping pull request was open.
-- `VH-M3-003` adds schema-version-1 per-save assignment documents at `<save folder>/UserData/VehicleHandlers.json`, atomic temporary-file replacement, previous-valid backup recovery, strict stable-ID/state decoding, fresh-registry load isolation, and exact `StartGame`, `SaveManager.Awake`/`onSaveComplete`, and `CleanUp` lifecycle integration.
+- `VH-M3-003` adds schema-version-1 per-save assignment documents at `<save folder>/UserData/VehicleHandlers.json`, atomic temporary-file replacement, previous-valid backup recovery, strict stable-ID/state decoding, fresh-registry load isolation, and exact `StartGame`, post-save `Save()`/`Save(string)`, and `CleanUp` lifecycle integration.
 - The `dev9` gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Restore runs after `StartGame` returns so synchronous base-game cleanup cannot erase the fresh registry. Built DLL SHA-256: `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
 - With the game closed, `dev9` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev8` DLL was retained in ignored local install-backup artifacts with SHA-256 `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
 - Runtime testing rejected `dev9`: its save prefix logged `Saved 1 Vehicle Handler assignment(s).`, but the base game's remaining save cleanup removed the mod-owned directory before save completion, leaving no `VehicleHandlers.json` to reload.
 - `dev10` moves persistence to the exact `SaveManager.onSaveComplete` event and attaches idempotently both during mod initialization and from an exact `SaveManager.Awake` postfix. The complete gate passes 168 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 103 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `6DAAD15621AEF061543577D760760FFF98DFE618749C8429F7AE798DF6F1773F`.
 - With the game closed, `dev10` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev9` was retained in ignored local install-backup artifacts with SHA-256 `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
+- Runtime testing rejected `dev10`: it loaded and restored safely, but the game's `onSaveComplete` event did not invoke the managed listener during the tested save, so no save log or assignment document was produced.
+- `dev11` replaces that event dependency with Harmony postfixes on both exact `SaveManager.Save` overloads. The complete gate passes 165 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 99 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `CEAE6815D540E9A16BD1F684ACCBCAB82E5E7BF5C4FBFE7CC8B9F20DDA0A807C`.
 
 Commands:
 
@@ -88,5 +90,5 @@ Commands:
 
 ## Next work
 
-1. Launch `0.4.7f12-dev10`, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
+1. Install `0.4.7f12-dev11` with the game closed, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
 2. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.
