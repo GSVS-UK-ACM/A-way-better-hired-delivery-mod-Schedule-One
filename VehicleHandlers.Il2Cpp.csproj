@@ -34,6 +34,7 @@
     <Reference Include="Il2CppFishNet.Runtime" HintPath="$(MelonLoaderRoot)\Il2CppAssemblies\Il2CppFishNet.Runtime.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(MelonLoaderRoot)\Il2CppAssemblies\UnityEngine.dll" Private="false" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(MelonLoaderRoot)\Il2CppAssemblies\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.IMGUIModule" HintPath="$(MelonLoaderRoot)\Il2CppAssemblies\UnityEngine.IMGUIModule.dll" Private="false" />
   </ItemGroup>
 
   <Target Name="ValidateMelonLoaderRoot" BeforeTargets="ResolveReferences">

@@ -2,11 +2,11 @@
 
 ## Active claim
 
-None. `VH-M3-001` is complete on `feat/vh-m3-001-assignment-model` and awaits owner-approved merge.
+`VH-M3-002` is complete on `feat/vh-m3-002-clipboard-controls` and is ready for owner-approved merge.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, and lifecycle PR #6 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` now supplies the in-memory assignment authority: one snapshot per Handler, exclusive vehicle claims, compare-and-swap revisions, removal tombstones, strict trip binding/transitions, deterministic snapshots, and a bounded save-restore phase. Clipboard controls, persistence, reservations, live-object validation, and movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, and assignment-model PR #7 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority. `VH-M3-002` now adds a Vehicle Handler-only management clipboard panel with owned-vehicle, owned-property, loading-bay, enabled, apply, remove, and refresh controls. The panel writes stable identities through the assignment registry and rejects non-server mutation. Persistence, reservations, live-object validation, and physical movement remain unchanged.
 
 ## Compatibility target
 
@@ -52,6 +52,21 @@ Game references remain outside this repository.
 - `VH-M3-001` adds a dependency-free assignment verifier with 51 assertions covering one-vehicle exclusivity, immutable snapshots, stale-write rejection, active-trip reconfiguration/removal blocks, exact trip ownership, legal transitions, revision tombstones, and restore conflicts.
 - The complete `0.4.7f12-dev6` gate passes 141 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, and 64 compiled Handler runtime checks; release compilation has zero warnings and zero errors.
 - Built `0.4.7f12-dev6` DLL SHA-256: `0D325D4D978D30E49D5AFE5623C36EA20AFA3222F1A9B2989AC1EACF25C69FC0`. It is a build artifact only and has not been installed; this milestone adds no player-facing control surface.
+- PR #7 merged `VH-M3-001` into `main` as `c7d2f5f3c04d947be24e8b0af89a92f5d40e6e28`.
+- Before claiming `VH-M3-002`, the preserved out-of-tree `0.4.7f12` IL2CPP reference set passed all 141 pinned API checks. The live game's `Assembly-CSharp.dll` is currently modified at startup by Polyfill.Boot and has SHA-256 `2FE6C19C6A14703EB2FD8171C6217F64804D61FE64EC372173796E5417E76971`; it must not replace the canonical preserved build reference.
+- `VH-M3-002` adds 46 dependency-free clipboard-model assertions for stable preselection, cycling, immutable choices, revision updates, control-flag preservation, and unavailable-choice failures.
+- The pinned API gate now includes `UnityEngine.IMGUIModule.dll` SHA-256 `5B8CBAEB25F4F8024675805B819AE0A26DBC44CEE3EE027969390DBFE4670D20` plus exact management-interface, IMGUI, vehicle-name, property, and dock-name members.
+- The complete `0.4.7f12-dev7` gate passes 159 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 46 clipboard assertions, and 81 compiled Handler runtime checks; release compilation has zero warnings and zero errors.
+- Built `0.4.7f12-dev7` DLL SHA-256: `1234E161053D443D4AD6DD5995197012D4EDFC65A01B05EEDFD68E7A34C47DF9`.
+- With the game closed, `dev7` was installed to `Mods/VehicleHandlers.dll` and its installed SHA-256 matched the build. The previous runtime-verified `dev5` DLL was retained in the ignored local install-backup artifacts with SHA-256 `0CB84F9E34F971B36F0AD8E73437FA8EBDE26BA5F07BD696557D8A4ACB9FEE74`.
+- In-game `dev7` verification passed Vehicle Handler panel rendering, stable vehicle/property/dock resolution, apply and reopen persistence at revision 1, disable and reopen persistence at revision 2, and enabled reconfiguration at revision 3. No Vehicle Handlers exception appeared; the observed `DeliverySpotsPlus` coroutine exception was unrelated.
+- Player feedback identified that short GUIDs alone do not make same-model vehicles easy to distinguish. `dev8` labels vehicles recognised as a `LoadingDock.DynamicOccupant` or `StaticOccupant` with the dock and property, and omits vehicles claimed by another Handler while retaining the current Handler's own claim.
+- The `dev8` gate passes 159 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, and 86 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
+- With the game closed, `dev8` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev7` DLL was retained in ignored local install-backup artifacts with SHA-256 `1234E161053D443D4AD6DD5995197012D4EDFC65A01B05EEDFD68E7A34C47DF9`.
+- In-game `dev8` verification recognised a manually parked Veeper as `Veeper (Loading Dock 1, Storage Unit)`. After Michelle claimed it, the Veeper remained visible in Michelle's panel but disappeared from another Vehicle Handler's chooser. The live log contained no Vehicle Handlers warning or exception; observed HWE and DeliverySpotsPlus errors were unrelated.
+- Removing Michelle's idle assignment in `dev8` released its vehicle claim immediately; the vehicle returned to the other Vehicle Handler's available chooser entries.
+- Assigning a vehicle to an expendable second Vehicle Handler and then firing that Handler released the idle registry claim; the vehicle immediately returned to Michelle's available chooser entries.
+- Selecting an ordinary unmarked vanilla Handler still opened the standard base-game Packager management panel. The Vehicle Handler overlay remained isolated to marked workers.
 
 Commands:
 
@@ -59,11 +74,12 @@ Commands:
 .\scripts\verify-game-api.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>"
 .\scripts\verify-contracts.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-assignments.ps1 -DotNet "<dotnet-8.0.425>"
+.\scripts\verify-clipboard.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>" -DotNet "<dotnet-8.0.425>"
 ```
 
 ## Next work
 
-1. Obtain owner approval and merge `feat/vh-m3-001-assignment-model`.
-2. Claim `VH-M3-002` for clipboard configuration and controls.
-3. Keep persistence adapters, reservations, and vehicle movement in their respective later backlog items.
+1. Merge `feat/vh-m3-002-clipboard-controls` only after explicit owner approval.
+2. Claim `VH-M3-003` before beginning versioned assignment persistence.
+3. Keep reservations and vehicle movement in their respective later backlog items.

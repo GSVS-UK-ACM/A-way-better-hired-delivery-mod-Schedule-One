@@ -241,9 +241,67 @@ try {
 
     $initialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnInitializeMelon"
     Assert-Call $initialize "*VehicleHandlers.StartupBanner::Print*" "Mod initialization prints the Vehicle Handlers startup banner"
+    Assert-Call $initialize "*VehicleHandlers.Assignments.HandlerAssignmentRuntime::Initialize*" "Mod initialization installs the assignment lifecycle sink"
+
+    $onGui = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnGUI"
+    Assert-Call $onGui "*VehicleHandlers.Clipboard.HandlerClipboardSession::Draw*" "MelonLoader OnGUI renders the Vehicle Handler clipboard controls"
 
     $deinitialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnDeinitializeMelon"
     Assert-Call $deinitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::NotifyModUnloading*" "Mod shutdown enters the lifecycle cleanup boundary"
+    Assert-Call $deinitialize "*VehicleHandlers.Clipboard.HandlerClipboardSession::End*" "Mod shutdown closes the clipboard assignment session"
+
+    $assignmentRuntimeInitialize = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime" "Initialize"
+    Assert-Call $assignmentRuntimeInitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::SetSink*" "Assignment runtime receives Handler lifecycle cleanup"
+
+    $assignmentLifecycle = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime/AssignmentLifecycleSink" "HandlerUnavailable" @(
+        "VehicleHandlers.Contracts.HandlerId", "VehicleHandlers.Contracts.HandlerUnavailableReason"
+    )
+    Assert-Call $assignmentLifecycle "*VehicleHandlers.Assignments.HandlerAssignmentRegistry::TryRemove*" "Unavailable Handlers release idle vehicle assignments"
+
+    $clipboardOpen = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerManagementOpenPatch" "Prefix" @(
+        'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Management.IConfigurable>'
+    )
+    Assert-Call $clipboardOpen "*VehicleHandlers.Clipboard.HandlerClipboardSession::Begin*" "Management clipboard selection enters the Vehicle Handler session"
+
+    $clipboardPanel = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerManagementPanelPatch" "Postfix" @(
+        "Il2CppScheduleOne.Management.ManagementInterface"
+    )
+    Assert-Call $clipboardPanel "*VehicleHandlers.Clipboard.HandlerClipboardSession::HideVanillaPanel*" "Vehicle Handler selection hides the vanilla Packager panel"
+
+    $clipboardClose = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerManagementClosePatch" "Postfix"
+    Assert-Call $clipboardClose "*VehicleHandlers.Clipboard.HandlerClipboardSession::End*" "Closing the management clipboard ends the Vehicle Handler session"
+
+    $clipboardBegin = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "Begin" @(
+        'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.Management.IConfigurable>'
+    )
+    Assert-Call $clipboardBegin "*TryCast<Il2CppScheduleOne.Employees.Packager>*" "Clipboard controls require the concrete Packager-backed employee"
+    Assert-Call $clipboardBegin "*VehicleHandlers.Employees.HandlerLifecycleFilter::TryGetMarker*" "Clipboard controls exclude ordinary vanilla Handlers"
+
+    $clipboardCanWrite = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "CanWrite"
+    Assert-Call $clipboardCanWrite "*Il2CppFishNet.Object.NetworkBehaviour::get_IsServerInitialized*" "Clipboard mutations are restricted to the server or host"
+
+    $clipboardApply = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "Apply"
+    Assert-Call $clipboardApply "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::TryConfigure*" "Apply uses the authoritative assignment registry"
+
+    $clipboardRemove = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "Remove"
+    Assert-Call $clipboardRemove "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::TryRemove*" "Remove uses the authoritative assignment registry"
+
+    $vehicleChoices = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "BuildVehicleChoices"
+    Assert-Call $vehicleChoices "*Il2CppScheduleOne.Vehicles.VehicleManager::get_PlayerOwnedVehicles*" "Clipboard vehicle choices come from the player-owned vehicle list"
+    Assert-Call $vehicleChoices "*Il2CppScheduleOne.Vehicles.LandVehicle::get_GUID*" "Clipboard vehicle choices retain stable vehicle GUIDs"
+    Assert-Call $vehicleChoices "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::Snapshot*" "Clipboard vehicle choices inspect authoritative assignment claims"
+    Assert-Call $vehicleChoices "*VehicleHandlers.Clipboard.HandlerClipboardChoicePolicy::IsVehicleAvailableForHandler*" "Clipboard hides vehicles assigned to other Handlers"
+
+    $vehicleLocation = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "TryFindLoadingDockLocation" @(
+        "VehicleHandlers.Contracts.VehicleId", "System.String&", "System.String&"
+    )
+    Assert-Call $vehicleLocation "*Il2CppScheduleOne.Property.Property::get_OwnedProperties*" "Vehicle location labels inspect owned properties"
+    Assert-Call $vehicleLocation "*Il2CppScheduleOne.Delivery.LoadingDock::get_DynamicOccupant*" "Vehicle location labels inspect live dock occupants"
+    Assert-Call $vehicleLocation "*Il2CppScheduleOne.Delivery.LoadingDock::get_StaticOccupant*" "Vehicle location labels inspect parked dock occupants"
+
+    $propertyChoices = Get-RequiredMethod "VehicleHandlers.Clipboard.HandlerClipboardSession" "BuildPropertyChoices"
+    Assert-Call $propertyChoices "*Il2CppScheduleOne.Property.Property::get_OwnedProperties*" "Clipboard destination choices come from owned properties"
+    Assert-Call $propertyChoices "*Il2CppScheduleOne.Delivery.LoadingDock::get_GUID*" "Clipboard bay choices retain stable dock GUIDs"
 
     $banner = Get-RequiredMethod "VehicleHandlers.StartupBanner" "Print"
     Assert-Condition ($banner.IsPublic -and $banner.IsStatic) "Startup banner exposes a callable static print method"
