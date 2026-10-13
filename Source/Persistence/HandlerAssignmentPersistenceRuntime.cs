@@ -150,8 +150,8 @@ namespace VehicleHandlers.Persistence
     })]
     internal static class HandlerAssignmentLoadPatch
     {
-        [HarmonyPrefix]
-        public static void Prefix(SaveInfo __0)
+        [HarmonyPostfix]
+        public static void Postfix(SaveInfo __0)
         {
             HandlerAssignmentPersistenceRuntime.PrepareLoad(__0?.SavePath);
         }

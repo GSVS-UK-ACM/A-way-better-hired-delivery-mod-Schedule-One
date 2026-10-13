@@ -272,7 +272,7 @@ try {
     Assert-Call $saveActive "*VehicleHandlers.Contracts.IHandlerAssignmentRegistry::Snapshot*" "Persistence saves an immutable registry snapshot"
     Assert-Call $saveActive "*VehicleHandlers.Persistence.AssignmentPersistenceFile::Save*" "Persistence writes through the atomic file layer"
 
-    $loadPatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentLoadPatch" "Prefix" @("Il2CppScheduleOne.Persistence.SaveInfo")
+    $loadPatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentLoadPatch" "Postfix" @("Il2CppScheduleOne.Persistence.SaveInfo")
     Assert-Call $loadPatch "*Il2CppScheduleOne.Persistence.SaveInfo::get_SavePath*" "Load integration uses the selected save's exact root"
     Assert-Call $loadPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::PrepareLoad*" "StartGame enters assignment restore"
 

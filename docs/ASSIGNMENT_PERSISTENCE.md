@@ -28,7 +28,7 @@ Both pinned `SaveManager.Save` routes snapshot the single assignment registry. W
 
 ## Load behavior
 
-Starting a save creates a fresh empty registry before reading its document. Valid entries are restored only through `IHandlerAssignmentRegistry.TryRestore`, retaining duplicate Handler/vehicle rejection and revision invariants. A corrupt primary document may recover from its previous valid backup. Missing, corrupt, future-version, or conflicting entries fail safely and never create a replacement vehicle.
+After `StartGame` returns, the mod creates a fresh empty registry before reading the selected save's document. This ordering lets synchronous base-game cleanup finish before restore. Valid entries are restored only through `IHandlerAssignmentRegistry.TryRestore`, retaining duplicate Handler/vehicle rejection and revision invariants. A corrupt primary document may recover from its previous valid backup. Missing, corrupt, future-version, or conflicting entries fail safely and never create a replacement vehicle.
 
 Leaving a save clears the process-local registry so assignments cannot leak between save slots.
 
