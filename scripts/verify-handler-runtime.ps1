@@ -242,6 +242,7 @@ try {
     $initialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnInitializeMelon"
     Assert-Call $initialize "*VehicleHandlers.StartupBanner::Print*" "Mod initialization prints the Vehicle Handlers startup banner"
     Assert-Call $initialize "*VehicleHandlers.Assignments.HandlerAssignmentRuntime::Initialize*" "Mod initialization installs the assignment lifecycle sink"
+    Assert-Call $initialize "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::Initialize*" "Mod initialization attaches assignment persistence"
 
     $onGui = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnGUI"
     Assert-Call $onGui "*VehicleHandlers.Clipboard.HandlerClipboardSession::Draw*" "MelonLoader OnGUI renders the Vehicle Handler clipboard controls"
@@ -249,6 +250,7 @@ try {
     $deinitialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnDeinitializeMelon"
     Assert-Call $deinitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::NotifyModUnloading*" "Mod shutdown enters the lifecycle cleanup boundary"
     Assert-Call $deinitialize "*VehicleHandlers.Clipboard.HandlerClipboardSession::End*" "Mod shutdown closes the clipboard assignment session"
+    Assert-Call $deinitialize "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::Shutdown*" "Mod shutdown detaches assignment persistence"
 
     $assignmentRuntimeInitialize = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime" "Initialize"
     Assert-Call $assignmentRuntimeInitialize "*VehicleHandlers.Employees.HandlerLifecycleBridge::SetSink*" "Assignment runtime receives Handler lifecycle cleanup"
@@ -276,11 +278,15 @@ try {
     Assert-Call $loadPatch "*Il2CppScheduleOne.Persistence.SaveInfo::get_SavePath*" "Load integration uses the selected save's exact root"
     Assert-Call $loadPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::PrepareLoad*" "StartGame enters assignment restore"
 
-    $savePatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentSavePatch" "Prefix"
-    Assert-Call $savePatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::SaveActive*" "Default game save persists Handler assignments"
+    $attachSaveManager = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "AttachSaveManager" @("Il2CppScheduleOne.Persistence.SaveManager")
+    Assert-Call $attachSaveManager "*UnityEngine.Events.UnityEvent::RemoveListener*" "Persistence attachment is idempotent"
+    Assert-Call $attachSaveManager "*UnityEngine.Events.UnityEvent::AddListener*" "Persistence subscribes to the completed-save event"
 
-    $namedSavePatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentNamedSavePatch" "Prefix" @("System.String")
-    Assert-Call $namedSavePatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::SaveActive*" "Named game save persists Handler assignments"
+    $saveCompleted = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "SaveCompleted"
+    Assert-Call $saveCompleted "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::SaveActive*" "Completed game saves persist Handler assignments"
+
+    $saveManagerAwakePatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentSaveManagerAwakePatch" "Postfix" @("Il2CppScheduleOne.Persistence.SaveManager")
+    Assert-Call $saveManagerAwakePatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::AttachSaveManager*" "SaveManager creation attaches persistence"
 
     $loadCleanupPatch = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentLoadCleanupPatch" "Postfix"
     Assert-Call $loadCleanupPatch "*VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime::ClearActiveSave*" "Leaving a save clears process-local assignment state"

@@ -2,7 +2,7 @@
 
 Status: Implemented; awaiting in-game verification  
 Target: Schedule I `0.4.7f12` IL2CPP  
-Build: `0.4.7f12-dev9`
+Build: `0.4.7f12-dev10`
 
 ## Storage
 
@@ -24,7 +24,7 @@ The mod writes only its stable assignment state. It never serializes game object
 
 ## Save behavior
 
-Both pinned `SaveManager.Save` routes snapshot the single assignment registry. Writes use a temporary file followed by an atomic replacement. A changed document preserves the previous primary document as `VehicleHandlers.json.bak`; an unchanged snapshot is not rewritten.
+The mod subscribes idempotently to the pinned `SaveManager.onSaveComplete` event and snapshots the single assignment registry only after the base game finishes its own cleanup and write cycle. Writes use a temporary file followed by an atomic replacement. A changed document preserves the previous primary document as `VehicleHandlers.json.bak`; an unchanged snapshot is not rewritten.
 
 ## Load behavior
 

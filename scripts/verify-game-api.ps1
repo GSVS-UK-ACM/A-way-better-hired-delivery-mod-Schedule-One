@@ -464,6 +464,7 @@ try {
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.SaveManager" "onSaveComplete" "UnityEngine.Events.UnityEvent" $true
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.SaveManager" "PlayersSavePath" "System.String" $true
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.SaveManager" "SaveName" "System.String" $true
+    Assert-Method "Game" "Il2CppScheduleOne.Persistence.SaveManager" "Awake" "System.Void"
     Assert-Method "Game" "Il2CppScheduleOne.Persistence.SaveManager" "Save" "System.Void"
     Assert-Method "Game" "Il2CppScheduleOne.Persistence.SaveManager" "Save" "System.Void" @("System.String")
     Assert-Property "Game" "Il2CppScheduleOne.Persistence.LoadManager" "onLoadComplete" "UnityEngine.Events.UnityEvent" $true
@@ -475,6 +476,8 @@ try {
         "Il2CppScheduleOne.Persistence.SaveInfo", "System.Boolean", "System.Boolean"
     )
     Assert-Method "Game" "Il2CppScheduleOne.Persistence.LoadManager" "CleanUp" "System.Void" @() $true
+    Assert-Method "Unity" "UnityEngine.Events.UnityEvent" "AddListener" "System.Void" @("UnityEngine.Events.UnityAction")
+    Assert-Method "Unity" "UnityEngine.Events.UnityEvent" "RemoveListener" "System.Void" @("UnityEngine.Events.UnityAction")
 
     Write-Output "Schedule I 0.4.7f12 IL2CPP Vehicle Handlers API verification passed ($script:PassCount checks)."
 }
