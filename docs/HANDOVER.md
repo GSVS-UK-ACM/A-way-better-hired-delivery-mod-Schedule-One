@@ -62,6 +62,7 @@ Game references remain outside this repository.
 - In-game `dev7` verification passed Vehicle Handler panel rendering, stable vehicle/property/dock resolution, apply and reopen persistence at revision 1, disable and reopen persistence at revision 2, and enabled reconfiguration at revision 3. No Vehicle Handlers exception appeared; the observed `DeliverySpotsPlus` coroutine exception was unrelated.
 - Player feedback identified that short GUIDs alone do not make same-model vehicles easy to distinguish. `dev8` labels vehicles recognised as a `LoadingDock.DynamicOccupant` or `StaticOccupant` with the dock and property, and omits vehicles claimed by another Handler while retaining the current Handler's own claim.
 - The `dev8` gate passes 159 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, and 86 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
+- With the game closed, `dev8` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev7` DLL was retained in ignored local install-backup artifacts with SHA-256 `1234E161053D443D4AD6DD5995197012D4EDFC65A01B05EEDFD68E7A34C47DF9`.
 
 Commands:
 
