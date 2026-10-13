@@ -73,6 +73,7 @@ Game references remain outside this repository.
 - With the game closed, `dev9` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. The replaced `dev8` DLL was retained in ignored local install-backup artifacts with SHA-256 `AB760DA82377CF80107D06E1CA6E8C1811A1F4B3D7F83C34E1199ADDFE7720B3`.
 - Runtime testing rejected `dev9`: its save prefix logged `Saved 1 Vehicle Handler assignment(s).`, but the base game's remaining save cleanup removed the mod-owned directory before save completion, leaving no `VehicleHandlers.json` to reload.
 - `dev10` moves persistence to the exact `SaveManager.onSaveComplete` event and attaches idempotently both during mod initialization and from an exact `SaveManager.Awake` postfix. The complete gate passes 168 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, and 103 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `6DAAD15621AEF061543577D760760FFF98DFE618749C8429F7AE798DF6F1773F`.
+- With the game closed, `dev10` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Rejected `dev9` was retained in ignored local install-backup artifacts with SHA-256 `6A409B1915EF3970F5FE82D3BA6DBDCD72C363B6F736AA0861CD19E03963F544`.
 
 Commands:
 
@@ -87,6 +88,5 @@ Commands:
 
 ## Next work
 
-1. Install `0.4.7f12-dev10` with the game closed.
-2. Apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
-3. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.
+1. Launch `0.4.7f12-dev10`, apply and save an assignment, return to menu, reload the same save, and verify the assignment/revision returns.
+2. Verify another save receives an independent empty document and no vehicle moves, hides, duplicates, or changes identity.
