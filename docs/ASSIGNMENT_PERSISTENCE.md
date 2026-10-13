@@ -2,7 +2,7 @@
 
 Status: Implemented; awaiting in-game verification  
 Target: Schedule I `0.4.7f12` IL2CPP  
-Build: `0.4.7f12-dev12`
+Build: `0.4.7f12-dev13`
 
 ## Storage
 
@@ -28,9 +28,9 @@ The loaded-game integration and prefixes on both pinned `SaveManager.Save` route
 
 ## Load behavior
 
-After `StartGame` returns, the mod creates a fresh empty registry before reading the selected save's document. This ordering lets synchronous base-game cleanup finish before restore. Valid entries are restored only through `IHandlerAssignmentRegistry.TryRestore`, retaining duplicate Handler/vehicle rejection and revision invariants. A corrupt primary document may recover from its previous valid backup. Missing, corrupt, future-version, or conflicting entries fail safely and never create a replacement vehicle.
+At `StartGame`, the mod creates a fresh empty registry, resolves the selected save's exact `SavePath`, and arms restoration on the live manager's `onLoadComplete` event. Only after the game finishes rebuilding the save does the callback read the document. Valid entries are restored only through `IHandlerAssignmentRegistry.TryRestore`, retaining duplicate Handler/vehicle rejection and revision invariants. A corrupt primary document may recover from its previous valid backup. Missing, corrupt, future-version, or conflicting entries fail safely and never create a replacement vehicle.
 
-Leaving a save clears the process-local registry so assignments cannot leak between save slots.
+Starting another save or unloading the mod clears process-local assignment state so assignments cannot leak between save slots.
 
 ## Current boundary
 

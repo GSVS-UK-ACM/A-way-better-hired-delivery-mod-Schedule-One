@@ -15,6 +15,9 @@ namespace VehicleHandlers.Persistence
         private static string activeSaveRoot = string.Empty;
         private static SaveManager subscribedSaveManager;
         private static UnityAction saveCompleteAction;
+        private static LoadManager subscribedLoadManager;
+        private static UnityAction loadCompleteAction;
+        private static bool loadRestorePending;
 
         public static void AttachSaveManager(SaveManager manager)
         {
@@ -49,12 +52,39 @@ namespace VehicleHandlers.Persistence
         {
             HandlerAssignmentRuntime.BeginRestore();
             activeSaveRoot = NormalizeRoot(saveRoot);
+            loadRestorePending = !string.IsNullOrWhiteSpace(activeSaveRoot);
             if (string.IsNullOrWhiteSpace(activeSaveRoot))
             {
                 MelonLogger.Warning("Vehicle Handler assignments were reset, but no save path was available to restore.");
+            }
+        }
+
+        public static void AttachLoadManager(LoadManager manager)
+        {
+            if (manager == null || manager.onLoadComplete == null)
+            {
+                MelonLogger.Warning("Vehicle Handler persistence could not attach to the load-complete event.");
                 return;
             }
 
+            if (loadCompleteAction == null)
+            {
+                loadCompleteAction = (UnityAction)new Action(LoadCompleted);
+            }
+
+            if (subscribedLoadManager != null && subscribedLoadManager.onLoadComplete != null)
+            {
+                subscribedLoadManager.onLoadComplete.RemoveListener(loadCompleteAction);
+            }
+
+            subscribedLoadManager = manager;
+            subscribedLoadManager.onLoadComplete.RemoveListener(loadCompleteAction);
+            subscribedLoadManager.onLoadComplete.AddListener(loadCompleteAction);
+            MelonLogger.Msg("Vehicle Handler assignment restore armed for load completion.");
+        }
+
+        private static void RestoreActive()
+        {
             string path = AssignmentPersistenceFile.BuildPath(activeSaveRoot);
             try
             {
@@ -125,6 +155,7 @@ namespace VehicleHandlers.Persistence
         public static void ClearActiveSave()
         {
             activeSaveRoot = string.Empty;
+            loadRestorePending = false;
             HandlerAssignmentRuntime.BeginRestore();
         }
 
@@ -137,13 +168,32 @@ namespace VehicleHandlers.Persistence
                 subscribedSaveManager.onSaveComplete.RemoveListener(saveCompleteAction);
             }
 
+            if (subscribedLoadManager != null &&
+                subscribedLoadManager.onLoadComplete != null &&
+                loadCompleteAction != null)
+            {
+                subscribedLoadManager.onLoadComplete.RemoveListener(loadCompleteAction);
+            }
+
             subscribedSaveManager = null;
+            subscribedLoadManager = null;
             ClearActiveSave();
         }
 
         private static void SaveCompleted()
         {
             SaveActive();
+        }
+
+        private static void LoadCompleted()
+        {
+            if (!loadRestorePending)
+            {
+                return;
+            }
+
+            loadRestorePending = false;
+            RestoreActive();
         }
 
         private static string ResolveActiveSaveRoot(string hint)
@@ -200,10 +250,11 @@ namespace VehicleHandlers.Persistence
     })]
     internal static class HandlerAssignmentLoadPatch
     {
-        [HarmonyPostfix]
-        public static void Postfix(SaveInfo __0)
+        [HarmonyPrefix]
+        public static void Prefix(LoadManager __instance, SaveInfo __0)
         {
             HandlerAssignmentPersistenceRuntime.PrepareLoad(__0?.SavePath);
+            HandlerAssignmentPersistenceRuntime.AttachLoadManager(__instance);
             if (SaveManager.InstanceExists && SaveManager.Instance != null)
             {
                 HandlerAssignmentPersistenceRuntime.AttachSaveManager(SaveManager.Instance);
@@ -231,13 +282,4 @@ namespace VehicleHandlers.Persistence
         }
     }
 
-    [HarmonyPatch(typeof(LoadManager), nameof(LoadManager.CleanUp), new Type[0])]
-    internal static class HandlerAssignmentLoadCleanupPatch
-    {
-        [HarmonyPostfix]
-        public static void Postfix()
-        {
-            HandlerAssignmentPersistenceRuntime.ClearActiveSave();
-        }
-    }
 }
