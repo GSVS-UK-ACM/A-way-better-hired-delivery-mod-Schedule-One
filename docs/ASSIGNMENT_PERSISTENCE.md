@@ -1,6 +1,6 @@
 # Vehicle Handler Assignment Persistence
 
-Status: Implemented; awaiting in-game verification  
+Status: Implemented; same-save save/reload verified, cross-save isolation pending  
 Target: Schedule I `0.4.7f12` IL2CPP  
 Build: `0.4.7f12-dev13`
 
