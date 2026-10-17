@@ -1,6 +1,6 @@
 # Vehicle Handler Assignment Persistence
 
-Status: Implemented; same-save save/reload verified, cross-save isolation pending  
+Status: Implemented and runtime verified  
 Target: Schedule I `0.4.7f12` IL2CPP  
 Build: `0.4.7f12-dev13`
 
@@ -52,3 +52,5 @@ Runtime verification must confirm:
 4. loading a different save does not import the first save's assignments;
 5. a missing document behaves like an empty assignment set;
 6. no vehicle is spawned, moved, hidden, or given a different save identity.
+
+All six checks passed on `0.4.7f12-dev13`. `SaveGame_1` retained its enabled revision-1 assignment document unchanged while `SaveGame_2` restored zero assignments and created an independent empty schema-v1 document on save.
