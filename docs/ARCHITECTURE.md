@@ -24,6 +24,8 @@ The registry maintains a reverse vehicle index, compare-and-swap revisions, remo
 
 `HandlerReservationRegistry` owns destination reservations keyed by stable property and dock identity. Reservation acquisition and release are atomic and owner-specific. A Harmony postfix on `DeliveryManager.IsLoadingBayFree(Property, int)` combines vanilla availability with Handler reservations.
 
+Reservations are process-local and server-owned. Exact owner/token release prevents stale trip cleanup from releasing a newer lease, while Handler lifecycle, save-load isolation, and mod shutdown clear abandoned leases. See [Loading-Bay Reservations](RESERVATIONS.md).
+
 ### Movement coordinator
 
 `HandlerMovementCoordinator` validates an assignment, detaches the exact vehicle from its current dock or parking spot, advances a timed trip, waits for destination availability, aligns the vehicle to the dock, and restores normal visibility/physics.

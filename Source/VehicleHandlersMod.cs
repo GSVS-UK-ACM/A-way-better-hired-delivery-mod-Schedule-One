@@ -3,6 +3,7 @@ using VehicleHandlers.Assignments;
 using VehicleHandlers.Clipboard;
 using VehicleHandlers.Employees;
 using VehicleHandlers.Persistence;
+using VehicleHandlers.Reservations;
 using VehicleHandlers.Runtime;
 
 namespace VehicleHandlers
@@ -12,7 +13,7 @@ namespace VehicleHandlers
         public const string ModName = "Vehicle Handlers";
         public const string Version = "0.1.0";
         public const string TargetGameVersion = "0.4.7f12";
-        public const string BuildIdentity = "0.4.7f12-dev13";
+        public const string BuildIdentity = "0.4.7f12-dev14";
         public const string Creator = "GSVS UK ACM";
         public const string ProjectOwner = "xboxnuker-rgb";
         public const string ModDescription = "Adds a hireable Handler who moves owned vehicles while respecting loading-bay reservations.";
@@ -20,9 +21,10 @@ namespace VehicleHandlers
         public override void OnInitializeMelon()
         {
             HandlerRuntimeRegistration.Register();
+            HandlerReservationRuntime.Reset();
             HandlerAssignmentRuntime.Initialize();
             StartupBanner.Print();
-            MelonLogger.Msg($"{ModName} {Version} initialized. Handler runtime, clipboard controls, and assignment persistence are ready.");
+            MelonLogger.Msg($"{ModName} {Version} initialized. Handler runtime, clipboard controls, assignment persistence, and loading-bay reservations are ready.");
         }
 
         public override void OnGUI()

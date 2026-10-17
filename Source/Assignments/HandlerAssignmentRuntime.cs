@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MelonLoader;
 using VehicleHandlers.Contracts;
 using VehicleHandlers.Employees;
+using VehicleHandlers.Reservations;
 
 namespace VehicleHandlers.Assignments
 {
@@ -22,6 +23,7 @@ namespace VehicleHandlers.Assignments
         {
             registry = new HandlerAssignmentRegistry();
             knownRevisions.Clear();
+            HandlerReservationRuntime.Reset();
         }
 
         public static long GetExpectedRevision(
@@ -49,6 +51,14 @@ namespace VehicleHandlers.Assignments
         {
             public void HandlerUnavailable(HandlerId handler, HandlerUnavailableReason reason)
             {
+                int releasedReservations = HandlerReservationRuntime.Registry.ReleaseForHandler(handler);
+                if (releasedReservations > 0)
+                {
+                    MelonLogger.Msg(
+                        $"Released {releasedReservations} Vehicle Handler loading-bay reservation(s) " +
+                        $"for {handler} after {reason}.");
+                }
+
                 if (!registry.TryGet(handler, out HandlerAssignmentSnapshot assignment))
                 {
                     return;
@@ -69,7 +79,7 @@ namespace VehicleHandlers.Assignments
 
             public void ModUnloading()
             {
-                // Normal game saves own persistence; shutdown performs no extra file mutation.
+                HandlerReservationRuntime.Reset();
             }
         }
     }

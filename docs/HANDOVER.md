@@ -2,11 +2,11 @@
 
 ## Active claim
 
-`VH-M4-001` is owned by Codex on `feat/vh-m4-001-bay-reservations`. PR #9 merged runtime-verified `VH-M3-003` into `main`; all M3 work is complete.
+`VH-M4-001` is owned by Codex on `feat/vh-m4-001-bay-reservations`. Its implementation and complete static/build gate are ready as `0.4.7f12-dev14`; the in-game smoke test is still required before merge.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, and clipboard-controls PR #8 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority, `VH-M3-002` supplies the runtime-verified Vehicle Handler clipboard panel, and `VH-M3-003` now adds versioned per-save persistence for those assignments. Reservations, live-object validation, and physical movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, clipboard-controls PR #8, and persistence PR #9 are merged. All M2 and M3 work is complete and runtime verified. `VH-M4-001` now supplies an atomic Handler-trip lease registry, exact stable loading-bay resolution, delivery-availability integration, and lifecycle/load/unload cleanup. Live movement validation and physical vehicle transitions remain for `VH-M4-002`.
 
 ## Compatibility target
 
@@ -86,6 +86,9 @@ Game references remain outside this repository.
 - In-game `dev13` verification saved one enabled revision-1 assignment, preserved the 436-byte schema-v1 document through the menu transition, armed final-load restoration, and logged `Restored 1 Vehicle Handler assignment(s).` after employee reconstruction. Michelle's reopened panel showed revision 1, idle, enabled, the same Veeper, Docks Warehouse, and Loading Dock 1 without reapplying the assignment.
 - PR #9 merged the same-save runtime-verified `VH-M3-003` implementation into `main` as `9ff4c91862cb0a19aba9c233d1f9a62493205b94`. Cross-save isolation was still tracked under `VERIFYING` at merge time.
 - Cross-save verification completed on `dev13`: `SaveGame_2` restored zero assignments and saved an independent 48-byte empty schema-v1 document, while `SaveGame_1` retained its 436-byte enabled revision-1 assignment document unchanged at SHA-256 `DCCBCECED240816AFA294C489332853E4EB0524EC40FF96EF97A098E7DF532F8`. No Vehicle Handler marker existed in the alternate save, so no worker or vehicle identity could leak across slots. `VH-M3-003` is complete.
+- `VH-M4-001` implements an atomic process-local reservation registry keyed by property code, dock GUID, and dock index and owned by `(HandlerId, TripId)` plus an opaque lease token. Same-owner acquisition is idempotent; foreign owners and stale releases cannot displace a lease; Handler lifecycle, load start, and mod unload clear owned or abandoned leases.
+- The exact `DeliveryManager.IsLoadingBayFree(Property, int)` postfix preserves vanilla unavailability and additionally reports a bay unavailable while a Vehicle Handler lease exists. `VH-M4-001` does not yet acquire leases from live assignments or move vehicles; those operations remain in `VH-M4-002`.
+- The `dev14` gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, 33 reservation assertions, and 115 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `E832BA15731AE757E81A8203EEECE61797F80FD5D6661699C57800B6014D9CF1`.
 
 Commands:
 
@@ -95,9 +98,11 @@ Commands:
 .\scripts\verify-assignments.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-clipboard.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-persistence.ps1 -DotNet "<dotnet-8.0.425>"
+.\scripts\verify-reservations.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>" -DotNet "<dotnet-8.0.425>"
 ```
 
 ## Next work
 
-1. Implement and verify the `VH-M4-001` server-authoritative loading-bay reservation registry and exact delivery-availability integration.
+1. Install `0.4.7f12-dev14` with the game closed and complete an in-game smoke test: startup, save load, normal Vehicle Handler panel, save, and clean log.
+2. After explicit approval, merge runtime-verified `VH-M4-001`, then claim `VH-M4-002` for live validation and timed physical vehicle transitions.
