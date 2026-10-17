@@ -89,6 +89,7 @@ Game references remain outside this repository.
 - `VH-M4-001` implements an atomic process-local reservation registry keyed by property code, dock GUID, and dock index and owned by `(HandlerId, TripId)` plus an opaque lease token. Same-owner acquisition is idempotent; foreign owners and stale releases cannot displace a lease; Handler lifecycle, load start, and mod unload clear owned or abandoned leases.
 - The exact `DeliveryManager.IsLoadingBayFree(Property, int)` postfix preserves vanilla unavailability and additionally reports a bay unavailable while a Vehicle Handler lease exists. `VH-M4-001` does not yet acquire leases from live assignments or move vehicles; those operations remain in `VH-M4-002`.
 - The `dev14` gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, 33 reservation assertions, and 115 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `E832BA15731AE757E81A8203EEECE61797F80FD5D6661699C57800B6014D9CF1`.
+- With the game closed, `dev14` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Runtime-verified `dev13` was retained in ignored local install-backup artifacts with SHA-256 `122E9206D8B696E289AA36C24B0E1742F1EAE24A53CAB5E7C2EF705CECCCE175`.
 
 Commands:
 
