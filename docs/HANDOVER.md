@@ -2,7 +2,7 @@
 
 ## Active claim
 
-No implementation branch is active. PR #9 merged runtime-verified `VH-M3-003` into `main`; all M3 work is complete.
+`VH-M4-001` is owned by Codex on `feat/vh-m4-001-bay-reservations`. PR #9 merged runtime-verified `VH-M3-003` into `main`; all M3 work is complete.
 
 ## Current outcome
 
@@ -100,4 +100,4 @@ Commands:
 
 ## Next work
 
-1. Claim `VH-M4-001` and implement the server-authoritative loading-bay reservation registry.
+1. Implement and verify the `VH-M4-001` server-authoritative loading-bay reservation registry and exact delivery-availability integration.
