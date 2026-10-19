@@ -2,7 +2,7 @@
 
 ## Active claim
 
-`VH-M4-001` is owned by Codex on `feat/vh-m4-001-bay-reservations` and is `VERIFYING`. The `0.4.7f12-dev14` startup and save-load checks passed. The panel and completed-save checks are still required before merge.
+`VH-M4-001` is `DONE` on `feat/vh-m4-001-bay-reservations`. The implementation is pushed, while the final runtime evidence commits are local and await owner approval to push and merge.
 
 ## Current outcome
 
@@ -86,12 +86,7 @@ Game references remain outside this repository.
 - In-game `dev13` verification saved one enabled revision-1 assignment, preserved the 436-byte schema-v1 document through the menu transition, armed final-load restoration, and logged `Restored 1 Vehicle Handler assignment(s).` after employee reconstruction. Michelle's reopened panel showed revision 1, idle, enabled, the same Veeper, Docks Warehouse, and Loading Dock 1 without reapplying the assignment.
 - PR #9 merged the same-save runtime-verified `VH-M3-003` implementation into `main` as `9ff4c91862cb0a19aba9c233d1f9a62493205b94`. Cross-save isolation was still tracked under `VERIFYING` at merge time.
 - Cross-save verification completed on `dev13`: `SaveGame_2` restored zero assignments and saved an independent 48-byte empty schema-v1 document, while `SaveGame_1` retained its 436-byte enabled revision-1 assignment document unchanged at SHA-256 `DCCBCECED240816AFA294C489332853E4EB0524EC40FF96EF97A098E7DF532F8`. No Vehicle Handler marker existed in the alternate save, so no worker or vehicle identity could leak across slots. `VH-M3-003` is complete.
-- `VH-M4-001` implements an atomic process-local reservation registry keyed by property code, dock GUID, and dock index and owned by `(HandlerId, TripId)` plus an opaque lease token. Same-owner acquisition is idempotent; foreign owners and stale releases cannot displace a lease; Handler lifecycle, load start, and mod unload clear owned or abandoned leases.
-- The exact `DeliveryManager.IsLoadingBayFree(Property, int)` postfix preserves vanilla unavailability and additionally reports a bay unavailable while a Vehicle Handler lease exists. `VH-M4-001` does not yet acquire leases from live assignments or move vehicles; those operations remain in `VH-M4-002`.
-- The `dev14` gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, 33 reservation assertions, and 115 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `E832BA15731AE757E81A8203EEECE61797F80FD5D6661699C57800B6014D9CF1`.
-- With the game closed, `dev14` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Runtime-verified `dev13` was retained in ignored local install-backup artifacts with SHA-256 `122E9206D8B696E289AA36C24B0E1742F1EAE24A53CAB5E7C2EF705CECCCE175`.
-- On 2026-10-19, the live `dev14` log confirmed startup, IL2CPP registration, assignment-persistence arming, one Vehicle Handler attachment, and restoration of one assignment after the save opened. No Vehicle Handlers warning or exception appeared. The observed HWE and DeliverySpotsPlus errors were unrelated.
-- Owner-observed `dev14` panel verification confirmed Michelle restored at revision 1, idle and enabled, with the same Veeper, Docks Warehouse, and Loading Dock 1. The assignment was shown without reapplying it.
+- `VH-M4-001` passed its automated, installed, save-load, panel, and completed-save checks on `0.4.7f12-dev14`. See [VH-M4-001 task report](tasks/VH-M4-001.md) for the exact results, hashes, limitations, and rollback note.
 - The project already has one source-project entry in the local GSVS Projects Hub checkout. No catalogue change is needed while this build remains an unreleased test candidate.
 
 Commands:
@@ -108,5 +103,5 @@ Commands:
 
 ## Next work
 
-1. Complete the `dev14` smoke test by saving once and checking the final log.
-2. After explicit approval, merge runtime-verified `VH-M4-001`, then claim `VH-M4-002` for live validation and timed physical vehicle transitions.
+1. After explicit approval, push the final verification records and merge `VH-M4-001`.
+2. Claim `VH-M4-002` for live validation and timed physical vehicle transitions.

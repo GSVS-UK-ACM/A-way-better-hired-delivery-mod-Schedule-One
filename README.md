@@ -4,7 +4,7 @@ Vehicle Handlers is a standalone Schedule I mod that adds a hireable Handler/Dri
 
 ## Current status
 
-**The Schedule I 0.4.7f12 IL2CPP compatibility layer, Vehicle Handler lifecycle, clipboard assignment controls, and per-save assignment persistence are runtime-verified. The fixer gains a separate Vehicle Handler choice while the vanilla Handler/packager remains unchanged. Server-owned loading-bay reservations are implemented and awaiting their in-game smoke test; physical vehicle movement remains the next development stage.**
+**The Schedule I 0.4.7f12 IL2CPP compatibility layer, Vehicle Handler lifecycle, clipboard assignment controls, and per-save assignment persistence are runtime-verified. The fixer gains a separate Vehicle Handler choice while the vanilla Handler/packager remains unchanged. The server-owned loading-bay reservation layer has passed its installed smoke test. Physical vehicle movement and live reservation use remain the next development stage.**
 
 The first release will support one owned vehicle and one destination loading bay per Handler. A Handler uses the normal employee lifecycle for hiring, wages, beds, lockers, saves, firing, and leaving work. Vehicle travel is represented by a short timed trip using the same physical vehicle, followed by reservation-aware placement in the selected loading bay.
 
