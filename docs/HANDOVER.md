@@ -2,11 +2,11 @@
 
 ## Active claim
 
-`VH-M4-001` is `DONE` on `feat/vh-m4-001-bay-reservations`. The implementation is pushed, while the final runtime evidence commits are local and await owner approval to push and merge.
+`VH-M4-002` is owned by Codex on `feat/vh-m4-002-timed-vehicle-transitions`, based on merged `main` commit `9d7707e0708848c84c5262e21afac8972713c7d1`.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, clipboard-controls PR #8, and persistence PR #9 are merged. All M2 and M3 work is complete and runtime verified. `VH-M4-001` now supplies an atomic Handler-trip lease registry, exact stable loading-bay resolution, delivery-availability integration, and lifecycle/load/unload cleanup. Live movement validation and physical vehicle transitions remain for `VH-M4-002`.
+All M2 and M3 work is complete and runtime verified. `VH-M4-001` is merged into `main` at `9d7707e` and supplies the lease authority plus base-game delivery availability integration. `VH-M4-002` now owns live validation and timed movement of the same physical assigned vehicle. Manual load and hide/release controls remain for `VH-M4-003`.
 
 ## Compatibility target
 
@@ -103,5 +103,5 @@ Commands:
 
 ## Next work
 
-1. After explicit approval, push the final verification records and merge `VH-M4-001`.
-2. Claim `VH-M4-002` for live validation and timed physical vehicle transitions.
+1. Pin the exact `0.4.7f12` IL2CPP APIs needed for vehicle source release, visibility, physics, dock placement, server authority, and game-time ticking.
+2. Implement the pure validation and movement state boundary described in [VH-M4-002](tasks/VH-M4-002.md).
