@@ -2,7 +2,7 @@
 
 ## Active claim
 
-`VH-M4-001` is owned by Codex on `feat/vh-m4-001-bay-reservations`. Its implementation and complete static/build gate are ready as `0.4.7f12-dev14`; the in-game smoke test is still required before merge.
+`VH-M4-001` is owned by Codex on `feat/vh-m4-001-bay-reservations` and is `VERIFYING`. The `0.4.7f12-dev14` startup and save-load checks passed. The panel and completed-save checks are still required before merge.
 
 ## Current outcome
 
@@ -90,6 +90,8 @@ Game references remain outside this repository.
 - The exact `DeliveryManager.IsLoadingBayFree(Property, int)` postfix preserves vanilla unavailability and additionally reports a bay unavailable while a Vehicle Handler lease exists. `VH-M4-001` does not yet acquire leases from live assignments or move vehicles; those operations remain in `VH-M4-002`.
 - The `dev14` gate passes 167 pinned API checks, 110 frozen-contract assertions, 51 assignment assertions, 51 clipboard assertions, 28 persistence assertions, 33 reservation assertions, and 115 compiled runtime checks; release compilation has zero warnings and zero errors. Built DLL SHA-256: `E832BA15731AE757E81A8203EEECE61797F80FD5D6661699C57800B6014D9CF1`.
 - With the game closed, `dev14` was installed to `Mods/VehicleHandlers.dll`; its installed SHA-256 matched the verified build. Runtime-verified `dev13` was retained in ignored local install-backup artifacts with SHA-256 `122E9206D8B696E289AA36C24B0E1742F1EAE24A53CAB5E7C2EF705CECCCE175`.
+- On 2026-10-19, the live `dev14` log confirmed startup, IL2CPP registration, assignment-persistence arming, one Vehicle Handler attachment, and restoration of one assignment after the save opened. No Vehicle Handlers warning or exception appeared. The observed HWE and DeliverySpotsPlus errors were unrelated.
+- The project already has one source-project entry in the local GSVS Projects Hub checkout. No catalogue change is needed while this build remains an unreleased test candidate.
 
 Commands:
 
@@ -105,5 +107,5 @@ Commands:
 
 ## Next work
 
-1. Install `0.4.7f12-dev14` with the game closed and complete an in-game smoke test: startup, save load, normal Vehicle Handler panel, save, and clean log.
+1. Complete the `dev14` smoke test by opening Michelle's Vehicle Handler panel, saving once, and checking the final log.
 2. After explicit approval, merge runtime-verified `VH-M4-001`, then claim `VH-M4-002` for live validation and timed physical vehicle transitions.
