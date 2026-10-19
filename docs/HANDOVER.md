@@ -2,11 +2,11 @@
 
 ## Active claim
 
-No implementation branch is active. PR #9 merged runtime-verified `VH-M3-003` into `main`; all M3 work is complete.
+`VH-M4-001` is `DONE` on `feat/vh-m4-001-bay-reservations`. The implementation is pushed, while the final runtime evidence commits are local and await owner approval to push and merge.
 
 ## Current outcome
 
-Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, and clipboard-controls PR #8 are merged. All M2 work is complete and runtime verified on `dev5`. `VH-M3-001` supplies the in-memory assignment authority, `VH-M3-002` supplies the runtime-verified Vehicle Handler clipboard panel, and `VH-M3-003` now adds versioned per-save persistence for those assignments. Reservations, live-object validation, and physical movement remain unchanged.
+Foundation PR #1, exact API-verifier PR #2, contract PR #3, Handler runtime PR #4, hiring PR #5, lifecycle PR #6, assignment-model PR #7, clipboard-controls PR #8, and persistence PR #9 are merged. All M2 and M3 work is complete and runtime verified. `VH-M4-001` now supplies an atomic Handler-trip lease registry, exact stable loading-bay resolution, delivery-availability integration, and lifecycle/load/unload cleanup. Live movement validation and physical vehicle transitions remain for `VH-M4-002`.
 
 ## Compatibility target
 
@@ -86,6 +86,8 @@ Game references remain outside this repository.
 - In-game `dev13` verification saved one enabled revision-1 assignment, preserved the 436-byte schema-v1 document through the menu transition, armed final-load restoration, and logged `Restored 1 Vehicle Handler assignment(s).` after employee reconstruction. Michelle's reopened panel showed revision 1, idle, enabled, the same Veeper, Docks Warehouse, and Loading Dock 1 without reapplying the assignment.
 - PR #9 merged the same-save runtime-verified `VH-M3-003` implementation into `main` as `9ff4c91862cb0a19aba9c233d1f9a62493205b94`. Cross-save isolation was still tracked under `VERIFYING` at merge time.
 - Cross-save verification completed on `dev13`: `SaveGame_2` restored zero assignments and saved an independent 48-byte empty schema-v1 document, while `SaveGame_1` retained its 436-byte enabled revision-1 assignment document unchanged at SHA-256 `DCCBCECED240816AFA294C489332853E4EB0524EC40FF96EF97A098E7DF532F8`. No Vehicle Handler marker existed in the alternate save, so no worker or vehicle identity could leak across slots. `VH-M3-003` is complete.
+- `VH-M4-001` passed its automated, installed, save-load, panel, and completed-save checks on `0.4.7f12-dev14`. See [VH-M4-001 task report](tasks/VH-M4-001.md) for the exact results, hashes, limitations, and rollback note.
+- The project already has one source-project entry in the local GSVS Projects Hub checkout. No catalogue change is needed while this build remains an unreleased test candidate.
 
 Commands:
 
@@ -95,9 +97,11 @@ Commands:
 .\scripts\verify-assignments.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-clipboard.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\verify-persistence.ps1 -DotNet "<dotnet-8.0.425>"
+.\scripts\verify-reservations.ps1 -DotNet "<dotnet-8.0.425>"
 .\scripts\build-il2cpp.ps1 -MelonLoaderRoot "<out-of-tree-MelonLoader>" -DotNet "<dotnet-8.0.425>"
 ```
 
 ## Next work
 
-1. Claim `VH-M4-001` and implement the server-authoritative loading-bay reservation registry.
+1. After explicit approval, push the final verification records and merge `VH-M4-001`.
+2. Claim `VH-M4-002` for live validation and timed physical vehicle transitions.

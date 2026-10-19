@@ -241,6 +241,7 @@ try {
 
     $initialize = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnInitializeMelon"
     Assert-Call $initialize "*VehicleHandlers.StartupBanner::Print*" "Mod initialization prints the Vehicle Handlers startup banner"
+    Assert-Call $initialize "*VehicleHandlers.Reservations.HandlerReservationRuntime::Reset*" "Mod initialization creates a fresh reservation authority"
     Assert-Call $initialize "*VehicleHandlers.Assignments.HandlerAssignmentRuntime::Initialize*" "Mod initialization installs the assignment lifecycle sink"
 
     $onGui = Get-RequiredMethod "VehicleHandlers.VehicleHandlersMod" "OnGUI"
@@ -257,11 +258,28 @@ try {
     $assignmentBeginRestore = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime" "BeginRestore"
     Assert-Call $assignmentBeginRestore "*VehicleHandlers.Assignments.HandlerAssignmentRegistry::.ctor*" "Load starts with a fresh assignment registry"
     Assert-Call $assignmentBeginRestore "*System.Collections.Generic.Dictionary*::Clear*" "Load clears cached assignment revisions"
+    Assert-Call $assignmentBeginRestore "*VehicleHandlers.Reservations.HandlerReservationRuntime::Reset*" "Load clears process-local bay reservations"
 
     $assignmentLifecycle = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime/AssignmentLifecycleSink" "HandlerUnavailable" @(
         "VehicleHandlers.Contracts.HandlerId", "VehicleHandlers.Contracts.HandlerUnavailableReason"
     )
     Assert-Call $assignmentLifecycle "*VehicleHandlers.Assignments.HandlerAssignmentRegistry::TryRemove*" "Unavailable Handlers release idle vehicle assignments"
+    Assert-Call $assignmentLifecycle "*VehicleHandlers.Contracts.IHandlerReservationRegistry::ReleaseForHandler*" "Unavailable Handlers release every owned bay reservation"
+
+    $assignmentUnload = Get-RequiredMethod "VehicleHandlers.Assignments.HandlerAssignmentRuntime/AssignmentLifecycleSink" "ModUnloading"
+    Assert-Call $assignmentUnload "*VehicleHandlers.Reservations.HandlerReservationRuntime::Reset*" "Mod unload clears every bay reservation"
+
+    $reservationResolve = Get-RequiredMethod "VehicleHandlers.Reservations.HandlerReservationRuntime" "TryResolveBay" @(
+        "Il2CppScheduleOne.Property.Property", "System.Int32", "VehicleHandlers.Contracts.LoadingBayKey&"
+    )
+    Assert-Call $reservationResolve "*Il2CppScheduleOne.Property.Property::get_PropertyCode*" "Reservation keys retain the stable property code"
+    Assert-Call $reservationResolve "*Il2CppScheduleOne.Property.Property::get_LoadingDocks*" "Reservation keys resolve the exact dock index"
+    Assert-Call $reservationResolve "*Il2CppScheduleOne.Delivery.LoadingDock::get_GUID*" "Reservation keys retain the stable dock GUID"
+
+    $availabilityPostfix = Get-RequiredMethod "VehicleHandlers.Reservations.HandlerLoadingBayAvailabilityPatch" "Postfix" @(
+        "Il2CppScheduleOne.Property.Property", "System.Int32", "System.Boolean&"
+    )
+    Assert-Call $availabilityPostfix "*VehicleHandlers.Reservations.HandlerReservationRuntime::IsReserved*" "Handler reservations make vanilla delivery bays unavailable"
 
     $prepareLoad = Get-RequiredMethod "VehicleHandlers.Persistence.HandlerAssignmentPersistenceRuntime" "PrepareLoad" @("System.String")
     Assert-Call $prepareLoad "*VehicleHandlers.Assignments.HandlerAssignmentRuntime::BeginRestore*" "Persistence resets process-local assignments before each load"

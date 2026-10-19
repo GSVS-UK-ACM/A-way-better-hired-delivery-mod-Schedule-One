@@ -14,7 +14,7 @@ Valid states: `READY`, `IN_PROGRESS`, `BLOCKED`, `VERIFYING`, `DONE`.
 | VH-M3-001 | M3 | DONE | Codex | One-vehicle assignment model. |
 | VH-M3-002 | M3 | DONE | Codex | Clipboard configuration and controls; runtime verified on dev8. |
 | VH-M3-003 | M3 | DONE | Codex | Versioned assignment persistence; same-save save/reload and cross-save isolation runtime verified on dev13. |
-| VH-M4-001 | M4 | READY | — | Server-authoritative bay reservation registry. |
+| VH-M4-001 | M4 | DONE | Codex | Server-authoritative bay reservation registry. |
 | VH-M4-002 | M4 | READY | — | Timed physical vehicle state transitions. |
 | VH-M4-003 | M4 | READY | — | Load and hide/release manual controls. |
 | VH-M5-001 | M5 | READY | — | Verified build and packaging workflow. |

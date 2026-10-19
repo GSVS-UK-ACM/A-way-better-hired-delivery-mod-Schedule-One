@@ -4,7 +4,7 @@ Vehicle Handlers is a standalone Schedule I mod that adds a hireable Handler/Dri
 
 ## Current status
 
-**The Schedule I 0.4.7f12 IL2CPP compatibility layer, shared internal contracts, and complete Vehicle Handler employee lifecycle are runtime-verified. The fixer gains a separate Vehicle Handler choice while the vanilla Handler/packager remains unchanged; hiring, save/load restoration, work isolation, firing, and the orange appearance cue have passed in-game testing. Assignment controls and vehicle-moving work are the next development stage.**
+**The Schedule I 0.4.7f12 IL2CPP compatibility layer, Vehicle Handler lifecycle, clipboard assignment controls, and per-save assignment persistence are runtime-verified. The fixer gains a separate Vehicle Handler choice while the vanilla Handler/packager remains unchanged. The server-owned loading-bay reservation layer has passed its installed smoke test. Physical vehicle movement and live reservation use remain the next development stage.**
 
 The first release will support one owned vehicle and one destination loading bay per Handler. A Handler uses the normal employee lifecycle for hiring, wages, beds, lockers, saves, firing, and leaving work. Vehicle travel is represented by a short timed trip using the same physical vehicle, followed by reservation-aware placement in the selected loading bay.
 
@@ -36,6 +36,10 @@ IL2CPP and Mono builds are not interchangeable.
 - [Handler runtime worker](docs/HANDLER_RUNTIME.md)
 - [Hiring integration](docs/HIRING_INTEGRATION.md)
 - [Handler lifecycle](docs/HANDLER_LIFECYCLE.md)
+- [Assignment model](docs/ASSIGNMENT_MODEL.md)
+- [Clipboard controls](docs/CLIPBOARD_CONTROLS.md)
+- [Assignment persistence](docs/ASSIGNMENT_PERSISTENCE.md)
+- [Loading-bay reservations](docs/RESERVATIONS.md)
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
 - [Backlog](docs/BACKLOG.md)
 - [Current handover](docs/HANDOVER.md)
