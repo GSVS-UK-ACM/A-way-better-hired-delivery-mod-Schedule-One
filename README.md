@@ -1,3 +1,9 @@
+<!-- GSVS-REPOSITORY-MIGRATION -->
+> **New repository home:** This project moved from `xboxnuker-rgb/A-way-better-hired-delivery-mod-Schedule-One` to
+> [GSVS-UK-ACM/A-way-better-hired-delivery-mod-Schedule-One](https://github.com/GSVS-UK-ACM/A-way-better-hired-delivery-mod-Schedule-One).
+> Existing GitHub links redirect here. Continue using this repository under its
+> organisation address. Existing local checkouts can keep their folders.
+
 # Vehicle Handlers
 
 Vehicle Handlers is a standalone Schedule I mod that adds a hireable Handler/Driver employee for moving the player's existing owned vehicles to property loading bays without duplicating vehicles or bypassing normal delivery reservations.
